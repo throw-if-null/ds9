@@ -1,0 +1,62 @@
+/* ---- Design tokens (colour palette and fonts) ---- */
+:root {
+	/* core palette */
+	--lcars-black: #000;
+	--lcars-beige: #f6c8c8;
+	--lcars-beige-hover: #e6b0b0;
+
+	/* theme colours – you can override these with your theme.ts helper */
+	--theme-main: #7f001b; /* the dark red frame colour */
+	--shape-color: var(--theme-main); /* used for sidebars/buttons by default */
+	--lcars-button-radius-left: 0; /* square corners for sidebar buttons */
+	--lcars-button-radius-right: 0;
+	/* typography */
+	--lcars-heading-font: 'Antonio', sans-serif;
+	--lcars-button-hover-filter: 1.1; /* brighten on hover */
+}
+
+/* ---- Base LCARS button ---- */
+.lcars-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 48px;
+	padding: 0.6rem 1rem;
+	border-top-left-radius: var(--lcars-button-radius-left);
+	border-bottom-left-radius: var(--lcars-button-radius-left);
+	border-top-right-radius: var(--lcars-button-radius-right);
+	border-bottom-right-radius: var(--lcars-button-radius-right);
+	background-color: var(--lcars-button-bg, var(--lcars-beige));
+	color: var(--lcars-button-fg, var(--lcars-black));
+	font-family: var(--lcars-heading-font);
+	font-weight: 600;
+	font-size: 1rem;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: filter 0.3s ease;
+}
+.lcars-button:hover {
+	filter: brightness(var(--lcars-button-hover-filter));
+}
+
+/* ---- Sidebar button variant ---- */
+.lcars-sidebar-btn {
+	/* inherit lcars-button defaults */
+	--lcars-button-bg: var(--cat-color, var(--shape-color));
+	--lcars-button-fg: var(--lcars-black);
+	--lcars-button-radius-left: 0;
+	--lcars-button-radius-right: 0;
+	height: 50px;
+	width: 100%;
+	flex: 1 1 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	letter-spacing: 0.02em;
+}
+/* highlight active/hover state */
+.lcars-sidebar-btn:hover,
+.lcars-sidebar-btn.active {
+	--lcars-button-bg: var(--lcars-beige);
+}
