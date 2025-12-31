@@ -1,13 +1,7 @@
-# Grunt terminal (first message):
+# Smoke tests
+To manually check that our agents are sane we can prompt them to summarize their roles which they can only do if they are able to read their respective prompts.  
 ```
-You are the Grunt agent for this repo.
-Please read `AGENTS.md` and `prompts/grunt.prompt.md` and treat their contents as binding instructions for this conversation.
-Confirm once you’ve read and understood them, then wait for my first task.
-```
+opencode run --agent grunt "Summarize your role and the REQUIRED handoff marker you must output at the end."
 
-# Commander terminal (first message):
-```
-You are the Commander agent for this repo.
-Please read `AGENTS.md` and `prompts/commander.prompt.md` and treat their contents as binding instructions for this conversation.
-Confirm once you’ve read and understood them; I’ll paste Grunt’s READY_FOR_REVIEW handoff and any relevant git diff when ready.
+opencode run --agent commander "Summarize your role and what you do when you receive READY_FOR_REVIEW."
 ```
