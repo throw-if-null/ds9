@@ -1,0 +1,168 @@
+{
+  "name": "Foreman AI Factory",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "trigger-task",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "trigger",
+      "name": "Webhook Trigger (Start Task)"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "retry_count",
+              "value": "0"
+            },
+            {
+              "name": "max_retries",
+              "value": "3"
+            },
+            {
+              "name": "task_id",
+              "value": "={{ $json.body.task_id }}"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.body.prompt }}"
+            },
+            {
+              "name": "worktree_path",
+              "value": "/home/backsippan/gh/etc/ds9/.oc_worktrees/{{ $json.body.task_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [200, 0],
+      "id": "init_vars",
+      "name": "Initialize Variables"
+    },
+    {
+      "parameters": {
+        "command": "git worktree add -b feature/{{ $json.task_id }} {{ $json.worktree_path }} main"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [400, 0],
+      "id": "git_setup",
+      "name": "Setup Git Worktree"
+    },
+    {
+      "parameters": {
+        "command": "nohup python3 /home/backsippan/gh/etc/ds9/agent_runner.py --webhook \"http://localhost:5678/webhook-test/builder-complete\" --cmd \"opencode run-agent builder --workdir {{ $json.worktree_path }} --prompt '{{ $json.prompt }}'\" > /dev/null 2>&1 &"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [600, 0],
+      "id": "start_builder",
+      "name": "Start Builder Agent (Async)"
+    },
+    {
+      "parameters": {
+        "path": "builder-complete",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [800, 0],
+      "id": "wait_for_builder",
+      "name": "Wait for Builder"
+    },
+    {
+      "parameters": {
+        "command": "opencode run-agent inspector --workdir {{ $node[\"Initialize Variables\"].json.worktree_path }} --diff HEAD~1"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1000, 0],
+      "id": "run_inspector",
+      "name": "Run Inspector"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1200, 0],
+      "id": "decision_point",
+      "name": "Decision Logic Placeholder"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger (Start Task)": {
+      "main": [
+        [
+          {
+            "node": "Initialize Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize Variables": {
+      "main": [
+        [
+          {
+            "node": "Setup Git Worktree",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Git Worktree": {
+      "main": [
+        [
+          {
+            "node": "Start Builder Agent (Async)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Builder Agent (Async)": {
+      "main": [
+        [
+          {
+            "node": "Wait for Builder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Builder": {
+      "main": [
+        [
+          {
+            "node": "Run Inspector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Inspector": {
+      "main": [
+        [
+          {
+            "node": "Decision Logic Placeholder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

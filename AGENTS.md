@@ -4,7 +4,7 @@ This repository is a **Svelte 5 + TypeScript component library** packaged with *
 
 **Important:** Run commands from the directory that contains `package.json` (this project’s Node root is `ds9/`).
 
-This file governs both humans and agents (Commander + Grunts).
+This file governs both humans and agents (Foreman + Builder + Inspector).
 
 ---
 
@@ -219,16 +219,16 @@ Do NOT add Histoire unless explicitly requested.
 
 ---
 
-## Commander / Grunt workflow
+## Inspector / Builder workflow
 
-### Commander responsibilities
-- Wait for Grunt completion message.
+### Inspector responsibilities
+- Wait for Builder completion message.
 - Review `git diff` for compliance with this AGENTS.md.
 - Verify required checks were run (or exceptions are justified).
-- If violations exist: provide a specific fix list and delegate back to the Grunt.
+- If violations exist: provide a specific fix list and delegate back to the Builder.
 - If compliant: approve and summarize changes + any remaining risks.
 
-### Commander review checklist (must be applied)
+### Inspector review checklist (must be applied)
 Svelte 5 requirements:
 - No `export let` in runes components; `$props()` used instead.
 - No `$:` in runes components; `$derived()` / `$effect()` used instead.
@@ -252,12 +252,12 @@ General:
 - Types: no `any` / implicit `any`; handler params/snippet props annotated
 - Checks run (as applicable): `pnpm lint`, `pnpm check`, `pnpm test`, and packaging sanity (`pnpm prepack`) for library changes
 
-### Grunt responsibilities
+### Builder responsibilities
 - Implement only the assigned task.
 - Run required checks (or explain precisely what was run).
 - Provide a complete handoff.
 
-### Mandatory Grunt handoff (final message)
+### Mandatory Builder handoff (final message)
 Include:
 - Summary (1–3 bullets)
 - Files touched
@@ -298,8 +298,8 @@ Use **`context7`** only when:
 - `svelte-mcp` cannot answer a question, is missing relevant docs, or is not providing useful signals, or
 - you need broader, non-Svelte documentation/context across general libraries or tools.
 
-### Commander requirement
-If an implementation or review depends on Svelte/SvelteKit-specific facts, the Commander must require the Grunt to:
+### Inspector requirement
+If an implementation or review depends on Svelte/SvelteKit-specific facts, the Inspector must require the Builder to:
 - cite what was checked via `svelte-mcp` (briefly: what tool was used and the conclusion), or
 - explicitly state why MCP could not be used.
 

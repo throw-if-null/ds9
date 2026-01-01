@@ -15,7 +15,7 @@ This repository provides two layers:
 
 Owns and enforces:
 
-* task queue and task state
+* task queue and task state (persisted via **SQLite** or similar for crash recovery)
 * git worktrees/branches lifecycle
 * OpenCode server process lifecycle
 * retry limits and “stuck” handling
@@ -25,11 +25,13 @@ Owns and enforces:
 
 ### Builder (implementer)
 
-Works inside an isolated worktree:
+Works inside an isolated worktree (ideally containerized):
 
 * edits code, runs tests, commits changes
 * signals completion with `READY_FOR_REVIEW` + JSON
 * signals blocking questions with `NEEDS_HUMAN_INPUT` + JSON
+
+**Note:** For true isolation (dependencies, runtime environment), it is recommended to run each Builder in a lightweight container (Docker/Podman) that mounts the specific worktree. This prevents environment pollution between concurrent agents.
 
 ### Inspector (reviewer)
 
@@ -38,6 +40,8 @@ Review-only gatekeeper:
 * reviews patch/commit
 * outputs **only** a JSON decision: `{ status, issues, next_tasks }`
 * no edit/bash permissions
+
+**Optimization:** To save AI tokens and time, Foreman runs automated "pre-flight" checks (lint, build, unit tests) *before* invoking the Inspector. If the code fails to compile or lint, it is rejected immediately without an expensive LLM review.
 
 ---
 
@@ -49,8 +53,9 @@ For each task:
 2. Foreman starts a dedicated **Builder OpenCode server** rooted at the worktree.
 3. Builder implements and commits.
 4. Foreman produces a patch from the commit.
-5. Inspector reviews patch and returns a JSON decision.
-6. Foreman either:
+5. **(Optional)** Foreman runs pre-flight checks (lint, test). If these fail, the task is returned to the Builder immediately.
+6. Inspector reviews patch and returns a JSON decision.
+7. Foreman either:
 
    * opens a GitHub PR (default **draft**) on approval, or
    * feeds issues back to Builder and loops.
@@ -262,7 +267,7 @@ Inspector must output **only** one JSON object:
 
 ---
 
-## Stuck handling (Builder replacement)
+## Stuck handling (Builder replacement & Refinement)
 
 Default rule:
 
@@ -270,11 +275,15 @@ Default rule:
 
 Behavior:
 
-* After 3 `changes_requested` cycles, Foreman marks the task stuck, stops the Builder server, removes the worktree, and retries with a fresh Builder.
+* After 3 `changes_requested` cycles, Foreman marks the task stuck.
+* **Refinement (Recommended):** Instead of immediately killing the Builder, Foreman triggers a `NEEDS_HUMAN_INPUT` event. The developer is asked if they want to refine the task/prompt, as 3 failures often indicate ambiguous requirements rather than a "bad" agent.
+* If no refinement is offered or the cycle limit is hit again, Foreman stops the Builder, deletes the worktree, and retries with a fresh Builder.
 
-Recommended enhancement (optional):
+## Merge Conflicts
 
-* fingerprint Inspector issues; if issues repeat with no meaningful change, stop earlier.
+When multiple Builders run in parallel on the same repo, merge conflicts are possible.
+* **Mitigation:** Structure tasks to be modular and orthogonal (e.g., "Agent A owns Component X, Agent B owns Component Y").
+* **Resolution:** Foreman does not ask agents to resolve complex merge conflicts. If a conflict occurs during the PR phase or sync, the task is flagged for human intervention.
 
 ---
 
