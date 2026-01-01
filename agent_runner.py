@@ -20,7 +20,7 @@ def run_agent():
 
     # We use a slight delay to ensure n8n has time to reach the "Wait" node
     # if this script was launched very quickly.
-    time.sleep(2)
+    time.sleep(10)
 
     # Run the actual OpenCode agent
     # capture_output=True captures stdout/stderr to send back to n8n
