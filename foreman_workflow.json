@@ -3,15 +3,17 @@
   "nodes": [
     {
       "parameters": {
+        "httpMethod": "POST",
         "path": "trigger-task",
         "responseMode": "lastNode",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [0, 0],
-      "id": "trigger",
-      "name": "Webhook Trigger (Start Task)"
+      "position": [-288, -128],
+      "id": "dd6370d8-b85f-48b1-bf6f-3cc1521a8e7a",
+      "name": "Webhook Trigger (Start Task)",
+      "webhookId": "25673ee8-bf54-43e5-9912-6ae2db478f78"
     },
     {
       "parameters": {
@@ -35,68 +37,138 @@
             },
             {
               "name": "worktree_path",
-              "value": "/home/backsippan/gh/etc/ds9/.oc_worktrees/{{ $json.body.task_id }}"
+              "value": "=/home/backsippan/gh/etc/ds9/.oc_worktrees/{{ $json.body.task_id }}"
             }
           ]
-        }
+        },
+        "options": {}
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [200, 0],
-      "id": "init_vars",
+      "position": [-64, -128],
+      "id": "de52293c-040b-4897-8a32-16706d2585fd",
       "name": "Initialize Variables"
     },
     {
       "parameters": {
-        "command": "git worktree add -b feature/{{ $json.task_id }} {{ $json.worktree_path }} main"
+        "command": "=git worktree add -b feature/{{ $json.task_id }} {{ $json.worktree_path }} main"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [400, 0],
-      "id": "git_setup",
+      "position": [160, -128],
+      "id": "ad3b52e3-8e44-4e39-8259-2fe3cb47342c",
       "name": "Setup Git Worktree"
     },
     {
       "parameters": {
-        "command": "nohup python3 /home/backsippan/gh/etc/ds9/agent_runner.py --webhook \"http://localhost:5678/webhook-test/builder-complete\" --cmd \"opencode run-agent builder --workdir {{ $json.worktree_path }} --prompt '{{ $json.prompt }}'\" > /dev/null 2>&1 &"
+        "command": "=# 1. Define paths (Use absolute path for the runner script)\nRUNNER_SCRIPT=\"/home/backsippan/gh/etc/ds9/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Define Prompt (MUST be quoted to handle spaces)\nPROMPT=\"{{ $('Initialize Variables').item.json.body.prompt }}\"\n# 3. Execution\n# We run the script from the main repo, but tell it to work (--cwd) in the worktree\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent builder \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [600, 0],
-      "id": "start_builder",
-      "name": "Start Builder Agent (Async)"
+      "position": [384, -128],
+      "id": "ec665aba-aaa8-4292-9efd-098a305c9f0b",
+      "name": "Start Builder Agent (Async)",
+      "alwaysOutputData": false
     },
     {
       "parameters": {
-        "path": "builder-complete",
-        "responseMode": "lastNode",
+        "command": "=# 1. Define paths (Use absolute path for the runner script)\nRUNNER_SCRIPT=\"/home/backsippan/gh/etc/ds9/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\n# 2. Define Prompt (MUST be quoted to handle spaces)\nPROMPT=\"Review the file inspector_diff.patch. Output ONLY the JSON decision object. After outputting the JSON, terminate the session.\"\n# 3. Execution\n# We run the script from the main repo, but tell it to work (--cwd) in the worktree\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent inspector \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [144, 96],
+      "id": "e399b50b-fd9d-40f0-a199-5a5e45d51906",
+      "name": "Run Inspector",
+      "notesInFlow": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const outputString = $('Run Inspector').first().json.stdout;\n    \n// Find the JSON object in the output (sometimes agents add chatter)\n// We look for the first '{' and the last '}'\nconst firstBrace = outputString.indexOf('{');\nconst lastBrace = outputString.lastIndexOf('}');\n\nif (firstBrace === -1 || lastBrace === -1) {\n   return { json: { error: \"No JSON found\", raw: outputString } };\n}\n\nconst jsonStr = outputString.substring(firstBrace, lastBrace + 1);\nconst decision = JSON.parse(jsonStr);\n\nreturn { json: decision };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [352, 96],
+      "id": "c0b9ffb2-07e6-4e95-a734-c6b461f05552",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e4238de8-6dfb-4cf6-b62b-1b4df22407eb",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "approved",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
         "options": {}
       },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1,
-      "position": [800, 0],
-      "id": "wait_for_builder",
-      "name": "Wait for Builder"
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [560, 96],
+      "id": "acce7872-11c7-4361-af39-e23db7eda854",
+      "name": "If"
     },
     {
       "parameters": {
-        "command": "opencode run-agent inspector --workdir {{ $node[\"Initialize Variables\"].json.worktree_path }} --diff HEAD~1"
+        "command": "= REPORT_FILE=\"/home/backsippan/gh/etc/ds9/failures/{{ $('Initialize Variables').first().json.task_id }}_report.json\"\n    mkdir -p /home/backsippan/gh/etc/ds9/failures\n    # Write the full inspector decision to the file\n    echo '{{ JSON.stringify($json) }}' > \"$REPORT_FILE\"\n    # Also cleanup the worktree so we don't leave mess behind?\n    # Optional: git worktree remove ..."
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [1000, 0],
-      "id": "run_inspector",
-      "name": "Run Inspector"
+      "position": [768, 192],
+      "id": "a9d2d695-e5d5-4aef-853f-869f99b596ae",
+      "name": "Log Rejection"
     },
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
+      "parameters": {
+        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && \\\n    git push -u origin feature/{{ $('Initialize Variables').first().json.task_id }} && \\\n    gh pr create \\\n      --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n      --body \"{{ $json.summary || 'Automated PR by Foreman' }}\" \\\n      --draft"
+      },
+      "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [1200, 0],
-      "id": "decision_point",
-      "name": "Decision Logic Placeholder"
+      "position": [768, 0],
+      "id": "f860849d-8aeb-4881-adfd-b6564509b455",
+      "name": "Create PR"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "httpMethod": "POST",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [-256, 96],
+      "id": "d5ee7cd1-b1b6-411a-9239-8a7d3fe23c0c",
+      "name": "Wait for Builder",
+      "webhookId": "7fae1480-f059-48d9-9a0d-864c586b17a0"
+    },
+    {
+      "parameters": {
+        "command": "=WORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\" && \\\ncd \"$WORKTREE\" && \\\ngit diff main...HEAD > inspector_diff.patch"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [-48, 96],
+      "id": "0d5aa69d-1733-44ee-9f74-f1e70e2d2e5c",
+      "name": "Execute Command"
     }
   ],
+  "pinData": {},
   "connections": {
     "Webhook Trigger (Start Task)": {
       "main": [
@@ -131,6 +203,53 @@
         ]
       ]
     },
+    "Run Inspector": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create PR",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Start Builder Agent (Async)": {
       "main": [
         [
@@ -146,23 +265,39 @@
       "main": [
         [
           {
-            "node": "Run Inspector",
+            "node": "Execute Command",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Run Inspector": {
+    "Execute Command": {
       "main": [
         [
           {
-            "node": "Decision Logic Placeholder",
+            "node": "Run Inspector",
             "type": "main",
             "index": 0
           }
         ]
       ]
     }
-  }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Europe/Stockholm",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1
+  },
+  "versionId": "a0f8c178-e21b-4e92-9d99-c74504cb0a0d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b11168fb8d2189bb65765ba38337a8f759c5093954de979172c9be19e0a9355a"
+  },
+  "id": "dPFeMtNgFfJcco6V",
+  "tags": []
 }
