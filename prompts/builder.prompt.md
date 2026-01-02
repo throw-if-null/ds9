@@ -74,5 +74,13 @@ When you believe your current task is complete, your FINAL message in this itera
 
 Then, on the VERY LAST LINE of your final message, write exactly:
 READY_FOR_REVIEW
-Do not put anything after that line.
+Immediately after `READY_FOR_REVIEW`, on a new line, output STRICT JSON ONLY with this schema:
+{
+  "summary": "short natural-language summary of the implementation",
+  "complexity": "low" | "medium" | "high"
+}
+- `complexity = low`: trivial or very small, fully localized change, or docs-only.
+- `complexity = medium`: non-trivial logic but limited blast radius.
+- `complexity = high`: public API changes, cross-cutting behavior, or significant runes/infra changes.
+Do not include any other top-level keys in this JSON object.
 Do not claim “approved” or “done forever”; Inspector will make the final call.
