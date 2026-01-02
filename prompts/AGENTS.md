@@ -2,7 +2,7 @@
 
 This repository is a **Svelte 5 + TypeScript component library** packaged with **SvelteKit packaging (@sveltejs/package)**.
 
-**Important:** Run commands from the directory that contains `package.json` (this project’s Node root is `ds9/`).
+**Important:** Run commands from the directory that contains `package.json` (the current folder / repo root).
 
 This file governs both humans and agents (Foreman + Builder + Inspector).
 
