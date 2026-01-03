@@ -10,7 +10,7 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [2160, -192],
+      "position": [1968, -192],
       "id": "686ce930-784c-47ce-8317-b3660d01f71e",
       "name": "Webhook Trigger (Start Task)",
       "webhookId": "25673ee8-bf54-43e5-9912-6ae2db478f78"
@@ -45,7 +45,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [2384, -192],
+      "position": [2192, -192],
       "id": "2440b035-ab87-49f6-b321-f32d142ddcb3",
       "name": "Initialize Variables"
     },
@@ -55,20 +55,89 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2608, -192],
+      "position": [2400, -192],
       "id": "3e0980e0-cfb9-4dd5-97af-1bc26e66edc0",
       "name": "Setup Git Worktree"
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths (Use absolute path for the runner script)\nRUNNER_SCRIPT=\"/home/backsippan/gh/etc/ds9/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Define Prompt (MUST be quoted to handle spaces)\nPROMPT=\"You are the 'Builder' agent for this repository.\nYou MUST:\n- Obey prompts/AGENTS.md and prompts/builder.prompt.md in this workspace as if they were system instructions.\n- Work ONLY inside the provided git worktree and do NOT touch any remotes.\nGit and staging requirements (NON-NEGOTIABLE):\n- After modifying files and running checks, you MUST prepare the Git state:\n  - Run git add to stage ALL relevant files so that git diff main...HEAD reflects the full change.\n  - If the environment allows Git commits, you SHOULD create a local commit with a clear, concise message (for example: feat: short summary (scope)).\n  - If git commit is disallowed or fails, LEAVE all changes staged and clearly report the error.\n- NEVER run git push or modify any remote.\n- In your final handoff you MUST:\n  - show git status --porcelain\n  - if a commit was created, also show git log -1 --pretty=format:%s\nHandoff and JSON requirements:\n- Follow the 'Final handoff (MANDATORY format)' section from prompts/builder.prompt.md exactly, including READY_FOR_REVIEW as the last line.\n- Write builder_result.json at the worktree root exactly as specified in prompts/builder.prompt.md (summary + complexity only).\nMake minimal, focused changes that implement ONLY the requested task.\nThe user task is:\n{{ $('Initialize Variables').item.json.body.prompt }}\"\n# 3. Execution\n# We run the script from the main repo, but tell it to work (--cwd) in the worktree\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent builder \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
+        "command": "= REPORT_FILE=\"/home/backsippan/gh/etc/ds9/failures/{{ $('Initialize Variables').first().json.task_id }}_report.json\"\n    mkdir -p /home/backsippan/gh/etc/ds9/failures\n    # Write the full inspector decision to the file\n    echo '{{ JSON.stringify($json) }}' > \"$REPORT_FILE\"\n    # Also cleanup the worktree so we don't leave mess behind?\n    # Optional: git worktree remove ..."
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2832, -192],
-      "id": "dd9a8ba6-6d67-4b28-ad97-f42e46caf3a8",
-      "name": "Start Builder Agent (Async)",
-      "alwaysOutputData": false
+      "position": [2992, 384],
+      "id": "98b5ce11-98c3-4a2a-99a1-1987eaeb1389",
+      "name": "Log Rejection"
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && \\\n    git push -u origin feature/{{ $('Initialize Variables').first().json.task_id }} && \\\n    gh pr create \\\n      --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n      --body \"{{ $json.summary || 'Automated PR by Foreman' }}\" \\\n      --draft"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2992, 192],
+      "id": "3b5faf5a-0b9e-41ea-b04e-856d6afbda1c",
+      "name": "Create PR"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "httpMethod": "POST",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2192, 32],
+      "id": "838d117f-b393-4e3a-a53e-18187cb3eb67",
+      "name": "Wait for Builder",
+      "webhookId": "7fae1480-f059-48d9-9a0d-864c586b17a0"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.stdout || $json.data || '';\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse inspector_result.json: ' + e.message);\n}\nif (!result || (result.status !== 'approved' && result.status !== 'changes_requested')) {\n  throw new Error('Inspector result has invalid status: ' + JSON.stringify(result));\n}\n// n8n expects an array of items\nreturn [result];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2608, 288],
+      "id": "faf80aa6-91e8-4d5d-81d6-b298caef6f58",
+      "name": "Check Inspector Response"
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && cat inspector_result.json"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2400, 288],
+      "id": "6c8cb35f-38ab-410d-b3bf-5f023bdd134d",
+      "name": "Preapre Env"
+    },
+    {
+      "parameters": {
+        "command": "=WORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\" && \\\ncd \"$WORKTREE\" && \\\ngit diff main...HEAD > inspector_diff.patch"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2400, 32],
+      "id": "c3ff04cd-d021-4f42-bd94-b507c6741fa2",
+      "name": "Create the DIFF"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "httpMethod": "POST",
+        "limitWaitTime": true,
+        "resumeAmount": 5,
+        "resumeUnit": "minutes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2192, 288],
+      "id": "df7730d4-6241-4ca8-a13d-0597cdf3b082",
+      "name": "Wait fo Inspector",
+      "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9",
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -98,52 +167,20 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [2704, 352],
+      "position": [2816, 288],
       "id": "fadb7356-2902-412a-b352-006b6edb2f4c",
-      "name": "If"
+      "name": "Is ready for review"
     },
     {
       "parameters": {
-        "command": "= REPORT_FILE=\"/home/backsippan/gh/etc/ds9/failures/{{ $('Initialize Variables').first().json.task_id }}_report.json\"\n    mkdir -p /home/backsippan/gh/etc/ds9/failures\n    # Write the full inspector decision to the file\n    echo '{{ JSON.stringify($json) }}' > \"$REPORT_FILE\"\n    # Also cleanup the worktree so we don't leave mess behind?\n    # Optional: git worktree remove ..."
+        "command": "=# 1. Define paths (Use absolute path for the runner script)\nRUNNER_SCRIPT=\"/home/backsippan/gh/etc/ds9/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Define Prompt (MUST be quoted to handle spaces)\nPROMPT=\"You are the 'Builder' agent for this repository.\nYou MUST:\n- Obey prompts/AGENTS.md and prompts/builder.prompt.md in this workspace as if they were system instructions.\n- Work ONLY inside the provided git worktree and do NOT touch any remotes.\nGit and staging requirements (NON-NEGOTIABLE):\n- After modifying files and running checks, you MUST prepare the Git state:\n  - Run git add to stage ALL relevant files so that git diff main...HEAD reflects the full change.\n  - If the environment allows Git commits, you SHOULD create a local commit with a clear, concise message (for example: feat: short summary (scope)).\n  - If git commit is disallowed or fails, LEAVE all changes staged and clearly report the error.\n- NEVER run git push or modify any remote.\n- In your final handoff you MUST:\n  - show git status --porcelain\n  - if a commit was created, also show git log -1 --pretty=format:%s\nHandoff and JSON requirements:\n- Follow the 'Final handoff (MANDATORY format)' section from prompts/builder.prompt.md exactly, including READY_FOR_REVIEW as the last line.\n- Write builder_result.json at the worktree root exactly as specified in prompts/builder.prompt.md (summary + complexity only).\nMake minimal, focused changes that implement ONLY the requested task.\nThe user task is:\n{{ $('Initialize Variables').item.json.body.prompt }}\"\n# 3. Execution\n# We run the script from the main repo, but tell it to work (--cwd) in the worktree\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent builder \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2864, 448],
-      "id": "98b5ce11-98c3-4a2a-99a1-1987eaeb1389",
-      "name": "Log Rejection"
-    },
-    {
-      "parameters": {
-        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && \\\n    git push -u origin feature/{{ $('Initialize Variables').first().json.task_id }} && \\\n    gh pr create \\\n      --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n      --body \"{{ $json.summary || 'Automated PR by Foreman' }}\" \\\n      --draft"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [2864, 256],
-      "id": "3b5faf5a-0b9e-41ea-b04e-856d6afbda1c",
-      "name": "Create PR"
-    },
-    {
-      "parameters": {
-        "resume": "webhook",
-        "httpMethod": "POST",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [2192, 32],
-      "id": "838d117f-b393-4e3a-a53e-18187cb3eb67",
-      "name": "Wait for Builder",
-      "webhookId": "7fae1480-f059-48d9-9a0d-864c586b17a0"
-    },
-    {
-      "parameters": {
-        "jsCode": "const text = $json.stdout || $json.data || '';\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse inspector_result.json: ' + e.message);\n}\nif (!result || (result.status !== 'approved' && result.status !== 'changes_requested')) {\n  throw new Error('Inspector result has invalid status: ' + JSON.stringify(result));\n}\n// n8n expects an array of items\nreturn [result];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [2544, 352],
-      "id": "faf80aa6-91e8-4d5d-81d6-b298caef6f58",
-      "name": "Check Inspector Response"
+      "position": [2592, -192],
+      "id": "dd9a8ba6-6d67-4b28-ad97-f42e46caf3a8",
+      "name": "Run Builder Agent",
+      "alwaysOutputData": false
     },
     {
       "parameters": {
@@ -153,43 +190,9 @@
       "typeVersion": 1,
       "position": [2592, 32],
       "id": "2dbea8c0-77b4-439b-a916-8e7589dd9b58",
-      "name": "Run Inspector Agent (Async)",
+      "name": "Run Inspector Agent",
       "notesInFlow": false,
       "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "resume": "webhook",
-        "httpMethod": "POST",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [2192, 272],
-      "id": "df7730d4-6241-4ca8-a13d-0597cdf3b082",
-      "name": "Wait",
-      "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9",
-      "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && cat inspector_result.json"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [2368, 288],
-      "id": "6c8cb35f-38ab-410d-b3bf-5f023bdd134d",
-      "name": "Preapre Env"
-    },
-    {
-      "parameters": {
-        "command": "=WORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\" && \\\ncd \"$WORKTREE\" && \\\ngit diff main...HEAD > inspector_diff.patch"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [2400, 32],
-      "id": "c3ff04cd-d021-4f42-bd94-b507c6741fa2",
-      "name": "Create the DIFF"
     }
   ],
   "pinData": {},
@@ -220,36 +223,7 @@
       "main": [
         [
           {
-            "node": "Start Builder Agent (Async)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If": {
-      "main": [
-        [
-          {
-            "node": "Create PR",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Log Rejection",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Start Builder Agent (Async)": {
-      "main": [
-        [
-          {
-            "node": "Wait for Builder",
+            "node": "Run Builder Agent",
             "type": "main",
             "index": 0
           }
@@ -271,43 +245,7 @@
       "main": [
         [
           {
-            "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Run Inspector Agent (Async)": {
-      "main": [
-        [
-          {
-            "node": "Wait",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Wait",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Wait": {
-      "main": [
-        [
-          {
-            "node": "Preapre Env",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Preapre Env",
+            "node": "Is ready for review",
             "type": "main",
             "index": 0
           }
@@ -329,7 +267,72 @@
       "main": [
         [
           {
-            "node": "Run Inspector Agent (Async)",
+            "node": "Run Inspector Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait fo Inspector": {
+      "main": [
+        [
+          {
+            "node": "Preapre Env",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preapre Env",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is ready for review": {
+      "main": [
+        [
+          {
+            "node": "Create PR",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Builder Agent": {
+      "main": [
+        [
+          {
+            "node": "Wait for Builder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Inspector Agent": {
+      "main": [
+        [
+          {
+            "node": "Wait fo Inspector",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait fo Inspector",
             "type": "main",
             "index": 0
           }
@@ -343,10 +346,9 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "timezone": "Europe/Stockholm",
-    "callerPolicy": "workflowsFromSameOwner",
-    "executionTimeout": -1
+    "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "4e2bdc1f-837d-4b13-9386-13537fbbfea9",
+  "versionId": "a21a7bf5-0927-42c5-8587-9d997eb99b92",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "b11168fb8d2189bb65765ba38337a8f759c5093954de979172c9be19e0a9355a"
