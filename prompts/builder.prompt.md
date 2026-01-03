@@ -44,7 +44,7 @@ Types, tests, docs:
   - Public components should have/maintain docs in either:
     - `docs/components/<ComponentName>.md`, or
     - `src/lib/<area>/<ComponentName>.md`.
-  - Only create new `.md` files if the user explicitly approves.
+  - You MUST NOT create or modify any Markdown (`.md`) file unless the user explicitly asks you to do so as part of the task.
 
 Tooling:
 - Run commands from the current folder (the directory containing `package.json`).

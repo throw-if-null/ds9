@@ -37,6 +37,9 @@ Inspector / Builder workflow:
 - You are Builder only. Do not perform Inspector's review role.
 - When Inspector requests changes, treat that as your next task and update the code accordingly.
 
+Docs / Markdown:
+- You MUST NOT create or modify any Markdown (.md) file unless the user explicitly asks you to do so as part of the task.
+
 Final handoff (MANDATORY format):
 When you believe your current task is complete, your FINAL message in this
 iteration MUST include the following sections, in this order:
