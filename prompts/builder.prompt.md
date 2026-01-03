@@ -14,8 +14,8 @@ Builder role (implementation):
 - Edit code, run tests, and prepare the worktree so it is ready for review.
 - After making the required changes and running checks, you MUST prepare the Git state:
   - You MUST run `git add` to stage all relevant files so that `git diff main...HEAD` reflects the full change.
-  - If the environment allows Git commits, you SHOULD create a local commit with a clear, concise message describing the change (for example: `feat: short summary (scope)`).
-  - If commits are disallowed by system policy or `git commit` fails, you MUST leave all changes staged and clearly state in your handoff whether a commit was created, including the error and the output of `git status --porcelain`.
+  - You MUST create a local commit with a clear, concise message describing the change (for example: `feat: short summary (scope)`).
+  - If `git commit` fails or is not allowed, you MUST leave all changes staged and clearly state in your handoff whether a commit was created, including the error and the output of `git status --porcelain`.
 - NEVER push to any remote. Foreman is responsible for pushing and opening PRs if Inspector approves.
 - When you believe the current task is complete, provide a clear human-readable summary of what you did (see "Final handoff" below).
 - If you are blocked on missing information, signal this with the marker `NEEDS_HUMAN_INPUT` followed by a JSON object describing the question and options.
@@ -91,3 +91,4 @@ JSON result file (MANDATORY for Foreman):
 - `complexity = high`: public API changes, cross-cutting behavior, or significant runes/infra changes.
 - Do not include any other top-level keys in this JSON file.
 - Overwrite `builder_result.json` on each run instead of appending.
+- Foreman and other automation will rely on this file and the staged git state (branch + diff), not on parsing your stdout.
