@@ -40,13 +40,27 @@ if [[ -z "$start_line" ]]; then
   exit 1
 fi
 
-# Find the next section separator ('---') after the task to bound the block.
-end_line="$(tail -n +"$start_line" "$TODO_FILE" | grep -n "^---$" | head -n1 | cut -d: -f1 || true)"
-
-if [[ -z "$end_line" ]]; then
-  # If no separator is found, read until end of file.
-  end_line_total="$(wc -l < "$TODO_FILE")"
-  end_line="$(( end_line_total - start_line + 1 ))"
+# Prefer the next task header ('### ') after the current task as the block end.
+# If no next header exists, fall back to the next '---' separator; if neither
+# exists, read until EOF.
+next_header_rel="$(tail -n +"$((start_line + 1))" "$TODO_FILE" | grep -nE "^### " | head -n1 | cut -d: -f1 || true)"
+if [[ -n "$next_header_rel" ]]; then
+  # Number of lines to include (relative to tail starting at start_line).
+  end_line="$next_header_rel"
+else
+  # Find the next section separator ('---') after the task to bound the block.
+  sep_rel="$(tail -n +"$start_line" "$TODO_FILE" | grep -n "^---$" | head -n1 | cut -d: -f1 || true)"
+  if [[ -n "$sep_rel" ]]; then
+    # We want lines up to just before the separator.
+    end_line="$(( sep_rel - 1 ))"
+    if [[ "$end_line" -lt 1 ]]; then
+      end_line=1
+    fi
+  else
+    # If no separator is found, read until end of file (relative count).
+    total_tail_lines="$(tail -n +"$start_line" "$TODO_FILE" | wc -l)"
+    end_line="$total_tail_lines"
+  fi
 fi
 
 # Extract the task block.
