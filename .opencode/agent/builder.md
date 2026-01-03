@@ -1,6 +1,6 @@
 ---
 description: "Implementation agent: writes code, runs tests, and iterates in an isolated worktree."
-model: "github-copilot/gpt-5-mini"
+model: "github-copilot/claude-haiku-4.5"
 temperature: 0.0
 prompt: prompts/builder.prompt.md
 tools:
