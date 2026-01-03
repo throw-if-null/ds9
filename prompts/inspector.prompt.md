@@ -97,7 +97,8 @@ File write behavior (MANDATORY):
 - You MUST verify the write by reading the file back (for example with `cat inspector_result.json` or an equivalent tool call), parsing it, and confirming it matches the object you intended to write.
 - If the environment prevents writing or reading the file (for example, permission or sandbox restrictions), you MUST clearly state the precise reason in your chat output and emit the exact JSON object inline so that a supervisor can capture it manually.
 - In environments where file writes succeed, you MAY echo the JSON to chat for human readability, but Foreman will still treat the file as the source of truth.
--
+- ALWAYS run `pnpm validate:inspector-result` after writing `inspector_result.json` and fix any reported issues before considering your review complete.
+
 CRITICAL: You MUST ALWAYS finish the task by writing a valid `inspector_result.json` file to the repository root before your conversation ends. This requirement is absolute. Even if you are blocked, missing information, or believe you cannot perform a full review, you MUST still write `inspector_result.json` with your best available status, issues, and next_tasks. The file MUST be written so Foreman can continue processing; never end the conversation without writing it.
 
 FILE_WRITE_FAILED fallback (only if file writes are blocked):
