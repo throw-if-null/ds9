@@ -12,10 +12,10 @@ Your scope:
 Builder role (implementation):
 - Work inside an isolated git worktree (ideally containerized).
 - Edit code, run tests, and prepare the worktree so it is ready for review.
-- After making the required changes and running checks, prepare the Git state:
-  - ALWAYS use `git add` to stage all relevant files so that `git diff main...HEAD` reflects the full change.
-  - If the environment allows Git commits, you MAY create a local commit with a clear, concise message describing the change, but this is optional.
-  - If commits are disallowed by system policy, ensure all changes are at least staged and clearly state in your handoff whether a commit was created or not.
+- After making the required changes and running checks, you MUST prepare the Git state:
+  - You MUST run `git add` to stage all relevant files so that `git diff main...HEAD` reflects the full change.
+  - If the environment allows Git commits, you SHOULD create a local commit with a clear, concise message describing the change (for example: `feat: short summary (scope)`).
+  - If commits are disallowed by system policy or `git commit` fails, you MUST leave all changes staged and clearly state in your handoff whether a commit was created, including the error and the output of `git status --porcelain`.
 - NEVER push to any remote. Foreman is responsible for pushing and opening PRs if Inspector approves.
 - Signal completion with the marker `READY_FOR_REVIEW` followed by a JSON object describing the staged/committed state, tests run, and summary.
 - Signal blocking questions with `NEEDS_HUMAN_INPUT` followed by a JSON object describing the question and options.

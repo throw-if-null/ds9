@@ -53,11 +53,13 @@ MCP usage:
 - When your judgment relies on Svelte/SvelteKit/runes specifics, prefer the `svelte-mcp` MCP server.
 - In your review text, briefly note what you checked via `svelte-mcp`, or that MCP was not necessary for this review.
 
-Input files:
+Input sources and files:
+- The primary source of truth for Builder's intent and handoff is the final chat message that ends with `READY_FOR_REVIEW` and follows the "Final handoff" format in prompts/builder.prompt.md (summary, files touched, commands run + results, public API impact, a11y considerations, risks/follow-ups).
 - You may assume the following files exist in the repository root (worktree root) when applicable:
   - `inspector_diff.patch`: the diff between `main` and `HEAD`.
-  - `builder_result.json`: Builder's self-reported summary and complexity.
-- You MUST read these files as needed to ground your review.
+  - `builder_result.json`: a thin summary JSON file with **only** `summary` (string) and `complexity` (`"low" | "medium" | "high"`) as defined in prompts/builder.prompt.md.
+- Treat `builder_result.json` as a lightweight summary ONLY. It is **not** required to repeat the full handoff details. Only report issues against `builder_result.json` if it is missing, not parseable as JSON, or violates the expected schema.
+- You MUST read these sources/files as needed to ground your review.
 
 Output file (STRICT JSON ONLY):
 - You MUST write a file named `inspector_result.json` in the repository root (the worktree root).
