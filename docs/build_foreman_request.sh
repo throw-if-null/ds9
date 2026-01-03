@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Usage: build_foreman_request TASK_ID WEBHOOK_URL
+# Usage: build_foreman_request TASK_ID [WEBHOOK_URL]
 # Example:
+#   ./build_foreman_request.sh ds9-1
 #   ./build_foreman_request.sh ds9-1 http://localhost:3000/test-hook
+#
+# If WEBHOOK_URL is omitted, the script uses the FOREMAN_WEBHOOK_URL
+# environment variable.
 #
 # This prints a curl command that POSTs:
 #   {
@@ -13,10 +17,11 @@ set -euo pipefail
 # using the task definition from docs/TODO.md.
 
 TASK_ID="${1:-}"
-WEBHOOK_URL="${2:-}"
+# Prefer explicit argument; fall back to FOREMAN_WEBHOOK_URL env var.
+WEBHOOK_URL="${2:-${FOREMAN_WEBHOOK_URL:-}}"
 
 if [[ -z "$TASK_ID" || -z "$WEBHOOK_URL" ]]; then
-  echo "Usage: build_foreman_request <TASK_ID> <WEBHOOK_URL>" >&2
+  echo "Usage: build_foreman_request <TASK_ID> [WEBHOOK_URL] (or set FOREMAN_WEBHOOK_URL)" >&2
   exit 1
 fi
 
