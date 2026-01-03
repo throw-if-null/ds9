@@ -18,83 +18,83 @@ Conventions:
 This tree shows main dependency relationships. Leaf tasks are more implementation‑heavy; higher nodes are foundations.
 
 - 1. Discovery & Alignment  
-  - 1.1 Inventory Existing LCARS Tokens & Primitives
+  - [ds9-1 · 1.1 Inventory Existing LCARS Tokens & Primitives](#11-ds9-1-inventory-existing-lcars-tokens--primitives)
 
 - 2. Design Tokens Layer  
-  - 2.1 Extract LCARS CSS Variables into Library Stylesheet  
-  - 2.2 Extract Theme Variant Rules  
-  - 2.3 Define Public Tokens API Contract  
-    - depends on: 2.1, 2.2
+  - [ds9-2 · 2.1 Extract LCARS CSS Variables into Library Stylesheet](#21-ds9-2-extract-lcars-css-variables-into-library-stylesheet)  
+  - [ds9-3 · 2.2 Extract Theme Variant Rules](#22-ds9-3-extract-theme-variant-rules)  
+  - [ds9-4 · 2.3 Define Public Tokens API Contract](#23-ds9-4-define-public-tokens-api-contract)  
+    - depends on: ds9-2, ds9-3
 
 - 3. Layout & Shell Primitives  
-  - 3.1 Extract `.lcars-app` Container Styles  
-    - depends on: 2.1  
-  - 3.2 Extract Shell Bar & Frame Segment Primitives  
-    - depends on: 3.1  
-  - 3.3 Extract Elbow & Scroll Container Primitives  
-    - depends on: 3.2
+  - [ds9-5 · 3.1 Extract `.lcars-app` Container Styles](#31-ds9-5-extract-lcars-app-container-styles)  
+    - depends on: ds9-2  
+  - [ds9-6 · 3.2 Extract Shell Bar & Frame Segment Primitives](#32-ds9-6-extract-shell-bar--frame-segment-primitives)  
+    - depends on: ds9-5  
+  - [ds9-7 · 3.3 Extract Elbow & Scroll Container Primitives](#33-ds9-7-extract-elbow--scroll-container-primitives)  
+    - depends on: ds9-6
 
 - 4. Core Component Primitives (CSS‑First)  
-  - 4.1 Extract Focus System Styles  
-    - depends on: 2.1  
-  - 4.2 Extract Base Button & Color Utility Classes  
-    - depends on: 2.1, 4.1  
-  - 4.3 Extract Arrow Button Primitive  
-    - depends on: 3.3, 4.2  
-  - 4.4 Extract Tile Primitive  
-    - depends on: 2.1, 3.1  
-  - 4.5 Extract Breadcrumb Primitive  
-    - depends on: 2.1, 4.1  
-  - 4.6 Extract Form Control Primitives  
-    - depends on: 4.1  
-  - 4.7 Extract Dialog Primitive Styles  
-    - depends on: 3.1, 4.2  
-  - 4.8 Extract Pin Primitive  
-    - depends on: 2.1, 4.1  
+  - [ds9-8 · 4.1 Extract Focus System Styles](#41-ds9-8-extract-focus-system-styles)  
+    - depends on: ds9-2  
+  - [ds9-9 · 4.2 Extract Base Button & Color Utility Classes](#42-ds9-9-extract-base-button--color-utility-classes)  
+    - depends on: ds9-2, ds9-8  
+  - [ds9-10 · 4.3 Extract Arrow Button Primitive](#43-ds9-10-extract-arrow-button-primitive)  
+    - depends on: ds9-7, ds9-9  
+  - [ds9-11 · 4.4 Extract Tile Primitive](#44-ds9-11-extract-tile-primitive)  
+    - depends on: ds9-2, ds9-5  
+  - [ds9-12 · 4.5 Extract Breadcrumb Primitive](#45-ds9-12-extract-breadcrumb-primitive)  
+    - depends on: ds9-2, ds9-8  
+  - [ds9-13 · 4.6 Extract Form Control Primitives](#46-ds9-13-extract-form-control-primitives)  
+    - depends on: ds9-8  
+  - [ds9-14 · 4.7 Extract Dialog Primitive Styles](#47-ds9-14-extract-dialog-primitive-styles)  
+    - depends on: ds9-5, ds9-9  
+  - [ds9-15 · 4.8 Extract Pin Primitive](#48-ds9-15-extract-pin-primitive)  
+    - depends on: ds9-2, ds9-8  
 
 - 5. App‑Level Components (Svelte 5)  
-  - 5.1 Create `<LcarsShell>` Component  
-    - depends on: 3.1, 3.2  
-  - 5.2 Create `<LcarsHeaderBar>` Component  
-    - depends on: 5.1, 4.1, 4.2  
-  - 5.3 Create `<LcarsSidebar>` and Scroll Controls  
-    - depends on: 3.3, 4.3, 5.1  
-  - 5.4 Create `<LcarsBreadcrumb>` Component  
-    - depends on: 4.5  
-  - 5.5 Create `<LcarsTile>` Component  
-    - depends on: 4.4  
-  - 5.6 Create `<LcarsButton>` / `<LcarsFooterButton>` Components  
-    - depends on: 4.2, 4.1  
-  - 5.7 Create `<LcarsDialog>` Component  
-    - depends on: 4.7, 5.6  
-  - 5.8 Create `<LcarsPin>` Component  
-    - depends on: 4.8  
+  - [ds9-16 · 5.1 Create `<LcarsShell>` Component](#51-ds9-16-create-lcarsshell-component)  
+    - depends on: ds9-5, ds9-6  
+  - [ds9-17 · 5.2 Create `<LcarsHeaderBar>` Component](#52-ds9-17-create-lcarsheaderbar-component)  
+    - depends on: ds9-16, ds9-8, ds9-9  
+  - [ds9-18 · 5.3 Create `<LcarsSidebar>` and Scroll Controls](#53-ds9-18-create-lcarssidebar-and-scroll-controls)  
+    - depends on: ds9-7, ds9-10, ds9-16  
+  - [ds9-19 · 5.4 Create `<LcarsBreadcrumb>` Component](#54-ds9-19-create-lcarsbreadcrumb-component)  
+    - depends on: ds9-12  
+  - [ds9-20 · 5.5 Create `<LcarsTile>` Component](#55-ds9-20-create-lcarstile-component)  
+    - depends on: ds9-11  
+  - [ds9-21 · 5.6 Create `<LcarsButton>` / `<LcarsFooterButton>` Components](#56-ds9-21-create-lcarsbutton--lcarsfooterbutton-components)  
+    - depends on: ds9-9, ds9-8  
+  - [ds9-22 · 5.7 Create `<LcarsDialog>` Component](#57-ds9-22-create-lcarsdialog-component)  
+    - depends on: ds9-14, ds9-21  
+  - [ds9-23 · 5.8 Create `<LcarsPin>` Component](#58-ds9-23-create-lcarspin-component)  
+    - depends on: ds9-15  
 
 - 6. Theming & Tokens Integration  
-  - 6.1 Add Theme Management API (Non‑UI)  
-    - depends on: 2.2  
-  - 6.2 Integrate Theme Management in Docs App  
-    - depends on: 6.1  
+  - [ds9-24 · 6.1 Add Theme Management API (Non‑UI)](#61-ds9-24-add-theme-management-api-non-ui)  
+    - depends on: ds9-3  
+  - [ds9-25 · 6.2 Integrate Theme Management in Docs App](#62-ds9-25-integrate-theme-management-in-docs-app)  
+    - depends on: ds9-24  
 
 - 7. Accessibility & Interaction Checks  
-  - 7.1 A11y Audit for Extracted Components  
-    - depends on: 5.1–5.8  
-  - 7.2 Apply A11y Fixes Identified in Audit  
-    - depends on: 7.1  
+  - [ds9-26 · 7.1 A11y Audit for Extracted Components](#71-ds9-26-a11y-audit-for-extracted-components)  
+    - depends on: ds9-16–ds9-23  
+  - [ds9-27 · 7.2 Apply A11y Fixes Identified in Audit](#72-ds9-27-apply-a11y-fixes-identified-in-audit)  
+    - depends on: ds9-26  
 
 - 8. Documentation & Testing  
-  - 8.1 Write Component‑Level Docs for LCARS Primitives  
-    - depends on: 5.1–5.8, 2.3  
-  - 8.2 Add Unit/Component Tests for LCARS Components  
-    - depends on: 5.1–5.8  
-  - 8.3 Add Minimal E2E Coverage for Integration  
-    - depends on: 6.2, 5.3, 5.7  
+  - [ds9-28 · 8.1 Write Component‑Level Docs for LCARS Primitives](#81-ds9-28-write-component-level-docs-for-lcars-primitives)  
+    - depends on: ds9-16–ds9-23, ds9-4  
+  - [ds9-29 · 8.2 Add Unit/Component Tests for LCARS Components](#82-ds9-29-add-unitcomponent-tests-for-lcars-components)  
+    - depends on: ds9-16–ds9-23  
+  - [ds9-30 · 8.3 Add Minimal E2E Coverage for Integration](#83-ds9-30-add-minimal-e2e-coverage-for-integration)  
+    - depends on: ds9-25, ds9-18, ds9-22  
 
 - 9. Cleanup & Deprecation  
-  - 9.1 Remove Redundant Inline Styles From `docs/index.html`  
-    - depends on: 2.x, 3.x, 4.x  
-  - 9.2 Mark Internal Classes As Private (If Needed)  
-    - depends on: 2.3, 5.x  
+  - [ds9-31 · 9.1 Remove Redundant Inline Styles From `docs/index.html`](#91-ds9-31-remove-redundant-inline-styles-from-docsindexhtml)  
+    - depends on: ds9-2–ds9-15  
+  - [ds9-32 · 9.2 Mark Internal Classes As Private (If Needed)](#92-ds9-32-mark-internal-classes-as-private-if-needed)  
+    - depends on: ds9-4, ds9-16–ds9-23  
 
 ---
 
