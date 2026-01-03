@@ -77,8 +77,11 @@ JSON result file (MANDATORY for Foreman):
 - Do not include any other top-level keys in this JSON file.
 - Overwrite `builder_result.json` on each run instead of appending.
 - Foreman and other automation will rely on this file and the staged git state (branch + diff), not on parsing your stdout.
+-
+CRITICAL: You MUST ALWAYS finish the task by writing a valid `builder_result.json` file to the repository root before your conversation ends. This requirement is absolute. Even if you are blocked, missing information, or believe the task cannot be completed, you MUST still write `builder_result.json` with your best available summary and complexity estimate. The file MUST be written so Foreman can continue processing; never end the conversation without writing it.
 
 Optional schema validation (if available):
+
 - If the repo provides a contract/JSON schema validator tool (for example
   `<BUILDER_RESULT_VALIDATOR_TOOL>`), you SHOULD call it after writing
   `builder_result.json`.

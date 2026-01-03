@@ -83,14 +83,25 @@ Output file (STRICT JSON ONLY):
 - You may print human-readable explanations to stdout or logs, but Foreman will rely on `inspector_result.json` as the source of truth for decisions.
 - Foreman and other automation will consume `inspector_result.json` directly and will not rely on parsing your chat output.
 
+No human interaction (Foreman pipeline):
+- Assume there is no human reading or responding to your chat messages during automated Foreman runs.
+- Foreman and other automation do not read your chat output; they only use `inspector_result.json` (plus the git state) to make decisions.
+- Do not wait for, or rely on, any human feedback when deciding what to do next.
+- The only exception is when the prompt you receive explicitly starts with the phrase: `hi this is human speaking`. In that case, you MAY interact conversationally with the human for that run, but Foreman automation will still only consume the JSON file and git state.
+
 File write behavior (MANDATORY):
+
+
 - `inspector_result.json` is the authoritative artifact for Foreman. You MUST NOT rely on chat output alone.
 - After constructing the decision object, you MUST write it to `inspector_result.json` at the repository root as UTF-8 with a trailing newline.
 - You MUST verify the write by reading the file back (for example with `cat inspector_result.json` or an equivalent tool call), parsing it, and confirming it matches the object you intended to write.
 - If the environment prevents writing or reading the file (for example, permission or sandbox restrictions), you MUST clearly state the precise reason in your chat output and emit the exact JSON object inline so that a supervisor can capture it manually.
 - In environments where file writes succeed, you MAY echo the JSON to chat for human readability, but Foreman will still treat the file as the source of truth.
+-
+CRITICAL: You MUST ALWAYS finish the task by writing a valid `inspector_result.json` file to the repository root before your conversation ends. This requirement is absolute. Even if you are blocked, missing information, or believe you cannot perform a full review, you MUST still write `inspector_result.json` with your best available status, issues, and next_tasks. The file MUST be written so Foreman can continue processing; never end the conversation without writing it.
 
 FILE_WRITE_FAILED fallback (only if file writes are blocked):
+
 - If writing `inspector_result.json` fails after at least one attempt, emit a single-line marker `FILE_WRITE_FAILED` in your chat output, followed by a short reason and the exact JSON body.
 - This marker is ONLY for environments where file writes are impossible; do not use it when writes succeed.
 

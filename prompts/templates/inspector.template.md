@@ -72,8 +72,11 @@ File write behavior (MANDATORY):
   `read`/`cat`-style tool call), parsing it, and confirming it matches the
   object you intended to write.
 - Foreman and other automation will consume `inspector_result.json` directly and will not rely on parsing your chat output.
+-
+CRITICAL: You MUST ALWAYS finish the task by writing a valid `inspector_result.json` file to the repository root before your conversation ends. This requirement is absolute. Even if you are blocked, missing information, or believe you cannot perform a full review, you MUST still write `inspector_result.json` with your best available status, issues, and next_tasks. The file MUST be written so Foreman can continue processing; never end the conversation without writing it.
 
 Optional schema validation (if available):
+
 - If the repo provides a contract/JSON schema validator tool (for example
   `<INSPECTOR_RESULT_VALIDATOR_TOOL>`), you SHOULD call it after writing
   `inspector_result.json`.
