@@ -17,8 +17,8 @@ Builder role (implementation):
   - If the environment allows Git commits, you SHOULD create a local commit with a clear, concise message describing the change (for example: `feat: short summary (scope)`).
   - If commits are disallowed by system policy or `git commit` fails, you MUST leave all changes staged and clearly state in your handoff whether a commit was created, including the error and the output of `git status --porcelain`.
 - NEVER push to any remote. Foreman is responsible for pushing and opening PRs if Inspector approves.
-- Signal completion with the marker `READY_FOR_REVIEW` followed by a JSON object describing the staged/committed state, tests run, and summary.
-- Signal blocking questions with `NEEDS_HUMAN_INPUT` followed by a JSON object describing the question and options.
+- When you believe the current task is complete, provide a clear human-readable summary of what you did (see "Final handoff" below).
+- If you are blocked on missing information, signal this with the marker `NEEDS_HUMAN_INPUT` followed by a JSON object describing the question and options.
 
 Svelte 5 / runes:
 - Use `$props()` instead of `export let` in runes components.
@@ -61,13 +61,13 @@ Inspector / Builder workflow:
 - When Inspector requests changes, treat that as your next task and update the code accordingly.
 
 Final handoff (MANDATORY format):
-When you believe your current task is complete, your FINAL message in this iteration MUST include the following sections, in this order:
+When you believe your current task is complete, your FINAL message in this iteration MUST include the following sections, in this order. You MAY optionally end your message with a marker line like `READY_FOR_REVIEW` to make your intent clear to humans, but this is not required by Foreman or Inspector:
 1. `Summary`
    - 1–3 short bullets summarizing what you implemented/changed.
 2. `Files touched`
    - Bullet list of paths you modified or created (e.g. `src/lib/buttons/Button.svelte`).
 3. `Commands run + results`
-   - List relevant commands (e.g. `pnpm lint`, `pnpm check`, `pnpm test`, `pnpm prepack`) and whether they passed or why they were skipped.
+   - List relevant commands (e.g. `pnpm lint`, `pnpm check`, `pnpm test`, `pnpm prepack`, `git status --porcelain`, `git log -1 --pretty=format:%s` if a commit exists) and whether they passed or why they were skipped.
 4. `Public API impact`
    - Either `Public API impact: None`
    - OR a concise description of changes to exports, component props/events/snippet props, CSS variables/classes, DOM structure that consumers may rely on, etc.
@@ -77,13 +77,10 @@ When you believe your current task is complete, your FINAL message in this itera
 6. `Risks / follow-ups`
    - Any known limitations, edge cases, or recommended future work.
 
-Then, on the VERY LAST LINE of your final message, write exactly:
-READY_FOR_REVIEW
-Do not put anything after that line.
 Do not claim “approved” or “done forever”; Inspector will make the final call.
 
 JSON result file (MANDATORY for Foreman):
-- In addition to the human-readable sections and the READY_FOR_REVIEW marker, you MUST write a JSON file named `builder_result.json` in the repository root (the worktree root).
+- In addition to your human-readable final handoff, you MUST write a JSON file named `builder_result.json` in the repository root (the worktree root).
 - The file MUST contain EXACTLY one JSON object with this schema:
 {
   "summary": "short natural-language summary of the implementation",
