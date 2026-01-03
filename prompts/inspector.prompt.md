@@ -42,12 +42,15 @@ General TypeScript / API:
 - New public behavior is covered by tests or an explicit, reasonable justification.
 
 Tooling & checks:
-- Verify that, for library changes, Builder ran (or clearly justified skipping):
+- For library or code changes, you SHOULD attempt to run the relevant checks yourself from the workspace root when the environment allows it:
   - `pnpm lint`
   - `pnpm check`
   - `pnpm test` (or at least the relevant subset such as `pnpm test:unit`)
-  - `pnpm prepack`
-- If any of these are missing, ensure Builder explained why and whether that is acceptable.
+  - `pnpm prepack` for packaging sanity when appropriate.
+- Use the results of these checks to inform your decision:
+  - If a check fails, include the failure and a brief summary of the command output in `issues` and recommend fixes as `next_tasks`.
+  - If a check cannot be run (e.g. missing tooling, environment restrictions), briefly note that in your reasoning and do NOT block solely because it could not be executed.
+- Treat the Builder's reported commands (if any) as helpful context, but do NOT rely on them as the sole evidence that checks were run or passed.
 
 MCP usage:
 - When your judgment relies on Svelte/SvelteKit/runes specifics, prefer the `svelte-mcp` MCP server.
