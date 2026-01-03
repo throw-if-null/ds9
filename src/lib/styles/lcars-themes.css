@@ -1,0 +1,61 @@
+/* LCARS Theme variants
+   Extracted from docs/index.html body[data-theme="..."] rules
+   Preserve variable names and behavior. Each theme includes a one-line identity comment. */
+
+/* La'An - default deep red/pink LCARS theme */
+body[data-theme="laan"] {
+    --theme-main: #830025;
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(in srgb, var(--shape-color) 30%, var(--lcars-white) 70%);
+}
+
+/* Data - amber/gold accent theme */
+body[data-theme="data"] {
+    --theme-main: #da9706;
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(in srgb, var(--shape-color) 30%, var(--lcars-white) 70%);
+}
+
+/* Doctor - teal variant */
+body[data-theme="doctor"] {
+    --theme-main: #008b8b; /* LCARS-ish teal */
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(in srgb, var(--shape-color) 30%, var(--lcars-white) 70%);
+}
+
+/* Chapel - white/neutral theme */
+body[data-theme="chapel"] {
+    --theme-main: var(--lcars-white);
+    --shape-color: var(--theme-main);
+    --theme-secondary: var(--lcars-gray);
+}
+
+/* Spock - deep blue theme */
+body[data-theme="spock"] {
+    --theme-main: #003366;
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(in srgb, var(--shape-color) 30%, var(--lcars-white) 70%);
+}
+
+/* Seven - silver / borg-accent theme */
+body[data-theme="seven"] {
+    /* LCARS-friendly darker silver main tone */
+    --theme-main: #8c8c8c;
+    --shape-color: var(--theme-main);
+    /* Borg green secondary accent */
+    --theme-secondary: #7fff00;
+}
+
+/* Mbenga - light blue theme */
+body[data-theme="mbenga"] {
+    --theme-main: #92b7dd;
+    --shape-color: var(--theme-main);
+    --theme-secondary: var(--lcars-white);
+}
+
+/* Shran - dark themed variant */
+body[data-theme="shran"] {
+    --theme-main: #282b29;
+    --shape-color: var(--theme-main);
+    --theme-secondary: #78bff5;
+}

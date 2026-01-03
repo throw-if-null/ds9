@@ -10,155 +10,12 @@
             href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&display=swap"
             rel="stylesheet"
         />
+        <link rel="stylesheet" href="../src/lib/styles/lcars-tokens.css">
+        <link rel="stylesheet" href="../src/lib/styles/lcars-themes.css">
         <style>
-            :root {
-                /* ==============================================
-                   DESIGN SYSTEM TOKENS
-                   ============================================== */
+            /* Design tokens extracted to src/lib/styles/lcars-tokens.css */
 
-                /* Color Palette: Core LCARS colors */
-                --lcars-black: #000000;
-                --lcars-white: #ffffff;
-                --lcars-orange: #ff9900;
-                --lcars-purple: #cc99cc;
-                --lcars-red: #cc6666;
-                --lcars-blue: #9999cc;
-                --lcars-beige: #ffcc99;
-                --lcars-gray: #999999;
-
-                /* Color Palette: Dark shades for surfaces */
-                --lcars-dark-1: #111111;
-                --lcars-dark-2: #222222;
-                --lcars-dark-3: #444444;
-
-                /* Typography */
-                --lcars-font: "Antonio", sans-serif;
-
-                /* Spacing */
-                --lcars-gutter: 5px;
-                --lcars-gap: 10px;
-
-                /* Border Radii */
-                --lcars-radius-xs: 5px;
-                --lcars-radius-sm: 14px;
-                --lcars-radius-md: 20px;
-                --lcars-radius-lg: 30px;
-
-                /* Tile Tokens */
-                --lcars-tile-stripe-width: 12px;
-                --lcars-tile-stripe-width-lg: 15px;
-                --lcars-tile-min-height: 110px;
-                --lcars-tile-min-height-lg: 140px;
-
-                /* Layout variables */
-                --sidebar-width: 160px;
-                --header-height: 80px;
-
-                /* Focus system */
-                --lcars-focus-outline-width: 3px;
-                --lcars-focus-outline-color: var(--lcars-white);
-                --lcars-focus-outline-offset: 2px;
-
-                /* Z-index scale */
-                --lcars-z-index-dropdown: 1000;
-                --lcars-z-index-dialog: 2000;
-                --lcars-z-index-tooltip: 3000;
-
-                /* Transition timing */
-                --lcars-transition-fast: 0.1s ease-out;
-                --lcars-transition-normal: 0.2s ease-out;
-
-                /* Spacing scale */
-                --lcars-spacing-xs: 5px;
-                --lcars-spacing-sm: 8px;
-                --lcars-spacing-md: 15px;
-                --lcars-spacing-lg: 20px;
-                --lcars-spacing-xl: 30px;
-
-                /* ==============================================
-                   COMPONENT-LEVEL VARIABLE DOCUMENTATION
-                   These are set inline by JS or via component CSS:
-
-                   --cat-color: Category button background (set by JS)
-                   --lcars-button-bg: Button background color
-                   --lcars-button-fg: Button foreground color
-                   --lcars-button-radius: Button border radius
-                   --lcars-button-hover-filter: Hover effect filter
-                   --lcars-pin-size: Pin/circular button size
-                   --lcars-pin-bg: Pin background color
-                   --lcars-pin-fg: Pin foreground color
-                   ============================================== */
-            }
-
-            /* ==============================================
-               THEME VARIANTS
-               Applied via data-theme attribute on <body>
-               ============================================== */
-            body[data-theme="laan"] {
-                --theme-main: #830025;
-                --shape-color: var(--theme-main);
-                --theme-secondary: color-mix(
-                    in srgb,
-                    var(--shape-color) 30%,
-                    var(--lcars-white) 70%
-                );
-            }
-
-            body[data-theme="data"] {
-                --theme-main: #da9706;
-                --shape-color: var(--theme-main);
-                --theme-secondary: color-mix(
-                    in srgb,
-                    var(--shape-color) 30%,
-                    var(--lcars-white) 70%
-                );
-            }
-
-            body[data-theme="doctor"] {
-                --theme-main: #008b8b; /* LCARS-ish teal */
-                --shape-color: var(--theme-main);
-                --theme-secondary: color-mix(
-                    in srgb,
-                    var(--shape-color) 30%,
-                    var(--lcars-white) 70%
-                );
-            }
-
-            body[data-theme="chapel"] {
-                --theme-main: var(--lcars-white);
-                --shape-color: var(--theme-main);
-                --theme-secondary: var(--lcars-gray);
-            }
-
-            body[data-theme="spock"] {
-                --theme-main: #003366;
-                --shape-color: var(--theme-main);
-                --theme-secondary: color-mix(
-                    in srgb,
-                    var(--shape-color) 30%,
-                    var(--lcars-white) 70%
-                );
-            }
-
-            body[data-theme="seven"] {
-                /* LCARS-friendly darker silver main tone */
-                --theme-main: #8c8c8c;
-                --shape-color: var(--theme-main);
-                /* Borg green secondary accent */
-                --theme-secondary: #7fff00;
-            }
-
-            body[data-theme="mbenga"] {
-                --theme-main: #92b7dd;
-                --shape-color: var(--theme-main);
-                --theme-secondary: var(--lcars-white);
-            }
-
-            body[data-theme="shran"] {
-                --theme-main: #282b29;
-                --shape-color: var(--theme-main);
-                --theme-secondary: #78bff5;
-            }
+            /* Theme variants extracted to src/lib/styles/lcars-themes.css */
 
             /* ==============================================
                SCOPED RESET
@@ -208,30 +65,8 @@
                 outline-offset: var(--lcars-focus-outline-offset);
             }
 
-            /* ==============================================
-               BODY: Theme Variables
-               Theme variables live on body so data-theme can override them.
-               Visual styles are scoped to .lcars-app for embedding flexibility.
-               ============================================== */
-            body {
-                /* Theme variables (can be overridden by data-theme) */
-                --theme-main: #830025; /* default: La'An */
-
-                /* --shape-color: Controls the LCARS frame color (header, footer, sidebar, elbows).
-                   By default it inherits from --theme-main, but can be overridden independently
-                   to allow frame color customization without changing the entire theme.
-                   Used by: .lcars-frame-segment, .lcars-header-bar, .lcars-footer-bar,
-                   .lcars-sidebar-bar-*, .lcars-elbow, dialog borders, and other frame elements. */
-                --shape-color: var(--theme-main);
-                --theme-secondary: color-mix(
-                    in srgb,
-                    var(--shape-color) 30%,
-                    var(--lcars-white) 70%
-                );
-
-                /* Minimal body reset - only what's needed for full-page ZANDER */
-                margin: 0;
-            }
+            /* Base theme variables moved to extracted theme stylesheet. */
+            body { margin: 0; }
 
             /* ==============================================
                LCARS APP CONTAINER

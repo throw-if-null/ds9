@@ -1,0 +1,83 @@
+/* LCARS Design Tokens
+   Extracted from docs/index.html :root
+   Public token set: global color, spacing, radius, z-index, transitions, etc.
+   Keep variable names/values identical to original source. */
+
+:root {
+    /* ==============================================
+       DESIGN SYSTEM TOKENS
+       ============================================== */
+
+    /* Color Palette: Core LCARS colors */
+    --lcars-black: #000000;
+    --lcars-white: #ffffff;
+    --lcars-orange: #ff9900;
+    --lcars-purple: #cc99cc;
+    --lcars-red: #cc6666;
+    --lcars-blue: #9999cc;
+    --lcars-beige: #ffcc99;
+    --lcars-gray: #999999;
+
+    /* Color Palette: Dark shades for surfaces */
+    --lcars-dark-1: #111111;
+    --lcars-dark-2: #222222;
+    --lcars-dark-3: #444444;
+
+    /* Typography */
+    --lcars-font: "Antonio", sans-serif;
+
+    /* Spacing */
+    --lcars-gutter: 5px;
+    --lcars-gap: 10px;
+
+    /* Border Radii */
+    --lcars-radius-xs: 5px;
+    --lcars-radius-sm: 14px;
+    --lcars-radius-md: 20px;
+    --lcars-radius-lg: 30px;
+
+    /* Tile Tokens */
+    --lcars-tile-stripe-width: 12px;
+    --lcars-tile-stripe-width-lg: 15px;
+    --lcars-tile-min-height: 110px;
+    --lcars-tile-min-height-lg: 140px;
+
+    /* Layout variables */
+    --sidebar-width: 160px;
+    --header-height: 80px;
+
+    /* Focus system */
+    --lcars-focus-outline-width: 3px;
+    --lcars-focus-outline-color: var(--lcars-white);
+    --lcars-focus-outline-offset: 2px;
+
+    /* Z-index scale */
+    --lcars-z-index-dropdown: 1000;
+    --lcars-z-index-dialog: 2000;
+    --lcars-z-index-tooltip: 3000;
+
+    /* Transition timing */
+    --lcars-transition-fast: 0.1s ease-out;
+    --lcars-transition-normal: 0.2s ease-out;
+
+    /* Spacing scale */
+    --lcars-spacing-xs: 5px;
+    --lcars-spacing-sm: 8px;
+    --lcars-spacing-md: 15px;
+    --lcars-spacing-lg: 20px;
+    --lcars-spacing-xl: 30px;
+
+    /* ==============================================
+       COMPONENT-LEVEL VARIABLE DOCUMENTATION
+       These are set inline by JS or via component CSS:
+
+       --cat-color: Category button background (set by JS)
+       --lcars-button-bg: Button background color
+       --lcars-button-fg: Button foreground color
+       --lcars-button-radius: Button border radius
+       --lcars-button-hover-filter: Hover effect filter
+       --lcars-pin-size: Pin/circular button size
+       --lcars-pin-bg: Pin background color
+       --lcars-pin-fg: Pin foreground color
+       ============================================== */
+}
