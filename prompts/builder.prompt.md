@@ -47,8 +47,8 @@ Types, tests, docs:
   - You MUST NOT create or modify any Markdown (`.md`) file unless the user explicitly asks you to do so as part of the task.
 
 Tooling:
-- Run commands from the current folder (the directory containing `package.json`).
-- Use only the scripts declared in `AGENTS.md` (`pnpm dev`, `pnpm build`, `pnpm lint`, `pnpm check`, `pnpm test`, `pnpm prepack`, etc.).
+- Run commands from the `ds9/` package folder (it contains the `package.json` and is the intended working directory for Builder).
+- Use only the scripts declared in `AGENTS.md` (`pnpm install`, `pnpm dev`, `pnpm build`, `pnpm lint`, `pnpm check`, `pnpm test`, `pnpm prepack`, etc.).
 - If you cannot run a required check, explain exactly why and what you ran instead.
 - Never add new dependencies without explicit user approval.
 
