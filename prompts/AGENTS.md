@@ -304,3 +304,5 @@ If an implementation or review depends on Svelte/SvelteKit-specific facts, the I
 - explicitly state why MCP could not be used.
 
 If `svelte-mcp` repeatedly fails to help for this repo, switch the default to `context7` (explicitly note the reason in the task/PR notes).
+
+- The Inspector MUST write exactly one JSON object to `inspector_result.json` at the repository root and nothing else; the file must be UTF-8 encoded with a trailing newline. The Inspector must not rely on chat output alone — the file is the authoritative artifact.
