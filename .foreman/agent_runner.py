@@ -31,7 +31,8 @@ def run_agent():
                     args.webhook,
                     json={"success": False, "output": f"Base64 Error: {e}"},
                 )
-            except:
+            except Exception as e:
+                print(f"Failed to hit the webhook. Error: {e}")
                 pass
             sys.exit(1)
 
