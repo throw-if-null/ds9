@@ -10,9 +10,9 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [1968, -192],
-      "id": "686ce930-784c-47ce-8317-b3660d01f71e",
-      "name": "Webhook Trigger (Start Task)",
+      "position": [1984, 656],
+      "id": "b48a6b43-36e8-4779-86ed-be024971b8aa",
+      "name": "Start",
       "webhookId": "25673ee8-bf54-43e5-9912-6ae2db478f78"
     },
     {
@@ -49,8 +49,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [2192, -192],
-      "id": "2440b035-ab87-49f6-b321-f32d142ddcb3",
+      "position": [2208, 656],
+      "id": "3a1f6987-42f0-4fe4-849d-8d407211951e",
       "name": "Initialize Variables"
     },
     {
@@ -59,29 +59,20 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2400, -192],
-      "id": "3e0980e0-cfb9-4dd5-97af-1bc26e66edc0",
+      "position": [2416, 656],
+      "id": "fcefb2d0-c5ae-4195-916b-fd20a7567559",
       "name": "Setup Git Worktree"
     },
     {
       "parameters": {
-        "command": "= REPORT_FILE=\".foreman/inspector/failures/{{ $('Initialize Variables').first().json.task_id }}_report.json\"\n    mkdir -p ./failures\n    # Write the full inspector decision to the file\n    echo '{{ JSON.stringify($json) }}' > \"$REPORT_FILE\"\n    # Also cleanup the worktree so we don't leave mess behind?\n    # Optional: git worktree remove ..."
+        "command": "=# 1. Define paths (Use absolute path for the runner script)\nRUNNER_SCRIPT=\".foreman/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Define Prompt (MUST be quoted to handle spaces)\nPROMPT=\"You are the 'Builder' agent for this repository.\nYou MUST:\n- Obey prompts/AGENTS.md and prompts/builder.prompt.md in this workspace as if they were system instructions.\n- Work ONLY inside the provided git worktree and do NOT touch any remotes.\nGit and staging requirements (NON-NEGOTIABLE):\n- After modifying files and running checks, you MUST prepare the Git state:\n  - Run git add to stage ALL relevant files so that git diff main...HEAD reflects the full change.\n  - If the environment allows Git commits, you SHOULD create a local commit with a clear, concise message (for example: feat: short summary (scope)).\n  - If git commit is disallowed or fails, LEAVE all changes staged and clearly report the error.\n- NEVER run git push or modify any remote.\n- In your final handoff you MUST:\n  - show git status --porcelain\n  - if a commit was created, also show git log -1 --pretty=format:%s\nHandoff and JSON requirements:\n- Follow the 'Final handoff (MANDATORY format)' section from prompts/builder.prompt.md exactly, including READY_FOR_REVIEW as the last line.\n- Write builder_result.json at the worktree root exactly as specified in prompts/builder.prompt.md (summary + complexity only).\nMake minimal, focused changes that implement ONLY the requested task.\nThe user task is:\n{{ $('Initialize Variables').item.json.body.prompt }}\"\n# 3. Execution\n# We run the script from the main repo, but tell it to work (--cwd) in the worktree\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent builder --title \\\"BUILDER {{ $('Initialize Variables').item.json.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\\\"  \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2992, 384],
-      "id": "98b5ce11-98c3-4a2a-99a1-1987eaeb1389",
-      "name": "Log Rejection"
-    },
-    {
-      "parameters": {
-        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && \\\n    git push -u origin feature/{{ $('Initialize Variables').first().json.task_id }} && \\\n    gh pr create \\\n      --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n      --body \"{{ $json.summary || 'Automated PR by Foreman' }}\" \\\n      --draft"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [2992, 192],
-      "id": "3b5faf5a-0b9e-41ea-b04e-856d6afbda1c",
-      "name": "Create PR"
+      "position": [2608, 656],
+      "id": "8ff81fe9-b793-4bd9-844c-d3c24178c01d",
+      "name": "Run Builder Agent",
+      "alwaysOutputData": false
     },
     {
       "parameters": {
@@ -91,30 +82,10 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [2192, 32],
-      "id": "838d117f-b393-4e3a-a53e-18187cb3eb67",
+      "position": [2208, 880],
+      "id": "02242c13-52e9-4b7e-b6a5-2a4705363d99",
       "name": "Wait for Builder",
       "webhookId": "7fae1480-f059-48d9-9a0d-864c586b17a0"
-    },
-    {
-      "parameters": {
-        "jsCode": "const text = $json.stdout || $json.data || '';\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse inspector_result.json: ' + e.message);\n}\nif (!result || (result.status !== 'approved' && result.status !== 'changes_requested')) {\n  throw new Error('Inspector result has invalid status: ' + JSON.stringify(result));\n}\n// n8n expects an array of items\nreturn [result];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [2608, 288],
-      "id": "faf80aa6-91e8-4d5d-81d6-b298caef6f58",
-      "name": "Check Inspector Response"
-    },
-    {
-      "parameters": {
-        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && cat inspector_result.json"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [2400, 288],
-      "id": "6c8cb35f-38ab-410d-b3bf-5f023bdd134d",
-      "name": "Preapre Env"
     },
     {
       "parameters": {
@@ -122,9 +93,21 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2400, 32],
-      "id": "c3ff04cd-d021-4f42-bd94-b507c6741fa2",
+      "position": [2416, 880],
+      "id": "5b492ec2-67d4-40e5-a852-49668c6f922d",
       "name": "Create the DIFF"
+    },
+    {
+      "parameters": {
+        "command": "=# 1. Define paths (use absolute path for the runner script)\nRUNNER_SCRIPT=\".foreman/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Define Prompt (MUST be quoted to handle spaces)\nread -r -d '' PROMPT << 'EOF'\nYou are the 'Inspector' agent for this repository.\nYou MUST:\n- Obey prompts/AGENTS.md and prompts/inspector.prompt.md in this workspace as if they were system instructions.\n- Perform a read-only review of the changes in this git worktree.\n- Base your review on:\n  - the diff in inspector_diff.patch (if present),\n  - the workspace code and tests,\n  - the Builder's final handoff message content (per prompts/builder.prompt.md),\n  - and the thin summary in builder_result.json (summary + complexity only).\nTooling and checks:\n- For library or code changes, you SHOULD attempt to run the relevant checks yourself from the workspace root when the environment allows it:\n  - pnpm lint\n  - pnpm check\n  - pnpm test (or at least a relevant subset such as pnpm test:unit)\n  - pnpm prepack for packaging sanity when appropriate.\n- Use the results of these checks to inform your decision:\n  - If a check fails, include the failure and a brief summary of the command output in issues and recommend fixes as next_tasks.\n  - If a check cannot be run (for example, missing tooling or environment restrictions), briefly note that in your reasoning and do NOT block solely because it could not be executed.\n- Treat the Builder's reported commands (if any) as helpful context, but do NOT rely on them as the sole evidence that checks were run or passed.\nOutput contract (IMPORTANT):\n- You MUST write a file named inspector_result.json at the root of this worktree.\n- The file MUST contain EXACTLY one JSON object with this schema:\n  {\n    \"status\": \"approved\" | \"changes_requested\",\n    \"issues\": [\n      { \"severity\": \"blocker\" | \"major\" | \"minor\", \"description\": \"...\", \"paths\": [\"...\"] }\n    ],\n    \"next_tasks\": [\"...\"]\n  }\n- Treat builder_result.json as a lightweight summary ONLY. It is NOT required to repeat the full handoff.\n- The Builder MAY optionally include a marker like READY_FOR_REVIEW in the final message to signal intent. You MUST NOT treat the presence or absence of this marker as a correctness requirement; base your review on the actual content of the handoff, the diff, the checks you run, and the workspace.\n- You MAY print human-readable commentary to stdout, but Foreman will only read inspector_result.json.\nDo NOT require the Builder to embed the full handoff into builder_result.json or to end messages with READY_FOR_REVIEW. Judge compliance by comparing:\n- the diff and workspace,\n- the content of the final handoff message,\n- the results of any checks you run,\n- and the rules in AGENTS.md and prompts/inspector.prompt.md.\nNow review the current changes and write inspector_result.json accordingly.\nEOF\n# 3. Execution: run Inspector via agent_runner.py\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent inspector --title \\\"INSEPCTOR {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\\\" \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2608, 880],
+      "id": "6d774f4c-b271-41fd-a827-abee5bc08fd1",
+      "name": "Run Inspector Agent",
+      "notesInFlow": false,
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -137,11 +120,31 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [2192, 288],
-      "id": "df7730d4-6241-4ca8-a13d-0597cdf3b082",
+      "position": [2208, 1136],
+      "id": "7c91e7f7-8ebe-4ab2-96ba-ce970839b910",
       "name": "Wait fo Inspector",
       "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9",
       "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && cat inspector_result.json"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2416, 1136],
+      "id": "b0024d90-a012-4017-b826-ccab86fa9f8b",
+      "name": "Preapre Env"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.stdout || $json.data || '';\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse inspector_result.json: ' + e.message);\n}\nif (!result || (result.status !== 'approved' && result.status !== 'changes_requested')) {\n  throw new Error('Inspector result has invalid status: ' + JSON.stringify(result));\n}\n// n8n expects an array of items\nreturn [result];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2624, 1136],
+      "id": "8b4fa34c-3006-424b-a513-1c0fb93d40dc",
+      "name": "Check Inspector Response"
     },
     {
       "parameters": {
@@ -171,37 +174,34 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [2816, 288],
-      "id": "fadb7356-2902-412a-b352-006b6edb2f4c",
+      "position": [2832, 1136],
+      "id": "36dab02d-ba00-4278-a4d2-f09f85983a40",
       "name": "Is ready for review"
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths (Use absolute path for the runner script)\nRUNNER_SCRIPT=\".foreman/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Define Prompt (MUST be quoted to handle spaces)\nPROMPT=\"You are the 'Builder' agent for this repository.\nYou MUST:\n- Obey prompts/AGENTS.md and prompts/builder.prompt.md in this workspace as if they were system instructions.\n- Work ONLY inside the provided git worktree and do NOT touch any remotes.\nGit and staging requirements (NON-NEGOTIABLE):\n- After modifying files and running checks, you MUST prepare the Git state:\n  - Run git add to stage ALL relevant files so that git diff main...HEAD reflects the full change.\n  - If the environment allows Git commits, you SHOULD create a local commit with a clear, concise message (for example: feat: short summary (scope)).\n  - If git commit is disallowed or fails, LEAVE all changes staged and clearly report the error.\n- NEVER run git push or modify any remote.\n- In your final handoff you MUST:\n  - show git status --porcelain\n  - if a commit was created, also show git log -1 --pretty=format:%s\nHandoff and JSON requirements:\n- Follow the 'Final handoff (MANDATORY format)' section from prompts/builder.prompt.md exactly, including READY_FOR_REVIEW as the last line.\n- Write builder_result.json at the worktree root exactly as specified in prompts/builder.prompt.md (summary + complexity only).\nMake minimal, focused changes that implement ONLY the requested task.\nThe user task is:\n{{ $('Initialize Variables').item.json.body.prompt }}\"\n# 3. Execution\n# We run the script from the main repo, but tell it to work (--cwd) in the worktree\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent builder --title \\\"BUILDER {{ $('Initialize Variables').item.json.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\\\"  \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
+        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && \\\n    git push -u origin feature/{{ $('Initialize Variables').first().json.task_id }} && \\\n    gh pr create \\\n      --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n      --body \"{{ $json.summary || 'Automated PR by Foreman' }}\" \\\n      --draft"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2592, -192],
-      "id": "dd9a8ba6-6d67-4b28-ad97-f42e46caf3a8",
-      "name": "Run Builder Agent",
-      "alwaysOutputData": false
+      "position": [3008, 1040],
+      "id": "32a4faf4-0ff6-4650-addc-3cfda115fd8f",
+      "name": "Create the PR"
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths (use absolute path for the runner script)\nRUNNER_SCRIPT=\".foreman/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Define Prompt (MUST be quoted to handle spaces)\nread -r -d '' PROMPT << 'EOF'\nYou are the 'Inspector' agent for this repository.\nYou MUST:\n- Obey prompts/AGENTS.md and prompts/inspector.prompt.md in this workspace as if they were system instructions.\n- Perform a read-only review of the changes in this git worktree.\n- Base your review on:\n  - the diff in inspector_diff.patch (if present),\n  - the workspace code and tests,\n  - the Builder's final handoff message content (per prompts/builder.prompt.md),\n  - and the thin summary in builder_result.json (summary + complexity only).\nTooling and checks:\n- For library or code changes, you SHOULD attempt to run the relevant checks yourself from the workspace root when the environment allows it:\n  - pnpm lint\n  - pnpm check\n  - pnpm test (or at least a relevant subset such as pnpm test:unit)\n  - pnpm prepack for packaging sanity when appropriate.\n- Use the results of these checks to inform your decision:\n  - If a check fails, include the failure and a brief summary of the command output in issues and recommend fixes as next_tasks.\n  - If a check cannot be run (for example, missing tooling or environment restrictions), briefly note that in your reasoning and do NOT block solely because it could not be executed.\n- Treat the Builder's reported commands (if any) as helpful context, but do NOT rely on them as the sole evidence that checks were run or passed.\nOutput contract (IMPORTANT):\n- You MUST write a file named inspector_result.json at the root of this worktree.\n- The file MUST contain EXACTLY one JSON object with this schema:\n  {\n    \"status\": \"approved\" | \"changes_requested\",\n    \"issues\": [\n      { \"severity\": \"blocker\" | \"major\" | \"minor\", \"description\": \"...\", \"paths\": [\"...\"] }\n    ],\n    \"next_tasks\": [\"...\"]\n  }\n- Treat builder_result.json as a lightweight summary ONLY. It is NOT required to repeat the full handoff.\n- The Builder MAY optionally include a marker like READY_FOR_REVIEW in the final message to signal intent. You MUST NOT treat the presence or absence of this marker as a correctness requirement; base your review on the actual content of the handoff, the diff, the checks you run, and the workspace.\n- You MAY print human-readable commentary to stdout, but Foreman will only read inspector_result.json.\nDo NOT require the Builder to embed the full handoff into builder_result.json or to end messages with READY_FOR_REVIEW. Judge compliance by comparing:\n- the diff and workspace,\n- the content of the final handoff message,\n- the results of any checks you run,\n- and the rules in AGENTS.md and prompts/inspector.prompt.md.\nNow review the current changes and write inspector_result.json accordingly.\nEOF\n# 3. Execution: run Inspector via agent_runner.py\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent inspector --title \\\"INSEPCTOR {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\\\" \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
+        "command": "= REPORT_FILE=\".foreman/inspector/failures/{{ $('Initialize Variables').first().json.task_id }}_report.json\"\n    mkdir -p ./failures\n    # Write the full inspector decision to the file\n    echo '{{ JSON.stringify($json) }}' > \"$REPORT_FILE\"\n    # Also cleanup the worktree so we don't leave mess behind?\n    # Optional: git worktree remove ..."
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2592, 32],
-      "id": "2dbea8c0-77b4-439b-a916-8e7589dd9b58",
-      "name": "Run Inspector Agent",
-      "notesInFlow": false,
-      "onError": "continueErrorOutput"
+      "position": [3008, 1232],
+      "id": "a6e657fa-35e0-4bd8-b2ee-025087321cf6",
+      "name": "Log Rejection"
     }
   ],
   "pinData": {},
   "connections": {
-    "Webhook Trigger (Start Task)": {
+    "Start": {
       "main": [
         [
           {
@@ -234,6 +234,17 @@
         ]
       ]
     },
+    "Run Builder Agent": {
+      "main": [
+        [
+          {
+            "node": "Wait for Builder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Wait for Builder": {
       "main": [
         [
@@ -245,33 +256,29 @@
         ]
       ]
     },
-    "Check Inspector Response": {
-      "main": [
-        [
-          {
-            "node": "Is ready for review",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Preapre Env": {
-      "main": [
-        [
-          {
-            "node": "Check Inspector Response",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Create the DIFF": {
       "main": [
         [
           {
             "node": "Run Inspector Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Inspector Agent": {
+      "main": [
+        [
+          {
+            "node": "Wait fo Inspector",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait fo Inspector",
             "type": "main",
             "index": 0
           }
@@ -296,11 +303,33 @@
         ]
       ]
     },
+    "Preapre Env": {
+      "main": [
+        [
+          {
+            "node": "Check Inspector Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Inspector Response": {
+      "main": [
+        [
+          {
+            "node": "Is ready for review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Is ready for review": {
       "main": [
         [
           {
-            "node": "Create PR",
+            "node": "Create the PR",
             "type": "main",
             "index": 0
           }
@@ -308,35 +337,6 @@
         [
           {
             "node": "Log Rejection",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Run Builder Agent": {
-      "main": [
-        [
-          {
-            "node": "Wait for Builder",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Run Inspector Agent": {
-      "main": [
-        [
-          {
-            "node": "Wait fo Inspector",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Wait fo Inspector",
             "type": "main",
             "index": 0
           }
@@ -352,7 +352,7 @@
     "timezone": "Europe/Stockholm",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "f9baba4f-8f4d-4a0d-a7c4-f65999db607c",
+  "versionId": "4c6aacd8-59ec-4a3d-9796-79521298e973",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "b11168fb8d2189bb65765ba38337a8f759c5093954de979172c9be19e0a9355a"
