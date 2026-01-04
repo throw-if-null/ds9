@@ -1,0 +1,84 @@
+/* LCARS Theme Variants
+   Extracted from docs/index.html to centralize theme rules.
+
+   Each theme defines three semantic variables:
+   - --theme-main:   The primary theme color (frame/tiles)
+   - --shape-color:  Controls LCARS frame elements (defaults to --theme-main)
+   - --theme-secondary: Accent/secondary color used for labels, pins, etc.
+
+   Theme identities (intended):
+   - laan   — La'An (default warm maroon)
+   - data   — Data (golden / yellow accent)
+   - doctor — The Doctor (teal)
+   - chapel — Chapel (white/clean look)
+   - spock  — Spock (deep blue)
+   - seven  — Seven of Nine (darker silver + Borg green accent)
+   - mbenga — M'Benga (pale blue)
+   - shran  — Shran (dark slate with light blue accent)
+*/
+
+body[data-theme="laan"] {
+    --theme-main: #830025;
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(
+        in srgb,
+        var(--shape-color) 30%,
+        var(--lcars-white) 70%
+    );
+}
+
+body[data-theme="data"] {
+    --theme-main: #da9706;
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(
+        in srgb,
+        var(--shape-color) 30%,
+        var(--lcars-white) 70%
+    );
+}
+
+body[data-theme="doctor"] {
+    --theme-main: #008b8b; /* LCARS-ish teal */
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(
+        in srgb,
+        var(--shape-color) 30%,
+        var(--lcars-white) 70%
+    );
+}
+
+body[data-theme="chapel"] {
+    --theme-main: var(--lcars-white);
+    --shape-color: var(--theme-main);
+    --theme-secondary: var(--lcars-gray);
+}
+
+body[data-theme="spock"] {
+    --theme-main: #003366;
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(
+        in srgb,
+        var(--shape-color) 30%,
+        var(--lcars-white) 70%
+    );
+}
+
+body[data-theme="seven"] {
+    /* LCARS-friendly darker silver main tone */
+    --theme-main: #8c8c8c;
+    --shape-color: var(--theme-main);
+    /* Borg green secondary accent */
+    --theme-secondary: #7fff00;
+}
+
+body[data-theme="mbenga"] {
+    --theme-main: #92b7dd;
+    --shape-color: var(--theme-main);
+    --theme-secondary: var(--lcars-white);
+}
+
+body[data-theme="shran"] {
+    --theme-main: #282b29;
+    --shape-color: var(--theme-main);
+    --theme-secondary: #78bff5;
+}
