@@ -6,37 +6,80 @@ that reuse these prompts/templates).
 
 ## Agent Tools
 
-- **Contract validators for agent result files**  
-  Implement lightweight validators for the two key JSON contracts:
-  - `builder_result.json` validator
-    - Ensure the file exists at the worktree root.
-    - Validate that it contains exactly one JSON object with:
-      - `summary`: non-empty string, reasonably short.
-      - `complexity`: one of `"low"`, `"medium"`, `"high"`.
-    - Return structured errors (missing field, wrong type, invalid value)
-      so Builder can fix and rewrite the file.
-  - `inspector_result.json` validator
-    - Ensure the file exists at the worktree root.
-    - Validate that it contains exactly one JSON object with:
-      - `status`: `"approved"` or `"changes_requested"`.
-      - `issues`: array; if `status === "changes_requested"`, must be
-        non-empty.
-        - Each issue has:
-          - `severity`: `"blocker"`, `"major"`, or `"minor"`.
-          - `description`: non-empty string.
-          - `paths`: array of non-empty strings.
-      - `next_tasks`: array of strings (may be empty when `status` is
-        `"approved"`).
-    - Return structured errors so Inspector can repair the file and
-      re-validate.
-  - Expose these validators as tools that Builder/Inspector can call
-    from their prompts (for example, via MCP, a small CLI, or a local
-    opencode tool), and update prompts to recommend running validation
-    after writing the files.
+### Result contract validators
+
+- [ ] **Implement `builder_result.json` validator**  
+  Implement a lightweight validator for the Builder JSON contract:
+  - Ensure the file exists at the worktree root.
+  - Validate that it contains exactly one JSON object with:
+    - `summary`: non-empty string, reasonably short.
+    - `complexity`: one of `"low"`, `"medium"`, `"high"`.
+  - Return structured errors (missing field, wrong type, invalid value)
+    so Builder can fix and rewrite the file.
+
+- [ ] **Implement `inspector_result.json` validator**  
+  Implement a lightweight validator for the Inspector JSON contract:
+  - Ensure the file exists at the worktree root.
+  - Validate that it contains exactly one JSON object with:
+    - `status`: `"approved"` or `"changes_requested"`.
+    - `issues`: array; if `status === "changes_requested"`, must be
+      non-empty.
+      - Each issue has:
+        - `severity`: `"blocker"`, `"major"`, or `"minor"`.
+        - `description`: non-empty string.
+        - `paths`: array of non-empty strings.
+    - `next_tasks`: array of strings (may be empty when `status` is
+      `"approved"`).
+  - Return structured errors so Inspector can repair the file and
+    re-validate.
+
+- [ ] **Expose validators as generic tools**  
+  Expose these validators as tools that Builder/Inspector can call
+  from their prompts (for example, via MCP, a small CLI, or a local
+  opencode tool), and update prompts to recommend running validation
+  after writing the files.
+
+### Generic OpenCode tools (repo-agnostic)
+
+- [ ] **Implement `validate_builder_result` tool**  
+  Generic tool that validates a `builder_result` object against the
+  public contract and returns structured errors.
+
+- [ ] **Implement `validate_inspector_result` tool**  
+  Generic tool that validates an `inspector_result` object against the
+  public contract and returns structured errors.
+
+- [ ] **Implement `git_status` tool**  
+  Generic tool that runs `git status --porcelain` in the current
+  working directory and returns a structured list of changed files.
+
+- [ ] **Implement `git_diff_main_head` tool**  
+  Generic tool that runs `git diff main...HEAD` (or a configurable
+  base ref) and returns the diff (raw text or structured summary).
+
+- [ ] **Implement `read_json_file` tool**  
+  Generic tool that reads and parses a JSON file given a relative path
+  and returns the resulting object.
+
+- [ ] **Implement `write_json_file` tool**  
+  Generic tool that writes a JSON object to a relative path with
+  stable formatting.
+
+### Generic OpenCode skills (repo-agnostic)
+
+- [ ] **Implement `skill:check-builder-handoff`**  
+  Generic skill that orchestrates tools (for example, `validate_builder_result`
+  and `git_status`) to validate a Builder handoff and return a single
+  verdict plus issues.
+
+- [ ] **Implement `skill:check-inspector-handoff`**  
+  Generic skill that orchestrates tools (for example, `validate_inspector_result`
+  and `git_status`) to validate an Inspector handoff and return a single
+  verdict plus issues.
 
 ## Foreman Improvements
 
-- **Implement a feedback loop between Inspector and Builder**  
+- [ ] **Implement a feedback loop between Inspector and Builder**  
   Enhance the Foreman workflow so that `changes_requested` can
   automatically trigger follow-up Builder iterations instead of
   terminating the run:
