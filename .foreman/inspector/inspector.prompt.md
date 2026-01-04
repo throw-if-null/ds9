@@ -43,7 +43,7 @@ General TypeScript / API:
 - New public behavior is covered by tests or an explicit, reasonable justification.
 
 Tooling & checks:
-- Run commands from the `ds9/` package folder (it contains the `package.json` and is the intended working directory for Builder).
+- Run commands from the `components/` package folder (it contains the `package.json` and is the intended working directory for Builder).
 - If `node_modules` are missing run `pnpm install` 
 - For library or code changes, you SHOULD attempt to run the relevant checks yourself from the workspace root when the environment allows it:
   - `pnpm lint`
