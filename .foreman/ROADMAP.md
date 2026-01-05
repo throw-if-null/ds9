@@ -49,10 +49,6 @@ that reuse these prompts/templates).
   Generic tool that validates an `inspector_result` object against the
   public contract and returns structured errors.
 
-- [x] **Implement `git_status` tool**  
-  Generic tool that runs `git status --porcelain` in the current
-  working directory and returns a structured list of changed files.
-
 - [x] **Implement `read_json_file` tool**  
   Generic tool that reads and parses a JSON file given a relative path
   and returns the resulting object.
@@ -63,14 +59,14 @@ that reuse these prompts/templates).
 
 ### Generic OpenCode skills (repo-agnostic)
 
-- [ ] **Implement `skill:check-builder-handoff`**  
-  Generic skill that orchestrates tools (for example, `validate_builder_result`
-  and `git_status`) to validate a Builder handoff and return a single
+- [x] **Implement `skill:check-builder-handoff`**  
+  Generic skill that orchestrates tools (for example, `validate_builder_result`)
+  to validate a Builder handoff and return a single
   verdict plus issues.
 
-- [ ] **Implement `skill:check-inspector-handoff`**  
-  Generic skill that orchestrates tools (for example, `validate_inspector_result`
-  and `git_status`) to validate an Inspector handoff and return a single
+- [x] **Implement `skill:check-inspector-handoff`**  
+  Generic skill that orchestrates tools (for example, `validate_inspector_result`)
+  to validate an Inspector handoff and return a single
   verdict plus issues.
 
 ## Foreman Improvements
