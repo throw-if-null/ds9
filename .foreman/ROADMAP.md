@@ -33,7 +33,7 @@ that reuse these prompts/templates).
   - Return structured errors so Inspector can repair the file and
     re-validate.
 
-- [ ] **Expose validators as generic tools**  
+- [x] **Expose validators as generic tools**  
   Expose these validators as tools that Builder/Inspector can call
   from their prompts (for example, via MCP, a small CLI, or a local
   opencode tool), and update prompts to recommend running validation
@@ -49,7 +49,7 @@ that reuse these prompts/templates).
   Generic tool that validates an `inspector_result` object against the
   public contract and returns structured errors.
 
-- [ ] **Implement `git_status` tool**  
+- [x] **Implement `git_status` tool**  
   Generic tool that runs `git status --porcelain` in the current
   working directory and returns a structured list of changed files.
 
