@@ -1,0 +1,1 @@
+{"summary":"Extracted LCARS theme variants from inline styles in docs/index.html into src/lib/styles/lcars-themes.css and updated docs/index.html to import the stylesheet; preserved variable semantics (--theme-main, --shape-color, --theme-secondary).","complexity":"low"}
