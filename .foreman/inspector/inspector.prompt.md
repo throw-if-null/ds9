@@ -84,7 +84,6 @@ Output file (STRICT JSON ONLY):
 - Overwrite `inspector_result.json` on each run instead of appending.
 - You may print human-readable explanations to stdout or logs, but Foreman will rely on `inspector_result.json` as the source of truth for decisions.
 - Foreman and other automation will consume `inspector_result.json` directly and will not rely on parsing your chat output.
-- When you need to inspect the change set, you MAY call the `git_diff_main_head` OpenCode tool (optionally with a custom `baseRef`) to obtain the diff text instead of running `git diff` manually.
 
 No human interaction (Foreman pipeline):
 - Assume there is no human reading or responding to your chat messages during automated Foreman runs.
