@@ -8,7 +8,7 @@ that reuse these prompts/templates).
 
 ### Result contract validators
 
-- [ ] **Implement `builder_result.json` validator**  
+- [x] **Implement `builder_result.json` validator**  
   Implement a lightweight validator for the Builder JSON contract:
   - Ensure the file exists at the worktree root.
   - Validate that it contains exactly one JSON object with:
@@ -41,7 +41,7 @@ that reuse these prompts/templates).
 
 ### Generic OpenCode tools (repo-agnostic)
 
-- [ ] **Implement `validate_builder_result` tool**  
+- [x] **Implement `validate_builder_result` tool**  
   Generic tool that validates a `builder_result` object against the
   public contract and returns structured errors.
 
