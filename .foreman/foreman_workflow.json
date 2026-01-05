@@ -1,5 +1,5 @@
 {
-  "name": "Foreman AI Factory",
+  "name": "Foreman",
   "nodes": [
     {
       "parameters": {
@@ -10,8 +10,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [1984, 656],
-      "id": "b48a6b43-36e8-4779-86ed-be024971b8aa",
+      "position": [4336, 864],
+      "id": "54d064be-b699-419a-abdf-73ebc1376803",
       "name": "Start",
       "webhookId": "25673ee8-bf54-43e5-9912-6ae2db478f78"
     },
@@ -49,8 +49,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [2208, 656],
-      "id": "3a1f6987-42f0-4fe4-849d-8d407211951e",
+      "position": [4560, 864],
+      "id": "032eb0aa-204d-4916-acba-d6425264fcfe",
       "name": "Initialize Variables"
     },
     {
@@ -59,8 +59,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2416, 656],
-      "id": "fcefb2d0-c5ae-4195-916b-fd20a7567559",
+      "position": [4768, 864],
+      "id": "34966bac-8383-4631-832a-c416af0c5009",
       "name": "Setup Git Worktree"
     },
     {
@@ -69,8 +69,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2608, 656],
-      "id": "8ff81fe9-b793-4bd9-844c-d3c24178c01d",
+      "position": [4960, 864],
+      "id": "09957eb7-4bef-4413-a173-92899588121e",
       "name": "Run Builder Agent",
       "alwaysOutputData": false
     },
@@ -82,8 +82,8 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [2208, 880],
-      "id": "02242c13-52e9-4b7e-b6a5-2a4705363d99",
+      "position": [4336, 1088],
+      "id": "f963019d-5a3c-466a-9793-16e7a36632ae",
       "name": "Wait for Builder",
       "webhookId": "7fae1480-f059-48d9-9a0d-864c586b17a0"
     },
@@ -93,8 +93,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2416, 880],
-      "id": "5b492ec2-67d4-40e5-a852-49668c6f922d",
+      "position": [5200, 1088],
+      "id": "b90d808d-de00-4f86-b00c-c646b5ed2d87",
       "name": "Create the DIFF"
     },
     {
@@ -103,8 +103,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2608, 880],
-      "id": "6d774f4c-b271-41fd-a827-abee5bc08fd1",
+      "position": [5376, 1088],
+      "id": "65c3372d-b946-4493-9243-b5c18ab519e8",
       "name": "Run Inspector Agent",
       "notesInFlow": false,
       "onError": "continueErrorOutput"
@@ -120,31 +120,62 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [2208, 1136],
-      "id": "7c91e7f7-8ebe-4ab2-96ba-ce970839b910",
+      "position": [4336, 1376],
+      "id": "f61c0b44-900f-47dc-9ef7-f6e5cd178386",
       "name": "Wait fo Inspector",
       "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9",
       "onError": "continueErrorOutput"
     },
     {
       "parameters": {
-        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && cat inspector_result.json"
+        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && \\\n    git push -u origin feature/{{ $('Initialize Variables').first().json.task_id }} && \\\n    gh pr create \\\n      --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n      --body \"{{ $json.summary || 'Automated PR by Foreman' }}\" \\\n      --draft"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [2416, 1136],
-      "id": "b0024d90-a012-4017-b826-ccab86fa9f8b",
-      "name": "Preapre Env"
+      "position": [5376, 1600],
+      "id": "4f199f0c-b522-4da4-b5a4-833973f7e479",
+      "name": "Create the PR"
     },
     {
       "parameters": {
-        "jsCode": "const text = $json.stdout || $json.data || '';\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse inspector_result.json: ' + e.message);\n}\nif (!result || (result.status !== 'approved' && result.status !== 'changes_requested')) {\n  throw new Error('Inspector result has invalid status: ' + JSON.stringify(result));\n}\n// n8n expects an array of items\nreturn [result];"
+        "command": "= REPORT_FILE=\".foreman/inspector/failures/{{ $('Initialize Variables').first().json.task_id }}_report.json\"\n    mkdir -p ./failures\n    # Write the full inspector decision to the file\n    echo '{{ JSON.stringify($json) }}' > \"$REPORT_FILE\"\n    # Also cleanup the worktree so we don't leave mess behind?\n    # Optional: git worktree remove ..."
       },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [2624, 1136],
-      "id": "8b4fa34c-3006-424b-a513-1c0fb93d40dc",
-      "name": "Check Inspector Response"
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [5200, 1296],
+      "id": "1b7ecb71-1ade-48f7-bb68-198575be4945",
+      "name": "Log Rejection"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "90ec06b4-7f79-490b-8459-b93dddfcad09",
+              "leftValue": "={{ $json.verdict }}",
+              "rightValue": "approved",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [4960, 1088],
+      "id": "b2fb4d14-6183-4592-8556-db7e171781c2",
+      "name": "Is Builder OK"
     },
     {
       "parameters": {
@@ -158,7 +189,7 @@
           "conditions": [
             {
               "id": "e4238de8-6dfb-4cf6-b62b-1b4df22407eb",
-              "leftValue": "={{ $json.status }}",
+              "leftValue": "={{ $json.verdict }}",
               "rightValue": "approved",
               "operator": {
                 "type": "string",
@@ -174,29 +205,49 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [2832, 1136],
-      "id": "36dab02d-ba00-4278-a4d2-f09f85983a40",
-      "name": "Is ready for review"
+      "position": [4976, 1376],
+      "id": "e8848f2f-3247-473e-a6bb-83eb437fa5be",
+      "name": "Is Inspector OK"
     },
     {
       "parameters": {
-        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && \\\n    git push -u origin feature/{{ $('Initialize Variables').first().json.task_id }} && \\\n    gh pr create \\\n      --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n      --body \"{{ $json.summary || 'Automated PR by Foreman' }}\" \\\n      --draft"
+        "command": "=cd {{ $('Initialize Variables').item.json.worktree_path }} && \\\n  python .foreman/tools/check_builder_handoff.py"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [3008, 1040],
-      "id": "32a4faf4-0ff6-4650-addc-3cfda115fd8f",
-      "name": "Create the PR"
+      "position": [4560, 1088],
+      "id": "f7fba4cc-4ad7-4e31-a60a-3e4a5ec3142e",
+      "name": "Check Builder Handoff"
     },
     {
       "parameters": {
-        "command": "= REPORT_FILE=\".foreman/inspector/failures/{{ $('Initialize Variables').first().json.task_id }}_report.json\"\n    mkdir -p ./failures\n    # Write the full inspector decision to the file\n    echo '{{ JSON.stringify($json) }}' > \"$REPORT_FILE\"\n    # Also cleanup the worktree so we don't leave mess behind?\n    # Optional: git worktree remove ..."
+        "jsCode": "const text = $json.stdout || '';\n\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse handoff JSON: ' + e.message);\n}\n  // n8n expects an array of items\nreturn [result];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [4768, 1088],
+      "id": "ef394d40-38b3-4f4d-89b7-b89c3ec2be42",
+      "name": "Process the response"
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $('Initialize Variables').item.json.worktree_path }} && \\\n  python .foreman/tools/check_inspector_handoff.py"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [3008, 1232],
-      "id": "a6e657fa-35e0-4bd8-b2ee-025087321cf6",
-      "name": "Log Rejection"
+      "position": [4560, 1376],
+      "id": "acbb6650-8826-4788-9801-544690bdc09f",
+      "name": "Check Inspector Handoff"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.stdout || '';\n\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse handoff JSON: ' + e.message);\n}\n  // n8n expects an array of items\nreturn [result];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [4784, 1376],
+      "id": "bd5db19b-9c43-49ad-a13c-ca906a671ba5",
+      "name": "Process the response1"
     }
   ],
   "pinData": {},
@@ -249,7 +300,7 @@
       "main": [
         [
           {
-            "node": "Create the DIFF",
+            "node": "Check Builder Handoff",
             "type": "main",
             "index": 0
           }
@@ -289,43 +340,21 @@
       "main": [
         [
           {
-            "node": "Preapre Env",
+            "node": "Check Inspector Handoff",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Preapre Env",
+            "node": "Check Inspector Handoff",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Preapre Env": {
-      "main": [
-        [
-          {
-            "node": "Check Inspector Response",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Check Inspector Response": {
-      "main": [
-        [
-          {
-            "node": "Is ready for review",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Is ready for review": {
+    "Is Inspector OK": {
       "main": [
         [
           {
@@ -342,6 +371,68 @@
           }
         ]
       ]
+    },
+    "Is Builder OK": {
+      "main": [
+        [
+          {
+            "node": "Create the DIFF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Builder Handoff": {
+      "main": [
+        [
+          {
+            "node": "Process the response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process the response": {
+      "main": [
+        [
+          {
+            "node": "Is Builder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Inspector Handoff": {
+      "main": [
+        [
+          {
+            "node": "Process the response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process the response1": {
+      "main": [
+        [
+          {
+            "node": "Is Inspector OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -352,7 +443,7 @@
     "timezone": "Europe/Stockholm",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "4c6aacd8-59ec-4a3d-9796-79521298e973",
+  "versionId": "b6d180cb-0536-4c87-9714-dcfac3dcdeb7",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "b11168fb8d2189bb65765ba38337a8f759c5093954de979172c9be19e0a9355a"
