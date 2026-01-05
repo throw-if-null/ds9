@@ -53,15 +53,15 @@ that reuse these prompts/templates).
   Generic tool that runs `git status --porcelain` in the current
   working directory and returns a structured list of changed files.
 
-- [ ] **Implement `git_diff_main_head` tool**  
+- [x] **Implement `git_diff_main_head` tool**  
   Generic tool that runs `git diff main...HEAD` (or a configurable
   base ref) and returns the diff (raw text or structured summary).
 
-- [ ] **Implement `read_json_file` tool**  
+- [x] **Implement `read_json_file` tool**  
   Generic tool that reads and parses a JSON file given a relative path
   and returns the resulting object.
 
-- [ ] **Implement `write_json_file` tool**  
+- [x] **Implement `write_json_file` tool**  
   Generic tool that writes a JSON object to a relative path with
   stable formatting.
 
