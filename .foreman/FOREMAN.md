@@ -10,7 +10,7 @@ This document describes the generic OpenCode tool contracts, example wiring to t
 
 - Provide generic, repo‑agnostic tools and skills that agents can call to validate and reason about Builder/Inspector handoffs.
 - Keep Foreman assets self‑contained under `.foreman/` so consumers can vendor them into their projects.
-- Document how to wire OpenCode tools to the provided Python implementations.
+- Document how to wire OpenCode tools to concrete implementations (this repo uses OpenCode custom tools under `.opencode/tool/`).
 
 ---
 
@@ -77,7 +77,7 @@ These tools are generic and language‑agnostic. Implementations may vary (Pytho
 In this repository, Foreman provides reference OpenCode tool implementations located under:
 
 - `.opencode/tool/validate_builder_result.ts`
-- (Inspector variant TBD when implemented as a tool)
+- `.opencode/tool/validate_inspector_result.ts`
 
 These tools follow the JSON input/output contract described above and are intended as canonical, dependencylight implementations that agents can call directly via the OpenCode tool system.
 
