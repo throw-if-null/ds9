@@ -8,6 +8,18 @@ This file governs both humans and agents (Foreman + Builder + Inspector).
 
 ---
 
+## Repository structure
+```
+root/
+- AGENTS.md
+- REVIEW_RULEBOOK.md
+- .foreman/ # Here are agents' (Builder and Inspector) prompt files and some other info
+- docs/
+- components
+  - src/
+  - package.json
+```
+
 ## Goals (in order)
 
 1) Correctness and predictable component behavior  
@@ -63,14 +75,14 @@ If a check cannot be run, the agent must state exactly why and what was run inst
 
 ## Repository layout and API boundaries
 
-- `src/lib/` — library source (packaged output originates here)
-- `src/lib/index.ts` — **public exports** (single source of truth)
-- `src/lib/**/index.ts` — module-level exports (re-exported by `src/lib/index.ts`)
-- `src/routes/` — showcase app (not exported)
+- `components/src/lib/` — library source (packaged output originates here)
+- `components/src/lib/index.ts` — **public exports** (single source of truth)
+- `components/src/lib/**/index.ts` — module-level exports (re-exported by `src/lib/index.ts`)
+- `components/src/routes/` — showcase app (not exported)
 
 Rules:
-- Only export public components/types from `src/lib/index.ts`.
-- Internal helpers go under `src/lib/internal/` (or within local module folders) and must not be exported.
+- Only export public components/types from `components/src/lib/index.ts`.
+- Internal helpers go under `components/src/lib/internal/` (or within local module folders) and must not be exported.
 - Avoid exporting deep paths unintentionally.
 
 ---
@@ -78,7 +90,7 @@ Rules:
 ## Public API stability (no accidental breaking changes)
 
 Public API includes:
-- exports from `src/lib/index.ts`
+- exports from `components/src/lib/index.ts`
 - component props / events / **snippet props** (e.g. `children`, `header`, `footer`)
 - documented classes / CSS variables / parts that consumers rely on
 - default styling behavior and DOM structure that consumers reasonably depend on
@@ -188,7 +200,7 @@ Rules:
 
 For every public component, add/maintain docs (choose one approach and be consistent):
 - Option A: `docs/components/<ComponentName>.md`
-- Option B: co-located `src/lib/<area>/<ComponentName>.md`
+- Option B: co-located `components/src/lib/<area>/<ComponentName>.md`
 
 Minimum content:
 - purpose + when to use

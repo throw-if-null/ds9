@@ -13,10 +13,11 @@ complementary sources of truth.
 - Library: Svelte 5 + TypeScript component library.
 - Packaging: SvelteKit packaging via `@sveltejs/package`.
 - Primary entrypoints:
-  - Library source under `src/lib/`.
-  - Showcase app under `src/routes/` (not exported).
-- Public exports originate from `src/lib/index.ts` and re-export from
-  module-level `src/lib/**/index.ts` barrels.
+  - Source is under `components/`
+  - Library source under `components/src/lib/`.
+  - Showcase app under `components/src/routes/` (not exported).
+- Public exports originate from `components/src/lib/index.ts` and re-export from
+  module-level `components/src/lib/**/index.ts` barrels.
 
 ---
 
