@@ -1,0 +1,86 @@
+/* LCARS Theme Variants
+   Extracted from docs/index.html to centralize theme definitions.
+   Each theme is applied by setting `data-theme` on the document <body>:
+     <body data-theme="laan"> ...
+   Themes expose the same CSS custom-properties used by the library:
+     --theme-main   (primary theme color)
+     --shape-color  (frame/shape color; defaults to --theme-main)
+     --theme-secondary (secondary/accent color; may be computed)
+
+   Keep variable semantics unchanged so theme switching via `data-theme`
+   continues to work without additional JS updates.
+*/
+
+/* LA'AN - default warm maroon/tint */
+body[data-theme="laan"] {
+    --theme-main: #830025;
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(
+        in srgb,
+        var(--shape-color) 30%,
+        var(--lcars-white) 70%
+    );
+}
+
+/* DATA - amber/gold, for data-oriented palette */
+body[data-theme="data"] {
+    --theme-main: #da9706;
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(
+        in srgb,
+        var(--shape-color) 30%,
+        var(--lcars-white) 70%
+    );
+}
+
+/* DOCTOR - teal variant (LCARS-ish teal) */
+body[data-theme="doctor"] {
+    --theme-main: #008b8b; /* LCARS-ish teal */
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(
+        in srgb,
+        var(--shape-color) 30%,
+        var(--lcars-white) 70%
+    );
+}
+
+/* CHAPEL - predominantly light / white theme */
+body[data-theme="chapel"] {
+    --theme-main: var(--lcars-white);
+    --shape-color: var(--theme-main);
+    --theme-secondary: var(--lcars-gray);
+}
+
+/* SPOCK - deep blue variant */
+body[data-theme="spock"] {
+    --theme-main: #003366;
+    --shape-color: var(--theme-main);
+    --theme-secondary: color-mix(
+        in srgb,
+        var(--shape-color) 30%,
+        var(--lcars-white) 70%
+    );
+}
+
+/* SEVEN - 'Seven of Nine' inspired: darker silver + borg green accent */
+body[data-theme="seven"] {
+    /* LCARS-friendly darker silver main tone */
+    --theme-main: #8c8c8c;
+    --shape-color: var(--theme-main);
+    /* Borg green secondary accent */
+    --theme-secondary: #7fff00;
+}
+
+/* MBENGA - cool light-blue variant */
+body[data-theme="mbenga"] {
+    --theme-main: #92b7dd;
+    --shape-color: var(--theme-main);
+    --theme-secondary: var(--lcars-white);
+}
+
+/* SHRAN - dark slate with bright cyan secondary */
+body[data-theme="shran"] {
+    --theme-main: #282b29;
+    --shape-color: var(--theme-main);
+    --theme-secondary: #78bff5;
+}
