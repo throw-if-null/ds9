@@ -13,7 +13,11 @@ This file governs both humans and agents (Foreman + Builder + Inspector).
 root/
 - AGENTS.md
 - REVIEW_RULEBOOK.md
-- .foreman/ # Here are agents' (Builder and Inspector) prompt files and some other info
+- .foreman/
+  - builder/
+    - builder.prompt.md
+  - inspector/
+    - inspector.prompt.md
 - docs/
 - components
   - src/
@@ -285,5 +289,3 @@ Use **`svelte-mcp`** by default for anything involving:
 Use **`context7`** only when:
 - `svelte-mcp` cannot answer a question, is missing relevant docs, or is not providing useful signals, or
 - you need broader, non-Svelte documentation/context across general libraries or tools.
-
-

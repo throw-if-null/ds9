@@ -46,18 +46,12 @@ function validateBuilderResult(data: unknown): ValidationResult {
 }
 export default tool({
   description:
-    "Validate a builder_result object (no file I/O) against the Foreman contract",
+    "Validate a builder_result object already loaded in memory (no file I/O). Pass the parsed JSON as 'data'.",
   args: {
     data: tool.schema
       .any()
       .optional()
-      .describe("builder_result object to validate"),
-    path: tool.schema
-      .string()
-      .optional()
-      .describe(
-        "Path to builder_result.json (currently not supported in this tool)",
-      ),
+      .describe("Parsed builder_result JSON object to validate (required)."),
   },
   async execute(args, _context) {
     // Enforce that we only validate provided data

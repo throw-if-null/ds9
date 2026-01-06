@@ -141,18 +141,12 @@ function validateInspectorResult(data: unknown): ValidationResult {
 
 export default tool({
   description:
-    "Validate an inspector_result object against the Foreman inspector contract",
+    "Validate an inspector_result object already loaded in memory (no file I/O). Pass the parsed JSON as 'data'.",
   args: {
     data: tool.schema
       .any()
       .optional()
-      .describe("inspector_result object to validate"),
-    path: tool.schema
-      .string()
-      .optional()
-      .describe(
-        "Path to inspector_result.json (not supported in this tool; use 'data' instead)",
-      ),
+      .describe("Parsed inspector_result JSON object to validate (required)."),
   },
   async execute(args, _context) {
     if (!args.data) {
