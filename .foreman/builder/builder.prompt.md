@@ -60,27 +60,27 @@ Make sure to:
 - [ ] Do the 'Public Handoff' - Construct your public handoff message in the required format (`Summary`, `Files touched`, `Commands run + results`, `Public API impact`, `A11y considerations`, `Risks / follow-ups`)
 - [ ] Do the 'Inspector Handoff'
   - [ ] (CRITICAL) Write `builder_result.json` to disk with EXACTLY one JSON object (`summary`, `complexity`)
-  - [ ] Run `pnpm validate:builder-result` and fix any reported issues
-- [ ] (OPTIONAL) Write a final message if you have anything you feel you should share.
+  - [ ] Run `validate_builder_result` (in process tool) and fix any reported issues
+- [ ] Print out the "implementation checklist" 
 
 CRITICAL: No matter what, you MUST always execute the "Write 'builder_result.json' to disk" step. That file is CRITICAL for the Foreman to operate.
 
 ## Implementation Procedure [MANDATORY]
-This is youe implementation checklist. Follow in order when possible:
+This is your implementation checklist. Follow in order when possible:
 - [ ] Read `AGENTS.md` and, if present, `REVIEW_RULEBOOK.md` to refresh requirements and constraints
 - [ ] Read the assigned task and restate it briefly
 - [ ] Identify the files and modules likely involved in the change
 - [ ] Implement the required changes with minimal, focused diffs
 - [ ] Update or add tests for any new or changed behavior (Vitest/Playwright as appropriate)
-- [ ] Run `pnpm install` if dependencies are missing
-- [ ] Run `pnpm lint` and record whether it passes or fails
-- [ ] Run `pnpm check` and record whether it passes or fails
-- [ ] Run `pnpm test:unit` (or broader `pnpm test` when appropriate) and record results
-- [ ] Run `pnpm prepack` when packaging changes are involved and record results
+- [ ] Run `pnpm install` (from `components/`) if dependencies are missing
+- [ ] Run `pnpm lint` (from `components/`) and record whether it passes or fails
+- [ ] Run `pnpm check` (from `components/`) and record whether it passes or fails
+- [ ] Run `pnpm test:unit` (from `components/`) (or broader `pnpm test` when appropriate) and record results
+- [ ] Run `pnpm prepack` (from `components/`) when packaging changes are involved and record results
 - [ ] Prepare the Git state: stage all relevant files with `git add` so that `git diff main...HEAD` reflects the full change
 - [ ] Create a local commit with a clear, concise message when possible; if `git commit` fails or is disallowed, leave changes staged and capture the error
 - [ ] (CRITICAL) (MANDATORY) Execute the 'Final Handoff Procedure'
-- [ ] Your final message should be the print of this checklist. Use the below legend to mark the items:
+- [ ] Report on your work by printing out this checklist. Use the below legend to mark the items:
   - [ + ] - completed items 
   - [ ~ ] - skipped items (put a comment regarding why you skipped it)
   - [ - ] - items you haven't do (explain why you didn't do them)
