@@ -57,12 +57,13 @@ def main() -> None:
   args = parser.parse_args()
 
   repo_root = os.getcwd()
-
+ 
   # 1) Remove builder_result.json from PR
   remove_builder_result(args.worktree)
+ 
+  # 2) Update docs/TODO.md marking task as completed inside the worktree
+  update_todo(args.task_id, args.worktree)
 
-  # 2) Update docs/TODO.md marking task as completed
-  update_todo(args.task_id, repo_root)
 
   # 3) Commit any remaining changes in the worktree (if not already committed)
   run("git add -A", cwd=args.worktree)
