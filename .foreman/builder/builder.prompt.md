@@ -83,4 +83,4 @@ This is you implementation checklist. Follow in order when possible:
 - [ ] Create a local commit with a clear, concise message when possible; if `git commit` fails or is disallowed, leave changes staged and capture the error
 - [ ] (CRITICAL) Execute the 'Final Handoff Procedure'
 
-CRITICAL If anything fails or you are stuck, you MUST still execute the Final Handoff Procedure so that builder_result.json exists. That file `builder_result.json` is MANDATORY and CRITICAL for the Foreman to operate.
+CRITICAL If anything fails or you are stuck, you MUST still execute the 'Final Handoff Procedure' so that 'builder_result.json' exists. That file `builder_result.json` is MANDATORY and CRITICAL for the Foreman to operate.
