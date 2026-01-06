@@ -91,12 +91,12 @@ def main() -> None:
         validation = validate_builder_result(data)
         builder_result_ok = bool(validation.get("ok"))
         builder_result_errors.extend(validation.get("errors", []))
-
+ 
     changed_files = get_changed_files()
-
+ 
     ok = builder_result_ok and not builder_result_errors
-    verdict = "approved" if ok else "changes_requested"
-
+    verdict = "approved" if ok else "impossible"
+ 
     output = {
         "ok": ok,
         "verdict": verdict,
@@ -104,6 +104,7 @@ def main() -> None:
         "builder_result_errors": builder_result_errors,
         "changed_files": changed_files,
     }
+
 
     json.dump(output, sys.stdout)
     sys.stdout.write("\n")

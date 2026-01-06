@@ -19,8 +19,6 @@ When you believe your current task is complete, your FINAL step MUST include:
 - Public Handoff
 - Inspector Handoff
 
-You MAY optionally end your message with a marker line like `READY_FOR_REVIEW` to make your intent clear to humans, but this is not required by Foreman or Inspector:
-
 ### Public Handoff
 Print out a message(s) that contains the below sections:
 1. `Summary`

@@ -129,9 +129,12 @@ def main() -> None:
     inspector_result_ok = False
     inspector_result_errors: List[Dict[str, Any]] = []
 
+    status = None
     try:
         with open(result_path, "r", encoding="utf-8") as f:
             data = json.load(f)
+            if isinstance(data, dict):
+                status = data.get("status")
     except FileNotFoundError:
         inspector_result_errors.append(
             {
@@ -152,12 +155,17 @@ def main() -> None:
         validation = validate_inspector_result(data)
         inspector_result_ok = bool(validation.get("ok"))
         inspector_result_errors.extend(validation.get("errors", []))
-
+ 
     changed_files = get_changed_files()
-
+ 
     ok = inspector_result_ok and not inspector_result_errors
-    verdict = "approved" if ok else "changes_requested"
-
+    if not ok:
+        verdict = "impossible"
+    elif status == "approved":
+        verdict = "approved"
+    else:
+        verdict = "changes_requested"
+ 
     output = {
         "ok": ok,
         "verdict": verdict,
@@ -165,6 +173,7 @@ def main() -> None:
         "inspector_result_errors": inspector_result_errors,
         "changed_files": changed_files,
     }
+
 
     json.dump(output, sys.stdout)
     sys.stdout.write("\n")
