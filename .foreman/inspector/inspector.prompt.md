@@ -10,6 +10,9 @@ Your behavior:
 - You always end your work by executing the "Final Handoff Procedure".
 
 # Procedures
+You should expect to have these artifacts at your disposal as they are required of you to be able to do the review:
+- `builder_result.json` - this a message from the Builder that contains its handoff with information about the code changes it did 
+- `inspector_diff.patch` - this is a file created by Foreman which contains `git diff` dumpt that you can use while doing the review.  
 
 ## Final Handoff Procedure (MANDATORY format)
 When you believe your current review is complete, or you are blocked and
