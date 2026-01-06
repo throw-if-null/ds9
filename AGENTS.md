@@ -2,7 +2,7 @@
 
 This repository is a **Svelte 5 + TypeScript component library** packaged with **SvelteKit packaging (@sveltejs/package)**.
 
-**Important:** Run commands from the directory that contains `package.json` (the current folder / repo root).
+**Important:** Run commands from the directory that contains `package.json` (root/components).
 
 This file governs both humans and agents (Foreman + Builder + Inspector).
 
@@ -231,14 +231,7 @@ Do NOT add Histoire unless explicitly requested.
 
 ---
 
-## Inspector / Builder workflow
-
-### Inspector responsibilities
-- Wait for Builder completion message.
-- Review `git diff` for compliance with this AGENTS.md.
-- Verify required checks were run (or exceptions are justified).
-- If violations exist: provide a specific fix list and delegate back to the Builder.
-- If compliant: approve and summarize changes + any remaining risks.
+## Inspector workflow
 
 ### Inspector review checklist (must be applied)
 Svelte 5 requirements:
@@ -263,23 +256,6 @@ General:
 - A11y covered for interactive components
 - Types: no `any` / implicit `any`; handler params/snippet props annotated
 - Checks run (as applicable): `pnpm lint`, `pnpm check`, `pnpm test`, and packaging sanity (`pnpm prepack`) for library changes
-
-### Builder responsibilities
-- Implement only the assigned task.
-- Run required checks (or explain precisely what was run).
-- Provide a complete handoff.
-
-### Mandatory Builder handoff (final message)
-Include:
-- Summary (1–3 bullets)
-- Files touched
-- Commands run + results
-- Public API impact: None / Describe
-- A11y considerations
-- Risks / follow-ups
-
-End with exactly:
-READY_FOR_REVIEW
 
 ---
 
@@ -310,11 +286,4 @@ Use **`context7`** only when:
 - `svelte-mcp` cannot answer a question, is missing relevant docs, or is not providing useful signals, or
 - you need broader, non-Svelte documentation/context across general libraries or tools.
 
-### Inspector requirement
-If an implementation or review depends on Svelte/SvelteKit-specific facts, the Inspector must require the Builder to:
-- cite what was checked via `svelte-mcp` (briefly: what tool was used and the conclusion), or
-- explicitly state why MCP could not be used.
 
-If `svelte-mcp` repeatedly fails to help for this repo, switch the default to `context7` (explicitly note the reason in the task/PR notes).
-
-- The Inspector MUST write exactly one JSON object to `inspector_result.json` at the repository root and nothing else; the file must be UTF-8 encoded with a trailing newline. The Inspector must not rely on chat output alone — the file is the authoritative artifact.
