@@ -8,7 +8,7 @@ This is your implementation checklist. Follow it in order when possible:
 - [ ] (MANDATORY) Implement the required changes with minimal, focused diffs
 - [ ] (MANDATORY) Update or add tests for any new or changed behavior (Vitest/Playwright as appropriate)
 - [ ] (MANDATORY) Run 'pnpm install' ('root/components') if dependencies are missing 
-- [ ] (MANDATORY) Run 'pnpm lint' ('root/components') and record whether it passes or fails
+- [ ] (MANDATORY) Run 'pnpm lint' and when needed 'pnpm format' ('root/components') and record whether it passes or fails
 - [ ] (MANDATORY) Run 'pnpm check' ('root/components') and record whether it passes or fails
 - [ ] (MANDATORY) Run 'pnpm test:unit' (or broader 'pnpm test' when appropriate) ('root/components') and record results
 - [ ] (OPTIONAL) Run 'pnpm prepack' ('root/components') when packaging changes are involved and record results
