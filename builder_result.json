@@ -1,0 +1,16 @@
+{
+  "summary": "Extract LCARS theme variants to dedicated stylesheet and update docs to load it",
+  "changes": [
+    {
+      "path": "components/src/lib/styles/lcars-themes.css",
+      "type": "added"
+    },
+    {
+      "path": "docs/index.html",
+      "type": "modified"
+    }
+  ],
+  "notes": "Extracted body[data-theme] theme variable blocks into a dedicated stylesheet and included it in docs/index.html. Preserved variable semantics: --theme-main, --shape-color, --theme-secondary. Formatted new file with Prettier.",
+  "complexity": "low",
+  "success": true
+}
