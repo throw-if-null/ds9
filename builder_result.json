@@ -1,1 +1,0 @@
-{"summary":"Extracted LCARS theme variants into src/lib/styles/lcars-themes.css and updated docs/index.html to consume it; preserved variable semantics (--theme-main, --shape-color, --theme-secondary) and theme switching behavior.","complexity":"low"}
