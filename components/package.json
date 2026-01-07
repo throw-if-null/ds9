@@ -13,10 +13,8 @@
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test:scripts": "vitest --config vitest.scripts.config.ts --run",
-		"test": "npm run test:unit -- --run && npm run test:e2e",
-		"test:e2e": "playwright test",
-		"validate:builder-result": "node tools/builder-result-validator.mjs builder_result.json",
-		"validate:inspector-result": "node tools/inspector-result-validator.mjs inspector_result.json"
+		"test": "pnpm test:unit -- --run && pnpm test:e2e",
+		"test:e2e": "playwright test"
 	},
 	"files": [
 		"dist",
