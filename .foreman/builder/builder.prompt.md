@@ -72,11 +72,11 @@ This is your implementation checklist. Follow in order when possible:
 - [ ] Identify the files and modules likely involved in the change
 - [ ] Implement the required changes with minimal, focused diffs
 - [ ] Update or add tests for any new or changed behavior (Vitest/Playwright as appropriate)
-- [ ] Run `pnpm install` (from `./components/`) if dependencies are missing
-- [ ] Run `pnpm lint` and when needed `pnpm format` (from `./components/`) and record whether it passes or fails
+- [ ] Run `pnpm install` (from `components/`) if dependencies are missing
+- [ ] Run `pnpm lint` and when needed `pnpm format` (from `components/`) and record whether it passes or fails
 - [ ] Run `pnpm check` (from `components/`) and record whether it passes or fails
-- [ ] Run `pnpm test:unit` (from `./components/`) (or broader `pnpm test` when appropriate) and record results
-- [ ] Run `pnpm prepack` (from `./components/`) when packaging changes are involved and record results
+- [ ] Run `pnpm test:unit` (from `components/`) (or broader `pnpm test` when appropriate) and record results
+- [ ] Run `pnpm prepack` (from `components/`) when packaging changes are involved and record results
 - [ ] Prepare the Git state: stage all relevant files with `git add` so that `git diff main...HEAD` reflects the full change
 - [ ] Create a local commit with a clear, concise message when possible; if `git commit` fails or is disallowed, leave changes staged and capture the error
 - [ ] (CRITICAL) (MANDATORY) Execute the 'Final Handoff Procedure'
