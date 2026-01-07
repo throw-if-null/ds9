@@ -27,7 +27,7 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
     - depends on: ds9-2, ds9-3
 
 - 3. Layout & Shell Primitives  
-  - [ ] [ds9-5 · 3.1 Extract `.lcars-app` Container Styles](#31-ds9-5-extract-lcars-app-container-styles)  
+  - [x] [ds9-5 · 3.1 Extract `.lcars-app` Container Styles](#31-ds9-5-extract-lcars-app-container-styles)  
     - depends on: ds9-2  
   - [ ] [ds9-6 · 3.2 Extract Shell Bar & Frame Segment Primitives](#32-ds9-6-extract-shell-bar--frame-segment-primitives)  
     - depends on: ds9-5  
