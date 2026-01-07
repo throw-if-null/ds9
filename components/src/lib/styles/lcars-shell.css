@@ -1,0 +1,24 @@
+/* LCARS shell container styles (extracted from docs/index.html)
+   Contains only the .lcars-app container and .lcars-app--fullpage modifier.
+   Keep behavior identical to the original inline styles. */
+
+.lcars-app {
+    /* Visual styling scoped to the component */
+    background-color: var(--lcars-black);
+    color: var(--lcars-orange);
+    font-family: var(--lcars-font);
+
+    /* Layout Grid */
+    display: grid;
+    grid-template-columns: 1fr 160px; /* Content | Sidebar */
+    grid-template-rows: 70px 1fr 70px; /* Header | Main | Footer */
+    height: 100%;
+    padding: 10px;
+    gap: 0; /* Seamless connections */
+}
+
+/* Full-page modifier for standalone ZANDER app */
+.lcars-app--fullpage {
+    height: 100vh;
+    overflow: hidden;
+}
