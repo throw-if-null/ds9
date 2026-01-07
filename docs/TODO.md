@@ -22,7 +22,7 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
 
 - 2. Design Tokens Layer  
   - [x] [ds9-2 · 2.1 Extract LCARS CSS Variables into Library Stylesheet](#21-ds9-2-extract-lcars-css-variables-into-library-stylesheet)  
-  - [ ] [ds9-3 · 2.2 Extract Theme Variant Rules](#22-ds9-3-extract-theme-variant-rules)  
+  - [x] [ds9-3 · 2.2 Extract Theme Variant Rules](#22-ds9-3-extract-theme-variant-rules)  
   - [ ] [ds9-4 · 2.3 Define Public Tokens API Contract](#23-ds9-4-define-public-tokens-api-contract)  
     - depends on: ds9-2, ds9-3
 
