@@ -4,13 +4,13 @@
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "trigger-task",
+        "path": "run-foreman",
         "responseMode": "lastNode",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [4336, 864],
+      "position": [3632, 864],
       "id": "54d064be-b699-419a-abdf-73ebc1376803",
       "name": "Start",
       "webhookId": "25673ee8-bf54-43e5-9912-6ae2db478f78"
@@ -42,14 +42,20 @@
             {
               "name": "timeStamp",
               "value": "={{(()=>{\n  return DateTime.now().toFormat('yyyyLLdd.HHmm');\n})()}}"
+            },
+            {
+              "name": "mode",
+              "value": "={{ (() => {\n  const url = $json.webhookUrl || '';\n  if (url.endsWith('run-foreman')) return 'full';\n  if (url.endsWith('run-inspector')) return 'review';\n  return 'unknown';\n})() }}"
             }
           ]
         },
-        "options": {}
+        "options": {
+          "dotNotation": true
+        }
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [4560, 864],
+      "position": [3920, 992],
       "id": "032eb0aa-204d-4916-acba-d6425264fcfe",
       "name": "Initialize Variables"
     },
@@ -59,17 +65,17 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4768, 864],
+      "position": [4336, 864],
       "id": "34966bac-8383-4631-832a-c416af0c5009",
       "name": "Setup Git Worktree"
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths (Use absolute path for the runner script)\nRUNNER_SCRIPT=\".foreman/tools/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Define Prompt (MUST be quoted to handle spaces)\nPROMPT=\"You are the 'Builder' agent for this repository.\nYou MUST:\n- Obey prompts/AGENTS.md and prompts/builder.prompt.md in this workspace as if they were system instructions.\n- Work ONLY inside the provided git worktree and do NOT touch any remotes.\nGit and staging requirements (NON-NEGOTIABLE):\n- After modifying files and running checks, you MUST prepare the Git state:\n  - Run git add to stage ALL relevant files so that git diff main...HEAD reflects the full change.\n  - If the environment allows Git commits, you SHOULD create a local commit with a clear, concise message (for example: feat: short summary (scope)).\n  - If git commit is disallowed or fails, LEAVE all changes staged and clearly report the error.\n- NEVER run git push or modify any remote.\n- In your final handoff you MUST:\n  - show git status --porcelain\n  - if a commit was created, also show git log -1 --pretty=format:%s\nHandoff and JSON requirements:\n- Follow the 'Final handoff (MANDATORY format)' section from prompts/builder.prompt.md exactly, including READY_FOR_REVIEW as the last line.\n- Write builder_result.json at the worktree root exactly as specified in prompts/builder.prompt.md (summary + complexity only).\nMake minimal, focused changes that implement ONLY the requested task.\nThe user task is:\n{{ $('Initialize Variables').item.json.body.prompt }}\"\n# 3. Execution\n# We run the script from the main repo, but tell it to work (--cwd) in the worktree\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent builder --title \\\"BUILDER {{ $('Initialize Variables').item.json.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\\\"  \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
+        "command": "=# 1. Define paths (Use repo-relative runner script)\nRUNNER_SCRIPT=\".foreman/tools/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Read base prompt from file\nBUILDER_BASE_PROMPT=\"$(cat .foreman/builder/templates/builder_base_prompt.md)\"\n# 3. Inject the user task\nUSER_TASK=\"{{ $('Initialize Variables').item.json.body.prompt }}\"\nPROMPT=\"${BUILDER_BASE_PROMPT}\nThe user task is:\n${USER_TASK}\n\"\n# 4. Execution: run Builder via agent_runner.py\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent builder --title \\\"BUILDER {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\\\" \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4960, 864],
+      "position": [4832, 864],
       "id": "09957eb7-4bef-4413-a173-92899588121e",
       "name": "Run Builder Agent",
       "alwaysOutputData": false
@@ -82,7 +88,7 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [4336, 1088],
+      "position": [5024, 864],
       "id": "f963019d-5a3c-466a-9793-16e7a36632ae",
       "name": "Wait for Builder",
       "webhookId": "7fae1480-f059-48d9-9a0d-864c586b17a0"
@@ -93,17 +99,17 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5200, 1088],
+      "position": [4992, 1088],
       "id": "b90d808d-de00-4f86-b00c-c646b5ed2d87",
       "name": "Create the DIFF"
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths (use absolute path for the runner script)\nRUNNER_SCRIPT=\".foreman/tools/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Define Prompt (MUST be quoted to handle spaces)\nread -r -d '' PROMPT << 'EOF'\nYou are the 'Inspector' agent for this repository.\nYou MUST:\n- Obey prompts/AGENTS.md and prompts/inspector.prompt.md in this workspace as if they were system instructions.\n- Perform a read-only review of the changes in this git worktree.\n- Base your review on:\n  - the diff in inspector_diff.patch (if present),\n  - the workspace code and tests,\n  - the Builder's final handoff message content (per prompts/builder.prompt.md),\n  - and the thin summary in builder_result.json (summary + complexity only).\nTooling and checks:\n- For library or code changes, you SHOULD attempt to run the relevant checks yourself from the workspace root when the environment allows it:\n  - pnpm lint\n  - pnpm check\n  - pnpm test (or at least a relevant subset such as pnpm test:unit)\n  - pnpm prepack for packaging sanity when appropriate.\n- Use the results of these checks to inform your decision:\n  - If a check fails, include the failure and a brief summary of the command output in issues and recommend fixes as next_tasks.\n  - If a check cannot be run (for example, missing tooling or environment restrictions), briefly note that in your reasoning and do NOT block solely because it could not be executed.\n- Treat the Builder's reported commands (if any) as helpful context, but do NOT rely on them as the sole evidence that checks were run or passed.\nOutput contract (IMPORTANT):\n- You MUST write a file named inspector_result.json at the root of this worktree.\n- The file MUST contain EXACTLY one JSON object with this schema:\n  {\n    \"status\": \"approved\" | \"changes_requested\",\n    \"issues\": [\n      { \"severity\": \"blocker\" | \"major\" | \"minor\", \"description\": \"...\", \"paths\": [\"...\"] }\n    ],\n    \"next_tasks\": [\"...\"]\n  }\n- Treat builder_result.json as a lightweight summary ONLY. It is NOT required to repeat the full handoff.\n- The Builder MAY optionally include a marker like READY_FOR_REVIEW in the final message to signal intent. You MUST NOT treat the presence or absence of this marker as a correctness requirement; base your review on the actual content of the handoff, the diff, the checks you run, and the workspace.\n- You MAY print human-readable commentary to stdout, but Foreman will only read inspector_result.json.\nDo NOT require the Builder to embed the full handoff into builder_result.json or to end messages with READY_FOR_REVIEW. Judge compliance by comparing:\n- the diff and workspace,\n- the content of the final handoff message,\n- the results of any checks you run,\n- and the rules in AGENTS.md and prompts/inspector.prompt.md.\nNow review the current changes and write inspector_result.json accordingly.\nEOF\n# 3. Execution: run Inspector via agent_runner.py\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent inspector --title \\\"INSEPCTOR {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\\\" \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
+        "command": "=# 1. Define paths (Use repo-relative runner script)\nRUNNER_SCRIPT=\".foreman/tools/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Read base prompt from Markdown file\nINSPECTOR_BASE_PROMPT=\"$(cat .foreman/inspector/templates/inspector_base_prompt.md)\"\n# 3. Inject the task being reviewed\nTASK_BEING_REVIEWED=\"{{ $('Initialize Variables').item.json.body.prompt }}\"\nPROMPT=\"${INSPECTOR_BASE_PROMPT}\nThe task being reviewed is:\n${TASK_BEING_REVIEWED}\n\"\n# 4. Execution: run Inspector via agent_runner.py\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent inspector --title \\\"INSPECTOR {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\\\" \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5376, 1088],
+      "position": [5152, 1088],
       "id": "65c3372d-b946-4493-9243-b5c18ab519e8",
       "name": "Run Inspector Agent",
       "notesInFlow": false,
@@ -113,14 +119,11 @@
       "parameters": {
         "resume": "webhook",
         "httpMethod": "POST",
-        "limitWaitTime": true,
-        "resumeAmount": 5,
-        "resumeUnit": "minutes",
         "options": {}
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [4336, 1376],
+      "position": [4352, 1360],
       "id": "f61c0b44-900f-47dc-9ef7-f6e5cd178386",
       "name": "Wait fo Inspector",
       "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9",
@@ -128,11 +131,11 @@
     },
     {
       "parameters": {
-        "command": "=cd {{ $('Initialize Variables').first().json.worktree_path }} && \\\n    git push -u origin feature/{{ $('Initialize Variables').first().json.task_id }} && \\\n    gh pr create \\\n      --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n      --body \"{{ $json.summary || 'Automated PR by Foreman' }}\" \\\n      --draft"
+        "command": "=python .foreman/tools/create_pr.py \\\n  --task-id \"{{ $('Initialize Variables').first().json.task_id }}\" \\\n  --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n  --body \"{{ $('Initialize Variables').first().json.body.prompt }}\" \\\n  --worktree \"{{ $('Initialize Variables').first().json.worktree_path }}\" \\\n  --branch \"feature/{{ $('Initialize Variables').first().json.task_id }}\""
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5376, 1600],
+      "position": [5200, 1440],
       "id": "4f199f0c-b522-4da4-b5a4-833973f7e479",
       "name": "Create the PR"
     },
@@ -173,7 +176,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [4960, 1088],
+      "position": [4752, 1088],
       "id": "b2fb4d14-6183-4592-8556-db7e171781c2",
       "name": "Is Builder OK"
     },
@@ -205,7 +208,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [4976, 1376],
+      "position": [4976, 1360],
       "id": "e8848f2f-3247-473e-a6bb-83eb437fa5be",
       "name": "Is Inspector OK"
     },
@@ -215,7 +218,7 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4560, 1088],
+      "position": [4352, 1088],
       "id": "f7fba4cc-4ad7-4e31-a60a-3e4a5ec3142e",
       "name": "Check Builder Handoff"
     },
@@ -225,7 +228,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [4768, 1088],
+      "position": [4544, 1088],
       "id": "ef394d40-38b3-4f4d-89b7-b89c3ec2be42",
       "name": "Process the response"
     },
@@ -235,7 +238,7 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4560, 1376],
+      "position": [4560, 1360],
       "id": "acbb6650-8826-4788-9801-544690bdc09f",
       "name": "Check Inspector Handoff"
     },
@@ -245,9 +248,92 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [4784, 1376],
+      "position": [4784, 1360],
       "id": "bd5db19b-9c43-49ad-a13c-ca906a671ba5",
       "name": "Process the response1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "run-inspector",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [3632, 1152],
+      "id": "7d0d4bb4-878b-4bca-9237-1d3d5b19b0dc",
+      "name": "Review",
+      "webhookId": "0d33a427-d5ca-4d31-8dda-d8a963a9db4e"
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $('Initialize Variables').item.json.worktree_path }}/components && \\\npnpm i"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [4512, 864],
+      "id": "938ab0db-6c9e-4a7c-9557-92a7d60c7eea",
+      "name": "Setup Repository"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mode }}",
+                    "rightValue": "full",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8ad8fcbe-21de-4473-bebb-ec4019dedcd4"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "275c73f6-2b12-46a9-849d-1ae68bd8f94a",
+                    "leftValue": "={{ $json.mode }}",
+                    "rightValue": "review",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [4112, 992],
+      "id": "ceb666c6-808d-491a-8e87-751541108cf6",
+      "name": "Switch"
     }
   ],
   "pinData": {},
@@ -267,7 +353,7 @@
       "main": [
         [
           {
-            "node": "Setup Git Worktree",
+            "node": "Switch",
             "type": "main",
             "index": 0
           }
@@ -278,7 +364,7 @@
       "main": [
         [
           {
-            "node": "Run Builder Agent",
+            "node": "Setup Repository",
             "type": "main",
             "index": 0
           }
@@ -433,6 +519,46 @@
           }
         ]
       ]
+    },
+    "Review": {
+      "main": [
+        [
+          {
+            "node": "Initialize Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Repository": {
+      "main": [
+        [
+          {
+            "node": "Run Builder Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Setup Git Worktree",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Builder Handoff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -443,7 +569,7 @@
     "timezone": "Europe/Stockholm",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "b6d180cb-0536-4c87-9714-dcfac3dcdeb7",
+  "versionId": "f7b22c7f-4bee-4f2c-9bb1-8223f209199a",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "b11168fb8d2189bb65765ba38337a8f759c5093954de979172c9be19e0a9355a"
