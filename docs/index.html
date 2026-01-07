@@ -12,6 +12,7 @@
         />
         <link rel="stylesheet" href="../src/lib/styles/lcars-tokens.css" />
         <link rel="stylesheet" href="../src/lib/styles/lcars-themes.css" />
+        <link rel="stylesheet" href="../src/lib/styles/lcars-shell.css" />
         <style>
             /* LCARS design tokens moved to src/lib/styles/lcars-tokens.css */
 
@@ -92,31 +93,9 @@
                 margin: 0;
             }
 
-            /* ==============================================
-               LCARS APP CONTAINER
-               All visual styles scoped here for embedding flexibility.
-               When used as full-page app, add .lcars-app--fullpage modifier.
-               ============================================== */
-            .lcars-app {
-                /* Visual styling scoped to the component */
-                background-color: var(--lcars-black);
-                color: var(--lcars-orange);
-                font-family: var(--lcars-font);
+            /* LCARS APP CONTAINER extracted to components/src/lib/styles/lcars-shell.css */
+            /* Keep these rules in an external stylesheet to be shared with the library */
 
-                /* Layout Grid */
-                display: grid;
-                grid-template-columns: 1fr 160px; /* Content | Sidebar */
-                grid-template-rows: 70px 1fr 70px; /* Header | Main | Footer */
-                height: 100%;
-                padding: 10px;
-                gap: 0; /* Seamless connections */
-            }
-
-            /* Full-page modifier for standalone ZANDER app */
-            .lcars-app--fullpage {
-                height: 100vh;
-                overflow: hidden;
-            }
 
             /* LCARS frame segment primitives */
             .lcars-frame-segment {
