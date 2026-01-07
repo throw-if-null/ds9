@@ -87,7 +87,7 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
     - depends on: ds9-16–ds9-23, ds9-4  
   - [ ] [ds9-29 · 8.2 Add Unit/Component Tests for LCARS Components](#82-ds9-29-add-unitcomponent-tests-for-lcars-components)  
     - depends on: ds9-16–ds9-23  
-  - [ ] [ds9-30 · 8.3 Add Minimal E2E Coverage for Integration](#83-ds9-30-add-minimal-e2e-coverage-for-integration)  
+  - [x] [ds9-30 · 8.3 Add Minimal E2E Coverage for Integration](#83-ds9-30-add-minimal-e2e-coverage-for-integration)  
     - depends on: ds9-25, ds9-18, ds9-22  
 
 - 9. Cleanup & Deprecation  
