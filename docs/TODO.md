@@ -124,11 +124,11 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
 
 ### 2.1 [ds9-2] Extract LCARS CSS Variables into Library Stylesheet
 
-- **Title**: Extract LCARS design tokens into `src/lib/styles/lcars-tokens.css`  
+- **Title**: Extract LCARS design tokens into `components/src/lib/styles/lcars-tokens.css`  
 - **Description**:  
-  Move the `:root` design system section from `docs/index.html` into a dedicated library stylesheet (e.g., `src/lib/styles/lcars-tokens.css`). Keep exactly the same variable names and values, only adjusting to be library‑friendly (e.g., comments, grouping).
+  Move the `:root` design system section from `docs/index.html` into a dedicated library stylesheet (e.g., `components/src/lib/styles/lcars-tokens.css`). Keep exactly the same variable names and values, only adjusting to be library‑friendly (e.g., comments, grouping).
 - **Expectations**:  
-  - New file `src/lib/styles/lcars-tokens.css` containing:  
+  - New file `components/src/lib/styles/lcars-tokens.css` containing:  
     - All global `--lcars-*` and layout‑level tokens currently in `:root`.  
     - Existing comments kept or lightly clarified.  
   - `docs/index.html` updated to import this stylesheet (or reference built output) instead of redefining tokens inline.  
@@ -138,12 +138,13 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
 
 - **Title**: Extract LCARS theme variants from `body[data-theme=…]`  
 - **Description**:  
-  Move the `body[data-theme="laan" | "data" | "doctor" | "chapel" | "spock" | "seven" | "mbenga" | "shran"]` rules into a library stylesheet (e.g., `src/lib/styles/lcars-themes.css`) while preserving variable semantics (`--theme-main`, `--shape-color`, `--theme-secondary`).
+  Move the `body[data-theme="laan" | "data" | "doctor" | "chapel" | "spock" | "seven" | "mbenga" | "shran"]` rules into a library stylesheet (e.g., `components/src/lib/styles/lcars-themes.css`) while preserving variable semantics (`--theme-main`, `--shape-color`, `--theme-secondary`).
 - **Expectations**:  
-  - New file `src/lib/styles/lcars-themes.css` containing all theme rules, unchanged in behavior.  
+  - New file `components/src/lib/styles/lcars-themes.css` containing all theme rules, unchanged in behavior.  
   - Clear comments documenting each theme’s intended identity.  
   - `docs/index.html` updated to consume the extracted theme stylesheet.  
   - Theme switching still works via `data-theme`.
+  - Make sure not to break `dosc/index.html` (check if it renders and that theme switching works).
 
 ### 2.3 [ds9-4] Define Public Tokens API Contract
 
@@ -166,7 +167,7 @@ _Depends on: 2.1, 2.2_
 
 - **Title**: Extract LCARS app container styles into library CSS  
 - **Description**:  
-  Move `.lcars-app` and `.lcars-app--fullpage` styles from `docs/index.html` into a library stylesheet (e.g., `src/lib/styles/lcars-shell.css`). Keep the same grid layout, gap, padding, and color usage.
+  Move `.lcars-app` and `.lcars-app--fullpage` styles from `docs/index.html` into a library stylesheet (e.g., `components/src/lib/styles/lcars-shell.css`). Keep the same grid layout, gap, padding, and color usage.
 - **Expectations**:  
   - `.lcars-app` and `.lcars-app--fullpage` styles defined in a library CSS file.  
   - `docs/index.html` updated to use the shared CSS without behavior changes.  
@@ -326,7 +327,7 @@ _Depends on: 2.1, 4.1_
 
 - **Title**: Create Svelte `<LcarsShell>` layout component  
 - **Description**:  
-  Create a Svelte component (e.g., `src/lib/layout/LcarsShell.svelte`) that:  
+  Create a Svelte component (e.g., `components/src/lib/layout/LcarsShell.svelte`) that:  
   - Applies `.lcars-app` and optional `.lcars-app--fullpage`.  
   - Exposes snippet props for `header`, `sidebar`, and `children` (main content).  
   - Does not hardcode "ZANDER" or any app‑specific strings.
