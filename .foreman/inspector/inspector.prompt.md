@@ -64,7 +64,7 @@ Schema rules:
 ### Final Handoff Checklist
 - [ ] Do the Public Handoff – construct your public handoff message in the required format (`Summary`, `Checks run + results`, `Key issues`, `Public API & A11y`, `Next steps for Builder`).
 - [ ] Do the Foreman Handoff
-  - [ ] (CRITICAL) Write `inspector_result.json` to disk with EXACTLY one JSON object (`status`, `issues`, `next_tasks`).
+  - [ ] (CRITICAL) Write `inspector_result.json` (to the root folder) to disk with EXACTLY one JSON object (`status`, `issues`, `next_tasks`).
   - [ ] Run `validate_inspector_result` and fix any reported issues.
 
 CRITICAL: No matter what, you MUST always write `inspector_result.json` with your best available `status`, `issues`, and `next_tasks`. Even if you are blocked or cannot perform a full review, you MUST still execute
@@ -76,11 +76,11 @@ This is your review checklist. Follow it in order when possible:
 - [ ] Read and parse `builder_result.json` (summary + complexity).
 - [ ] Read `inspector_diff.patch` if present, or compute the diff via `git diff`.
 - [ ] Examine the workspace code and git state relevant to the task.
-- [ ] If dependencies are missing, run `pnpm install` (from `components/`).
-- [ ] Run `pnpm lint` (from `components/`) and record whether it passes or fails.
-- [ ] Run `pnpm check` (from `components/`) and record whether it passes or fails.
-- [ ] Run `pnpm test:unit` (from `components/`) (or broader `pnpm test` when appropriate) and record results.
-- [ ] Run `pnpm prepack` (from `components/`) when packaging changes are involved and record results.
+- [ ] If dependencies are missing, run `pnpm install` (from `./components/`).
+- [ ] Run `pnpm lint` (from `./components/`) and record whether it passes or fails.
+- [ ] Run `pnpm check` (from `./components/`) and record whether it passes or fails.
+- [ ] Run `pnpm test:unit` (from `./components/`) (or broader `pnpm test` when appropriate) and record results.
+- [ ] Run `pnpm prepack` (from `./components/`) when packaging changes are involved and record results.
 - [ ] Analyze findings and deviations against `AGENTS.md` and `REVIEW_RULEBOOK.md`.
 - [ ] (CRITICAL) (MANDATORY) Execute the "Final Handoff Procedure".
 - [ ] Report on your work by printing out this checklist. Use the below legend to mark the items:
