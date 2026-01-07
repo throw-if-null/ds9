@@ -13,6 +13,9 @@ This is your review checklist. Follow it in order when possible:
 - [ ] (MANDATORY) Read and understand 'builder_result.json' (summary + complexity)
 - [ ] (MANDATORY) Examine the diff ('inspector_diff.patch' or 'git diff') and the updated code
 - [ ] (MANDATORY) Run 'pnpm install' ('./components') if dependencies are missing
+      - If 'pnpm install' cannot run (for example due to network restrictions), treat it as a hard failure:
+        - write `inspector_result.json` with `run.status = "failed"`, `run.failed_step = "pnpm install"`, `run.error` set to the exact error output, and `work = null`
+        - then proceed to the Final Handoff Procedure so Foreman can stop safely.
 - [ ] (MANDATORY) Run 'pnpm lint' ('./components') and record whether it passes or fails
 - [ ] (MANDATORY) Run 'pnpm check' ('./components') and record whether it passes or fails
 - [ ] (MANDATORY) Run 'pnpm test:unit' (or broader 'pnpm test' when appropriate) ('./components') and record results

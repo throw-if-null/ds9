@@ -141,7 +141,7 @@
     },
     {
       "parameters": {
-        "command": "= REPORT_FILE=\".foreman/inspector/failures/{{ $('Initialize Variables').first().json.task_id }}_report.json\"\n    mkdir -p ./failures\n    # Write the full inspector decision to the file\n    echo '{{ JSON.stringify($json) }}' > \"$REPORT_FILE\"\n    # Also cleanup the worktree so we don't leave mess behind?\n    # Optional: git worktree remove ..."
+        "command": "=TASK_ID=\"{{ $('Initialize Variables').first().json.task_id }}\"\n\nWHO=\"builder\"\nif [ \"{{ $json.data.work.status || '' }}\" != \"\" ]; then\n  WHO=\"inspector\"\nfi\n\nREPORT_DIR=\".foreman/failures/$WHO\"\nREPORT_FILE=\"$REPORT_DIR/${TASK_ID}_report.json\"\nmkdir -p \"$REPORT_DIR\"\n\nREASON=\"unknown\"\nif [ \"{{ $json.status }}\" != \"valid\" ]; then\n  REASON=\"result_invalid\"\nelif [ \"{{ $json.data.run.status }}\" != \"ok\" ]; then\n  REASON=\"run_failed\"\nelif [ \"{{ $json.data.work.status || '' }}\" != \"approved\" ]; then\n  REASON=\"changes_requested\"\nelse\n  REASON=\"unexpected\"\nfi\n\nFOREMAN_STATUS=\"{{ $json.status }}\" \\\nFOREMAN_REASON=\"$REASON\" \\\nFOREMAN_RAW_JSON='{{ JSON.stringify($json) }}' \\\npython3 - <<'PY' > \"$REPORT_FILE\"\nimport json\nimport os\n\nstatus = os.environ.get('FOREMAN_STATUS')\nreason = os.environ.get('FOREMAN_REASON')\nraw = os.environ.get('FOREMAN_RAW_JSON')\n\ntry:\n    payload = json.loads(raw)\nexcept Exception:\n    payload = None\n\ndata = (payload.get('data') if isinstance(payload, dict) else None) or {}\n\nout = {\n    'status': status,\n    'reason': reason,\n    'errors': (payload.get('errors') if isinstance(payload, dict) else None),\n    'data': {\n        'run': data.get('run'),\n        'work': data.get('work'),\n    },\n}\nprint(json.dumps(out, ensure_ascii=False))\nPY"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -161,8 +161,18 @@
           "conditions": [
             {
               "id": "90ec06b4-7f79-490b-8459-b93dddfcad09",
-              "leftValue": "={{ $json.verdict }}",
-              "rightValue": "approved",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "valid",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "2e9ba515-993c-4378-a68f-b6ff997fa2cc",
+              "leftValue": "={{ $json.data.run.status }}",
+              "rightValue": "ok",
               "operator": {
                 "type": "string",
                 "operation": "equals",
@@ -192,7 +202,27 @@
           "conditions": [
             {
               "id": "e4238de8-6dfb-4cf6-b62b-1b4df22407eb",
-              "leftValue": "={{ $json.verdict }}",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "valid",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "0a71aede-43b0-4f73-9570-798181800b51",
+              "leftValue": "={{ $json.data.run.status }}",
+              "rightValue": "ok",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "ebce3b67-55cd-4285-a8a6-6c6c5758a8f0",
+              "leftValue": "={{ $json.data.work.status }}",
               "rightValue": "approved",
               "operator": {
                 "type": "string",

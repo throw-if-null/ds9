@@ -43,10 +43,21 @@ You MUST write a JSON file named `builder_result.json` in the repository root.
 The file MUST contain EXACTLY one JSON object with this schema:
 ```json
 {
-  "summary": "short natural-language summary of the implementation",
-  "complexity": "low" | "medium" | "high"
+  "run": {
+    "status": "ok" | "failed",
+    "failed_step": "..." | null,
+    "error": "..." | null
+  },
+  "work": {
+    "summary": "short natural-language summary of the implementation",
+    "complexity": "low" | "medium" | "high"
+  } | null
 }
 ```
+
+Rules:
+- If `run.status` is `ok`, `work` MUST be an object.
+- If `run.status` is `failed`, `work` MUST be `null`.
 
 When deciding upon `complexity` use this as a guideline:
 - `complexity = low`: trivial or very small, fully localized change, or docs-only.
@@ -54,7 +65,7 @@ When deciding upon `complexity` use this as a guideline:
 - `complexity = high`: public API changes, cross-cutting behavior, or significant runes/infra changes.
 
 Make sure to:
-- ALWAYS run `pnpm validate:builder-result` after writing `builder_result.json` and fix any reported issues before considering your work ready for review.
+- Run `validate_builder_result` (in-process tool) after writing `builder_result.json` and fix any reported issues before considering your work ready for review.
 
 ### Final Handoff Checklist [MANDATORY]
 - [ ] Do the 'Public Handoff' - Construct your public handoff message in the required format (`Summary`, `Files touched`, `Commands run + results`, `Public API impact`, `A11y considerations`, `Risks / follow-ups`)
@@ -72,13 +83,25 @@ This is your implementation checklist. Follow in order when possible:
 - [ ] Identify the files and modules likely involved in the change
 - [ ] Implement the required changes with minimal, focused diffs
 - [ ] Update or add tests for any new or changed behavior (Vitest/Playwright as appropriate)
-- [ ] Run `pnpm install` (from `components/`) if dependencies are missing
+- [ ] Run `pnpm install` (from `components/`) if dependencies are missing.
+      If `pnpm install` cannot run (for example due to network restrictions), this is a hard failure:
+        - Set `run.status = "failed"`
+        - Set `run.failed_step = "pnpm install"`
+        - Set `run.error` to the exact error output
+        - Set `work = null`
+      Then proceed to the "Final Handoff Procedure" so Foreman can stop safely.
 - [ ] Run `pnpm lint` and when needed `pnpm format` (from `components/`) and record whether it passes or fails
 - [ ] Run `pnpm check` (from `components/`) and record whether it passes or fails
 - [ ] Run `pnpm test:unit` (from `components/`) (or broader `pnpm test` when appropriate) and record results
 - [ ] Run `pnpm prepack` (from `components/`) when packaging changes are involved and record results
 - [ ] Prepare the Git state: stage all relevant files with `git add` so that `git diff main...HEAD` reflects the full change
-- [ ] Create a local commit with a clear, concise message when possible; if `git commit` fails or is disallowed, leave changes staged and capture the error
+- [ ] Create a local commit with a clear, concise message.
+      If `git commit` fails for any reason, treat it as a hard failure (Foreman depends on the commit for `git diff HEAD...main`):
+        - Set `run.status = "failed"`
+        - Set `run.failed_step = "git commit"`
+        - Set `run.error` to the exact error output
+        - Set `work = null`
+      Then proceed to the "Final Handoff Procedure" so Foreman can stop safely.
 - [ ] (CRITICAL) (MANDATORY) Execute the 'Final Handoff Procedure'
 - [ ] Report on your work by printing out this checklist. Use the below legend to mark the items:
   - [ + ] - completed items 

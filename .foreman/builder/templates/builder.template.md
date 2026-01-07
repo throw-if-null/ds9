@@ -45,10 +45,21 @@ You MUST write a JSON file named `builder_result.json` in the repository root.
 The file MUST contain EXACTLY one JSON object with this schema:
 ```json
 {
-  "summary": "short natural-language summary of the implementation",
-  "complexity": "low" | "medium" | "high"
+  "run": {
+    "status": "ok" | "failed",
+    "failed_step": "..." | null,
+    "error": "..." | null
+  },
+  "work": {
+    "summary": "short natural-language summary of the implementation",
+    "complexity": "low" | "medium" | "high"
+  } | null
 }
 ```
+
+Rules:
+- If `run.status` is `ok`, `work` MUST be an object.
+- If `run.status` is `failed`, `work` MUST be `null`.
 
 When deciding upon `complexity` use this as a guideline:
 - `complexity = low`: trivial or very small, fully localized change, or docs-only.
@@ -56,13 +67,13 @@ When deciding upon `complexity` use this as a guideline:
 - `complexity = high`: public API changes, cross-cutting behavior, or significant runes/infra changes.
 
 Make sure to:
-- ALWAYS run `pnpm validate:builder-result` after writing `builder_result.json` and fix any reported issues before considering your work ready for review.
+- Run `validate_builder_result` (in-process tool) after writing `builder_result.json` and fix any reported issues before considering your work ready for review.
 
 ### Final Handoff Checklist
 - [ ] Do the 'Public Handoff' - Construct your public handoff message in the required format (`Summary`, `Files touched`, `Commands run + results`, `Public API impact`, `A11y considerations`, `Risks / follow-ups`)
 - [ ] Do the 'Inspector Handoff'
   - [ ] (CRITICAL) Write `builder_result.json` to disk with EXACTLY one JSON object (`summary`, `complexity`)
-  - [ ] Run `pnpm validate:builder-result` and fix any reported issues
+  - [ ] Run `validate_builder_result` (in process tool) and fix any reported issues
 - [ ] (OPTIONAL) Write a final message if you have anything you feel you should share.
 
 CRITICAL no matter what ALWAYS do the "Write 'builder_result.json' to disk. That file is CRITICAL for the Foreman to operate.

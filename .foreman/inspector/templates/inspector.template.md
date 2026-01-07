@@ -47,12 +47,23 @@ Output file (STRICT JSON ONLY):
 - The file MUST contain EXACTLY one JSON object and nothing else. The object
   MUST match this schema:
 {
-  "status": "approved" | "changes_requested",
-  "issues": [
-    { "severity": "blocker" | "major" | "minor", "description": "...", "paths": ["..."] }
-  ],
-  "next_tasks": ["..."]
+  "run": {
+    "status": "ok" | "failed",
+    "failed_step": "..." | null,
+    "error": "..." | null
+  },
+  "work": {
+    "status": "approved" | "changes_requested",
+    "issues": [
+      { "severity": "blocker" | "major" | "minor", "description": "...", "paths": ["..."] }
+    ],
+    "next_tasks": ["..."]
+  } | null
 }
+
+Rules:
+- If `run.status` is `ok`, `work` MUST be an object.
+- If `run.status` is `failed`, `work` MUST be `null`.
 
 - If `status` is `approved`, `issues` may be an empty array and `next_tasks` may
   be empty.

@@ -40,8 +40,16 @@ These tools are generic and language‑agnostic. Implementations may vary (Pytho
 
 - Semantic contract (validators should enforce):
   - Root is a JSON object.
-  - `summary`: non‑empty string (recommend max length 300 characters).
-  - `complexity`: one of `"low"`, `"medium"`, `"high"`.
+  - `run`: object
+    - `status`: `"ok" | "failed"`
+    - `failed_step`: string or null
+    - `error`: string or null
+  - `work`:
+    - If `run.status === "ok"`: object with:
+      - `summary`: non-empty string (recommend max length 300 characters)
+      - `complexity`: one of `"low"`, `"medium"`, `"high"`
+    - If `run.status === "failed"`: must be `null`
+
 
 - Exit codes:
   - `0`: tool ran successfully (whether `ok` is true or false).
@@ -60,13 +68,21 @@ These tools are generic and language‑agnostic. Implementations may vary (Pytho
 
 - Semantic contract (validators should enforce):
   - Root is a JSON object.
-  - `status`: either `"approved"` or `"changes_requested"`.
-  - `issues`: array; when `status === "changes_requested"` it must be non‑empty.
-    - Each issue must be an object:
-      - `severity`: `"blocker" | "major" | "minor"`.
-      - `description`: non‑empty string.
-      - `paths`: non‑empty array of non‑empty strings (file/path references; consumers may use their own conventions).
-  - `next_tasks`: array of strings (may be empty for `approved`).
+  - `run`: object
+    - `status`: `"ok" | "failed"`
+    - `failed_step`: string or null
+    - `error`: string or null
+  - `work`:
+    - If `run.status === "ok"`: object with:
+      - `status`: either `"approved"` or `"changes_requested"`
+      - `issues`: array; when `status === "changes_requested"` it must be non-empty
+        - Each issue must be an object:
+          - `severity`: `"blocker" | "major" | "minor"`
+          - `description`: non-empty string
+          - `paths`: non-empty array of non-empty strings
+      - `next_tasks`: array of strings (may be empty for `approved`)
+    - If `run.status === "failed"`: must be `null`
+
 
 - Exit codes: same semantics as `validate_builder_result`.
 
@@ -158,6 +174,19 @@ Foreman defines (conceptual) skills that orchestrate the tools above. These live
 When implemented, skills should be packaged and documented so agent runtimes can discover them (for example, under an `.opencode/skill/` directory in the Foreman repo when extracted).
 
 ---
+
+## Orchestration semantics (hard failures)
+
+Foreman is designed to treat certain infrastructure failures as **hard stops** so downstream steps do not run on incomplete or inconsistent state.
+
+- When a Builder or Inspector reports `run.status = "failed"`:
+  - Foreman MUST stop the automation run.
+  - Foreman MUST NOT attempt to create diffs, run Inspector, or open PRs.
+  - A human can inspect the failed session output/logs, fix the underlying issue, and then re-run only the appropriate part of the workflow.
+
+Common hard-failure examples:
+- `run.failed_step = "pnpm install"`: dependencies could not be installed (often network restrictions). The agent should include exact error output in `run.error`.
+- `run.failed_step = "git commit"`: a local commit could not be created, which breaks downstream diff/PR logic.
 
 ## Documentation & consumer wiring
 

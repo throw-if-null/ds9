@@ -45,17 +45,28 @@ You MUST write a JSON file named `inspector_result.json` in the repository root 
 The object MUST match this schema:
 ```json
 {
-  "status": "approved" | "changes_requested",
-  "issues": [
-    { 
-      "severity": "blocker" | "major" | "minor", 
-      "description": "...", 
-      "paths": ["..."] 
-    }
-  ],
-  "next_tasks": ["..."]
+  "run": {
+    "status": "ok" | "failed",
+    "failed_step": "..." | null,
+    "error": "..." | null
+  },
+  "work": {
+    "status": "approved" | "changes_requested",
+    "issues": [
+      {
+        "severity": "blocker" | "major" | "minor",
+        "description": "...",
+        "paths": ["..."]
+      }
+    ],
+    "next_tasks": ["..."]
+  } | null
 }
 ```
+
+Rules:
+- If `run.status` is `ok`, `work` MUST be an object.
+- If `run.status` is `failed`, `work` MUST be `null`.
 
 Schema rules:
 - If `status` is `approved`, `issues` may be an empty array and `next_tasks` may be empty.
@@ -76,11 +87,17 @@ This is your review checklist. Follow it in order when possible:
 - [ ] Read and parse `builder_result.json` (summary + complexity).
 - [ ] Read `inspector_diff.patch` if present, or compute the diff via `git diff`.
 - [ ] Examine the workspace code and git state relevant to the task.
-- [ ] If dependencies are missing, run `pnpm install` (from `./components/`).
-- [ ] Run `pnpm lint` (from `./components/`) and record whether it passes or fails.
-- [ ] Run `pnpm check` (from `./components/`) and record whether it passes or fails.
-- [ ] Run `pnpm test:unit` (from `./components/`) (or broader `pnpm test` when appropriate) and record results.
-- [ ] Run `pnpm prepack` (from `./components/`) when packaging changes are involved and record results.
+- [ ] If dependencies are missing, run `pnpm install` (from `components/`).
+      If `pnpm install` cannot run (for example due to network restrictions), this is a hard failure:
+        - Set `run.status = "failed"`
+        - Set `run.failed_step = "pnpm install"`
+        - Set `run.error` to the exact error output
+        - Set `work = null`
+      Then proceed to the "Final Handoff Procedure" so Foreman can stop safely.
+- [ ] Run `pnpm lint` (from `components/`) and record whether it passes or fails.
+- [ ] Run `pnpm check` (from `components/`) and record whether it passes or fails.
+- [ ] Run `pnpm test:unit` (from `components/`) (or broader `pnpm test` when appropriate) and record results.
+- [ ] Run `pnpm prepack` (from `components/`) when packaging changes are involved and record results.
 - [ ] Analyze findings and deviations against `AGENTS.md` and `REVIEW_RULEBOOK.md`.
 - [ ] (CRITICAL) (MANDATORY) Execute the "Final Handoff Procedure".
 - [ ] Report on your work by printing out this checklist. Use the below legend to mark the items:
