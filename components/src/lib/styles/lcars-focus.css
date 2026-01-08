@@ -1,0 +1,62 @@
+/* LCARS Focus System
+   Centralized focus styles and variables for the LCARS design system.
+
+   Scope & accessibility rationale:
+   - Variables are defined here so themes can still override colors on `body` or via
+     theme files while keeping a consistent focus system.
+   - Focus outlines use a 3px width by default which provides strong contrast and a
+     large hit target for keyboard users. Outline is used (instead of box-shadow)
+     to avoid blurry or clipped shadows when elements are near overflow boundaries.
+   - Styles are intentionally scoped to `.lcars-app` and `.lcars-dialog-container`
+     (and a helper class `.lcars-focus-outline`) so the focus styles do not leak
+     into host pages when the LCARS stylesheet is embedded.
+   - We use `:focus-visible` to avoid showing focus styles on mouse interactions,
+     improving the visual experience while keeping keyboard accessibility intact.
+
+   Public variables (can be overridden by theme files or consumer):
+   - --lcars-focus-outline-width
+   - --lcars-focus-outline-color
+   - --lcars-focus-outline-offset
+*/
+
+:root {
+	/* Sensible defaults; themes may override these on `body[data-theme]` */
+	--lcars-focus-outline-width: 3px;
+	--lcars-focus-outline-color: var(--lcars-white, #ffffff);
+	--lcars-focus-outline-offset: 2px;
+}
+
+/* Default focus style for interactive elements within LCARS app and dialogs */
+.lcars-app :focus-visible,
+.lcars-dialog-container :focus-visible {
+	outline: var(--lcars-focus-outline-width) solid var(--lcars-focus-outline-color);
+	outline-offset: var(--lcars-focus-outline-offset);
+	box-shadow: none;
+}
+
+/* Explicit helper class for outline focus (same as default, for clarity) */
+.lcars-focus-outline:focus-visible {
+	outline: var(--lcars-focus-outline-width) solid var(--lcars-focus-outline-color);
+	outline-offset: var(--lcars-focus-outline-offset);
+}
+
+/* Specific components that rely on outline focus */
+.lcars-pill:focus-visible,
+.lcars-input:focus-visible,
+.lcars-select:focus-visible,
+.lcars-textarea:focus-visible,
+.category-config-btn:focus-visible {
+	outline: var(--lcars-focus-outline-width) solid var(--lcars-focus-outline-color);
+	outline-offset: var(--lcars-focus-outline-offset);
+}
+
+/* Special-case: arrow buttons in shell use a negative offset so the outline visually
+   hugs the control without increasing perceived size.
+   Keep this here since it's a shell primitive used by components in the library. */
+.lcars-arrow-btn:focus-visible {
+	outline: var(--lcars-focus-outline-width) solid var(--lcars-focus-outline-color);
+	outline-offset: calc(-1 * var(--lcars-focus-outline-width));
+	background-color: var(--lcars-arrow-btn-bg-focus, var(--shape-color));
+}
+
+/* Export nothing else: this file is purely styling and safe for SSR */

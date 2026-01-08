@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="../src/lib/styles/lcars-tokens.css" />
         <link rel="stylesheet" href="../src/lib/styles/lcars-themes.css" />
         <link rel="stylesheet" href="../src/lib/styles/lcars-shell.css" />
+        <link rel="stylesheet" href="../src/lib/styles/lcars-focus.css" />
         <style>
             /* LCARS design tokens moved to src/lib/styles/lcars-tokens.css */
 
@@ -35,38 +36,7 @@
                 box-sizing: border-box;
             }
 
-            /* ==============================================
-               FOCUS SYSTEM
-               Unified to 3px for strong a11y contrast
-               Scoped to .lcars-app and dialogs to avoid leaking into host pages
-               ============================================== */
 
-            /* Default focus style for interactive elements within LCARS app and dialogs */
-            .lcars-app :focus-visible,
-            .lcars-dialog-container :focus-visible {
-                outline: var(--lcars-focus-outline-width) solid
-                    var(--lcars-focus-outline-color);
-                outline-offset: var(--lcars-focus-outline-offset);
-                box-shadow: none;
-            }
-
-            /* Explicit helper class for outline focus (same as default, for clarity) */
-            .lcars-focus-outline:focus-visible {
-                outline: var(--lcars-focus-outline-width) solid
-                    var(--lcars-focus-outline-color);
-                outline-offset: var(--lcars-focus-outline-offset);
-            }
-
-            /* Pill buttons, inputs, and config buttons use outline focus */
-            .lcars-pill:focus-visible,
-            .lcars-input:focus-visible,
-            .lcars-select:focus-visible,
-            .lcars-textarea:focus-visible,
-            .category-config-btn:focus-visible {
-                outline: var(--lcars-focus-outline-width) solid
-                    var(--lcars-focus-outline-color);
-                outline-offset: var(--lcars-focus-outline-offset);
-            }
 
             /* ==============================================
                BODY: Theme Variables
