@@ -16,10 +16,12 @@ This is your review checklist. Follow it in order when possible:
       - If 'pnpm install' cannot run (for example due to network restrictions), treat it as a hard failure:
         - write `inspector_result.json` with `run.status = "failed"`, `run.failed_step = "pnpm install"`, `run.error` set to the exact error output, and `work = null`
         - then proceed to the Final Handoff Procedure so Foreman can stop safely.
-- [ ] (MANDATORY) Run 'pnpm lint' ('./components') and record whether it passes or fails
-- [ ] (MANDATORY) Run 'pnpm check' ('./components') and record whether it passes or fails
-- [ ] (MANDATORY) Run 'pnpm test:unit' (or broader 'pnpm test' when appropriate) ('./components') and record results
-- [ ] (OPTIONAL) Run 'pnpm prepack' ('./components') when packaging changes are involved and record results
+- [ ] (MANDATORY) Run `pnpm lint` (`components/`) and record pass/fail
+      - If it fails due to formatting (Prettier), you MAY run `pnpm format` (`components/`) and then re-run `pnpm lint`.
+- [ ] (MANDATORY) Run `pnpm check` (`components/`) and record pass/fail
+- [ ] (MANDATORY) Run `pnpm test:unit` (or broader `pnpm test` when appropriate) (`components/`) and record pass/fail
+- [ ] (OPTIONAL) Run `pnpm prepack` (`components/`) when packaging changes are involved and record pass/fail
+      - If you are unsure whether packaging is involved, run it.
 - [ ] (MANDATORY) Review the changes against 'AGENTS.md' and 'REVIEW_RULEBOOK.md':
       correctness, accessibility, Svelte 5/runes rules, public API stability, tests, and docs
 - [ ] (MANDATORY) Decide whether the change is acceptable or if changes are required

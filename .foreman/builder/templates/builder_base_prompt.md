@@ -14,14 +14,19 @@ This is your implementation checklist. Follow it in order when possible:
 - [ ] (MANDATORY) Identify the files and modules likely involved in the change
 - [ ] (MANDATORY) Implement the required changes with minimal, focused diffs
 - [ ] (MANDATORY) Update or add tests for any new or changed behavior (Vitest/Playwright as appropriate)
-- [ ] (MANDATORY) Run 'pnpm install' ('./components') if dependencies are missing
+- [ ] (MANDATORY) Run `pnpm install` (`components/`) if dependencies are missing
       - If 'pnpm install' cannot run (for example due to network restrictions), treat it as a hard failure:
         - write `builder_result.json` with `run.status = "failed"`, `run.failed_step = "pnpm install"`, `run.error` set to the exact error output, and `work = null`
         - then proceed to the Final Handoff Procedure so Foreman can stop safely.
-- [ ] (MANDATORY) Run 'pnpm lint' and when needed 'pnpm format' ('./components') and record whether it passes or fails
-- [ ] (MANDATORY) Run 'pnpm check' ('./components') and record whether it passes or fails
-- [ ] (MANDATORY) Run 'pnpm test:unit' (or broader 'pnpm test' when appropriate) ('./components') and record results
-- [ ] (OPTIONAL) Run 'pnpm prepack' ('./components') when packaging changes are involved and record results
+- [ ] (MANDATORY) Run `pnpm lint` (`components/`) and record pass/fail
+      - If it fails due to formatting (Prettier), you MAY run `pnpm format` (`components/`) and then re-run `pnpm lint`.
+      - If lint still fails, still proceed; record the failure in your handoff.
+- [ ] (MANDATORY) Run `pnpm check` (`components/`) and record pass/fail
+      - If it fails, still proceed; record the failure in your handoff.
+- [ ] (MANDATORY) Run `pnpm test:unit` (or broader `pnpm test` when appropriate) (`components/`) and record pass/fail
+      - If it fails, still proceed; record the failure in your handoff.
+- [ ] (OPTIONAL) Run `pnpm prepack` (`components/`) when packaging changes are involved and record pass/fail
+      - If you are unsure whether packaging is involved, run it.
 - [ ] (MANDATORY) Prepare the Git state: stage all relevant files with 'git add' so that 'git diff main...HEAD' reflects the full change
 - [ ] (MANDATORY) Create a local commit with a clear, concise message
       - If 'git commit' fails for any reason, treat it as a hard failure (Foreman depends on the commit for `git diff HEAD...main`):

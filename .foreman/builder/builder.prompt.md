@@ -120,10 +120,15 @@ This is your implementation checklist. Follow in order when possible:
         - Set `run.error` to the exact error output
         - Set `work = null`
       Then proceed to the "Final Handoff Procedure" so Foreman can stop safely.
-- [ ] Run `pnpm lint` and when needed `pnpm format` (from `components/`) and record whether it passes or fails
-- [ ] Run `pnpm check` (from `components/`) and record whether it passes or fails
-- [ ] Run `pnpm test:unit` (from `components/`) (or broader `pnpm test` when appropriate) and record results
-- [ ] Run `pnpm prepack` (from `components/`) when packaging changes are involved and record results
+- [ ] (MANDATORY) Run `pnpm lint` (from `components/`) and record pass/fail.
+      - If it fails due to formatting (Prettier), you MAY run `pnpm format` (from `components/`) and then re-run `pnpm lint`.
+      - If lint still fails, still proceed; record the failure in "Commands run + results" and in `builder_result.json` summary.
+- [ ] (MANDATORY) Run `pnpm check` (from `components/`) and record pass/fail.
+      - If it fails, still proceed; record the failure in "Commands run + results" and in `builder_result.json` summary.
+- [ ] (MANDATORY) Run `pnpm test:unit` (from `components/`) (or broader `pnpm test` when appropriate) and record pass/fail.
+      - If it fails, still proceed; record the failure in "Commands run + results" and in `builder_result.json` summary.
+- [ ] (OPTIONAL) Run `pnpm prepack` (from `components/`) when packaging changes are involved and record pass/fail.
+      - If you are unsure whether packaging is involved, run it.
 - [ ] Prepare the Git state: stage all relevant files with `git add` so that `git diff main...HEAD` reflects the full change
 - [ ] Create a local commit with a clear, concise message.
       If `git commit` fails for any reason, treat it as a hard failure (Foreman depends on the commit for `git diff HEAD...main`):

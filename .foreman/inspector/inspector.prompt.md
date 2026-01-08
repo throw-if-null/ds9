@@ -135,10 +135,12 @@ This is your review checklist. Follow it in order when possible:
         - Set `run.error` to the exact error output
         - Set `work = null`
       Then proceed to the "Final Handoff Procedure" so Foreman can stop safely.
-- [ ] Run `pnpm lint` (from `components/`) and record whether it passes or fails.
-- [ ] Run `pnpm check` (from `components/`) and record whether it passes or fails.
-- [ ] Run `pnpm test:unit` (from `components/`) (or broader `pnpm test` when appropriate) and record results.
-- [ ] Run `pnpm prepack` (from `components/`) when packaging changes are involved and record results.
+- [ ] (MANDATORY) Run `pnpm lint` (from `components/`) and record pass/fail.
+      - If it fails due to formatting (Prettier), you MAY run `pnpm format` (from `components/`) and then re-run `pnpm lint`.
+- [ ] (MANDATORY) Run `pnpm check` (from `components/`) and record pass/fail.
+- [ ] (MANDATORY) Run `pnpm test:unit` (from `components/`) (or broader `pnpm test` when appropriate) and record pass/fail.
+- [ ] (OPTIONAL) Run `pnpm prepack` (from `components/`) when packaging changes are involved and record pass/fail.
+      - If you are unsure whether packaging is involved, run it.
 - [ ] Analyze findings and deviations against `AGENTS.md` and `REVIEW_RULEBOOK.md`.
 - [ ] (CRITICAL) (MANDATORY) Execute the "Final Handoff Procedure".
 

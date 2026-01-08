@@ -115,12 +115,13 @@ This is you implementation checklist. Follow in order when possible:
 - [ ] Identify the files and modules likely involved in the change
 - [ ] Implement the required changes with minimal, focused diffs
 - [ ] Update or add tests for any new or changed behavior (Vitest/Playwright as appropriate)
-<!-- Update these according to you tech stack and needs
-- [ ] Run `pnpm install` if dependencies are missing
-- [ ] Run `pnpm lint` and record whether it passes or fails
-- [ ] Run `pnpm check` and record whether it passes or fails
-- [ ] Run `pnpm test:unit` (or broader `pnpm test` when appropriate) and record results
-- [ ] Run `pnpm prepack` when packaging changes are involved and record results
+<!-- Update these according to your tech stack and needs
+- [ ] (MANDATORY) Run `pnpm install` if dependencies are missing
+- [ ] (MANDATORY) Run `pnpm lint` and record pass/fail
+- [ ] (MANDATORY) Run `pnpm check` and record pass/fail
+- [ ] (MANDATORY) Run `pnpm test:unit` (or broader `pnpm test` when appropriate) and record pass/fail
+- [ ] (OPTIONAL) Run `pnpm prepack` when packaging changes are involved and record pass/fail
+      - If you are unsure whether packaging is involved, run it.
 -->  
 - [ ] Prepare the Git state: stage all relevant files with `git add` so that `git diff main...HEAD` reflects the full change
 - [ ] Create a local commit with a clear, concise message.
