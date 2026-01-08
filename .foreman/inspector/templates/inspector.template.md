@@ -65,6 +65,40 @@ Rules:
 - If `run.status` is `ok`, `work` MUST be an object.
 - If `run.status` is `failed`, `work` MUST be `null`.
 
+Example `inspector_result.json` (approved):
+```json
+{
+  "run": { "status": "ok", "failed_step": null, "error": null },
+  "work": { "status": "approved", "issues": [], "next_tasks": [] }
+}
+```
+
+Example `inspector_result.json` (changes requested):
+```json
+{
+  "run": { "status": "ok", "failed_step": null, "error": null },
+  "work": {
+    "status": "changes_requested",
+    "issues": [
+      { "severity": "major", "description": "<describe issue>", "paths": ["<path>"] }
+    ],
+    "next_tasks": ["<explicit follow-up task>"]
+  }
+}
+```
+
+Example `inspector_result.json` (hard failure):
+```json
+{
+  "run": {
+    "status": "failed",
+    "failed_step": "pnpm install",
+    "error": "<paste exact error output here>"
+  },
+  "work": null
+}
+```
+
 - If `status` is `approved`, `issues` may be an empty array and `next_tasks` may
   be empty.
 - If `status` is `changes_requested`, `issues` must list the problems and

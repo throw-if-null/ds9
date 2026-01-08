@@ -62,6 +62,26 @@ Rules:
 - If `run.status` is `ok`, `work` MUST be an object.
 - If `run.status` is `failed`, `work` MUST be `null`.
 
+Example `builder_result.json` (success):
+```json
+{
+  "run": { "status": "ok", "failed_step": null, "error": null },
+  "work": { "summary": "Extract shell CSS primitives", "complexity": "low" }
+}
+```
+
+Example `builder_result.json` (hard failure):
+```json
+{
+  "run": {
+    "status": "failed",
+    "failed_step": "pnpm install",
+    "error": "<paste exact error output here>"
+  },
+  "work": null
+}
+```
+
 When deciding upon `complexity` use this as a guideline:
 - `complexity = low`: trivial or very small, fully localized change, or docs-only.
 - `complexity = medium`: non-trivial logic but limited blast radius.
