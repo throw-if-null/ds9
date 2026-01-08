@@ -36,6 +36,11 @@ def remove_inspector_artifacts(worktree: str) -> None:
       run(f"git rm --cached {filename} || true", cwd=worktree)
 
 
+def remove_session_log_artifacts(worktree: str) -> None:
+  # Keep logs on disk, but never include them in commits/PRs.
+  run("git rm -r --cached session_log || true", cwd=worktree)
+
+
 def update_todo(task_id: str, repo_root: str) -> None:
   todo_path = os.path.join(repo_root, "docs", "TODO.md")
   if not os.path.exists(todo_path):
@@ -66,9 +71,10 @@ def main() -> None:
 
   repo_root = os.getcwd()
  
-  # 1) Remove builder_result.json and inspector artifacts from PR
+  # 1) Remove result artifacts from PR
   remove_builder_result(args.worktree)
   remove_inspector_artifacts(args.worktree)
+  remove_session_log_artifacts(args.worktree)
  
   # 2) Update docs/TODO.md marking task as completed inside the worktree
   update_todo(args.task_id, args.worktree)
