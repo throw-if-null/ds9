@@ -70,7 +70,14 @@ When deciding upon `complexity` use this as a guideline:
 - `complexity = high`: public API changes, cross-cutting behavior, or significant runes/infra changes.
 
 Make sure to:
-- Run `validate_builder_result` (in-process tool) after writing `builder_result.json` and fix any reported issues before considering your work ready for review.
+- Run `validate_builder_result` (in-process tool) after writing `builder_result.json`.
+- If `validate_builder_result` reports issues, fix `builder_result.json` and re-run validation until it passes.
+- If the validator tool itself cannot be executed (tool missing/unavailable), treat it like any other hard failure:
+  - Set `run.status = "failed"`
+  - Set `run.failed_step = "validate_builder_result"`
+  - Set `run.error` to the exact error output
+  - Set `work = null`
+  Then proceed to the "Final Handoff Procedure" so Foreman can stop safely.
 
 ### Final Handoff Checklist
 - [ ] Do the 'Public Handoff' - Construct your public handoff message in the required format (`Summary`, `Files touched`, `Commands run + results`, `Public API impact`, `A11y considerations`, `Risks / follow-ups`)

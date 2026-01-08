@@ -29,4 +29,6 @@ This is your implementation checklist. Follow it in order when possible:
         - then proceed to the Final Handoff Procedure so Foreman can stop safely.
 - [ ] (CRITICAL) (MANDATORY) Execute the 'Final Handoff Procedure'
 
-(CRITICAL) No matter what happens ALWAYS save the 'builder_result.json' and validated it with 'validate_builder_result' (in process) tool.
+(CRITICAL) No matter what happens ALWAYS write `builder_result.json` and validate it with `validate_builder_result` (in-process tool).
+- If the validator reports issues: fix the JSON and re-run until it passes.
+- If the validator tool itself cannot be executed (tool missing/unavailable): treat it as a hard failure and write `builder_result.json` with `run.status = "failed"`, `run.failed_step = "validate_builder_result"`, `run.error` set to the exact error output, and `work = null`, then proceed to the Final Handoff Procedure so Foreman can stop safely.
