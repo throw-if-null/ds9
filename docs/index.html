@@ -121,35 +121,10 @@
                 height: 100%;
             }
 
-            /* Generic LCARS elbow component */
-            .lcars-elbow {
-                height: 70px;
-                width: 100%;
+            /* Generic LCARS elbow component moved to library stylesheet:
+               components/src/lib/styles/lcars-shell.css
+               (Primitives: .lcars-elbow and orientation overrides) */
 
-                /* Default orientation and radii (can be overridden per use) */
-                --elbow-position: bottom left;
-                --elbow-radius-top-left: 0;
-                --elbow-radius-top-right: 0;
-                --elbow-radius-bottom-right: 0;
-                --elbow-radius-bottom-left: 0;
-
-                background: radial-gradient(
-                    circle at var(--elbow-position),
-                    var(--lcars-black) var(--lcars-radius-lg),
-                    var(--shape-color) calc(var(--lcars-radius-lg) + 0.5px)
-                );
-
-                border-top-left-radius: var(--elbow-radius-top-left);
-                border-top-right-radius: var(--elbow-radius-top-right);
-                border-bottom-right-radius: var(--elbow-radius-bottom-right);
-                border-bottom-left-radius: var(--elbow-radius-bottom-left);
-            }
-
-            /* Top Elbow Connector (right side, opening downward) */
-            .lcars-sidebar-bar-top-cap {
-                --elbow-position: bottom left;
-                --elbow-radius-top-right: var(--lcars-radius-lg);
-            }
 
             /* Middle Sidebar Track - now a flex container for scroll buttons + categories */
             .lcars-sidebar-bar-track {
@@ -163,22 +138,9 @@
                 position: relative; /* Establish positioning context for submenus */
             }
 
-            /* ==============================================
-               LCARS SCROLL CONTAINER PRIMITIVE
-               A scrollable container with hidden scrollbar.
-               Mouse wheel and touch scrolling still work.
-               ============================================== */
-            .lcars-scroll-container {
-                overflow-y: auto;
-                /* Note: overflow-x is NOT set to allow child elements (like submenus) to overflow */
-                /* Hide scrollbar but keep functionality */
-                scrollbar-width: none; /* Firefox */
-                -ms-overflow-style: none; /* IE/Edge */
-            }
-
-            .lcars-scroll-container::-webkit-scrollbar {
-                display: none; /* Chrome/Safari/Opera */
-            }
+            /* LCARS scroll container primitive moved to library stylesheet:
+               components/src/lib/styles/lcars-shell.css
+               (Primitives: .lcars-scroll-container and scrollbar hiding) */
 
             /* ==============================================
                LCARS ARROW BUTTON PRIMITIVE
