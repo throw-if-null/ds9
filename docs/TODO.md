@@ -39,7 +39,7 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
     - depends on: ds9-2  
   - [x] [ds9-9 · 4.2 Extract Base Button & Color Utility Classes](#42-ds9-9-extract-base-button--color-utility-classes)  
     - depends on: ds9-2, ds9-8  
-  - [ ] [ds9-10 · 4.3 Extract Arrow Button Primitive](#43-ds9-10-extract-arrow-button-primitive)  
+  - [x] [ds9-10 · 4.3 Extract Arrow Button Primitive](#43-ds9-10-extract-arrow-button-primitive)  
     - depends on: ds9-7, ds9-9  
   - [ ] [ds9-11 · 4.4 Extract Tile Primitive](#44-ds9-11-extract-tile-primitive)  
     - depends on: ds9-2, ds9-5  
