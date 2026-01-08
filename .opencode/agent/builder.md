@@ -9,5 +9,8 @@ permission:
   webfetch: allow
   websearch: allow
   codesearch: allow
+  skill:
+    builder-checklist: allow
+    "*": deny
   external_directory: deny
 ---

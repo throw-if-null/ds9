@@ -17,5 +17,8 @@ permission:
   webfetch: allow
   websearch: allow
   codesearch: allow
+  skill:
+    inspector-checklist: allow
+    "*": deny
   external_directory: deny
 ---
