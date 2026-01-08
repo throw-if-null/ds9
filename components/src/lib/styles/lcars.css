@@ -1,4 +1,5 @@
 @import './lcars-buttons.css';
+@import './lcars-tiles.css';
 
 /* ---- Design tokens (colour palette and fonts) ---- */
 :root {
