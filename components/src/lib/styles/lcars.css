@@ -1,6 +1,7 @@
 @import './lcars-buttons.css';
 @import './lcars-tiles.css';
 @import './lcars-breadcrumb.css';
+@import './lcars-dialog.css';
 
 /* ---- Design tokens (colour palette and fonts) ---- */
 :root {
