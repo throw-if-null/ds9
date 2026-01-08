@@ -43,7 +43,7 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
     - depends on: ds9-7, ds9-9  
   - [x] [ds9-11 · 4.4 Extract Tile Primitive](#44-ds9-11-extract-tile-primitive)  
     - depends on: ds9-2, ds9-5  
-  - [ ] [ds9-12 · 4.5 Extract Breadcrumb Primitive](#45-ds9-12-extract-breadcrumb-primitive)  
+  - [x] [ds9-12 · 4.5 Extract Breadcrumb Primitive](#45-ds9-12-extract-breadcrumb-primitive)  
     - depends on: ds9-2, ds9-8  
   - [ ] [ds9-13 · 4.6 Extract Form Control Primitives](#46-ds9-13-extract-form-control-primitives)  
     - depends on: ds9-8  
