@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="../src/lib/styles/lcars-themes.css" />
         <link rel="stylesheet" href="../src/lib/styles/lcars-shell.css" />
         <link rel="stylesheet" href="../src/lib/styles/lcars-focus.css" />
+        <link rel="stylesheet" href="../src/lib/styles/lcars-buttons.css" />
         <style>
             /* LCARS design tokens moved to src/lib/styles/lcars-tokens.css */
 
@@ -610,79 +611,10 @@
                 letter-spacing: 1px;
             }
 
-            /* Base LCARS button primitive */
-            .lcars-button {
-                /* Layout */
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-
-                /* Box */
-                min-height: 32px;
-                padding: 0 15px;
-                border: none;
-                border-radius: var(--lcars-button-radius, 0px);
-                background-color: var(--lcars-button-bg, var(--lcars-beige));
-                color: var(--lcars-button-fg, var(--lcars-black));
-
-                /* Text */
-                font-family: var(--lcars-font);
-                font-size: 1.1rem;
-                font-weight: bold;
-                text-transform: uppercase;
-                white-space: normal;
-                word-break: break-word;
-
-                /* Behavior */
-                cursor: pointer;
-                position: relative;
-            }
-
-            /* Derived LCARS pill variant (rounded button) */
-            .lcars-pill {
-                --lcars-button-radius: var(--lcars-radius-md);
-            }
-
-            /* Hover behavior (can be disabled per-variant) */
-            .lcars-button:hover {
-                filter: var(--lcars-button-hover-filter, brightness(1.1));
-            }
-
-            /* LCARS color utility classes for buttons */
-            .lcars-color-orange {
-                --lcars-button-bg: var(--lcars-orange);
-                --lcars-button-fg: var(--lcars-black);
-            }
-
-            .lcars-color-dark {
-                --lcars-button-bg: var(--lcars-dark-3);
-                --lcars-button-fg: var(--lcars-beige);
-            }
-
-            .lcars-color-danger {
-                --lcars-button-bg: var(--lcars-red);
-                --lcars-button-fg: var(--lcars-black);
-            }
-
-            .lcars-color-beige {
-                --lcars-button-bg: var(--lcars-beige);
-                --lcars-button-fg: var(--lcars-black);
-            }
-
-            /* ==============================================
-               LCARS ACTION ROLE HELPERS
-               Semantic class hooks for context-specific button styling.
-               These base classes are intentionally empty - they serve as
-               extension points for scoped overrides (e.g., .js-theme-controls-container .lcars-settings-action).
-               Add styles here only if ALL buttons in that context need them.
-               ============================================== */
-            .lcars-dialog-action {
-                /* Semantic hook for dialog action buttons (Cancel, Save, Delete) */
-            }
-
-            .lcars-settings-action {
-                /* Semantic hook for settings panel action buttons */
-            }
+            /* LCARS button primitives and color utilities moved to:
+               ../src/lib/styles/lcars-buttons.css
+               Included from library and linked in this docs page for parity.
+            */
 
             /* ==============================================
                SETTINGS TILE
