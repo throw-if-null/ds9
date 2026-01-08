@@ -38,7 +38,11 @@ def remove_inspector_artifacts(worktree: str) -> None:
 
 def remove_session_log_artifacts(worktree: str) -> None:
     # Keep logs on disk, but never include them in commits/PRs.
-    run("git rm -r --cached session-log || true", cwd=worktree)
+    # OpenCode writes under `.opencode/session-log/` (also remove legacy `session-log/`).
+    run("git rm -r --cached session-log .opencode/session-log || true", cwd=worktree)
+    # If they are not tracked, they can still be staged via `git add -A`.
+    # Explicitly unstage them.
+    run("git restore --staged --worktree -- session-log .opencode/session-log || true", cwd=worktree)
 
 
 def update_todo(task_id: str, repo_root: str) -> None:
