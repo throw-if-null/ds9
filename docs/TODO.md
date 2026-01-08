@@ -31,7 +31,7 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
     - depends on: ds9-2  
   - [x] [ds9-6 · 3.2 Extract Shell Bar & Frame Segment Primitives](#32-ds9-6-extract-shell-bar--frame-segment-primitives)  
     - depends on: ds9-5  
-  - [ ] [ds9-7 · 3.3 Extract Elbow & Scroll Container Primitives](#33-ds9-7-extract-elbow--scroll-container-primitives)  
+  - [x] [ds9-7 · 3.3 Extract Elbow & Scroll Container Primitives](#33-ds9-7-extract-elbow--scroll-container-primitives)  
     - depends on: ds9-6
 
 - 4. Core Component Primitives (CSS‑First)  

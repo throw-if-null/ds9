@@ -192,7 +192,6 @@
 	display: none; /* Chrome/Safari/Opera */
 }
 
-
 .lcars-sidebar-bar {
 	--lcars-sidebar-bar-width: var(--sidebar-width, 110px);
 	--lcars-sidebar-bar-elbow-height: 70px;
