@@ -85,12 +85,6 @@
 	position: relative;
 }
 
-.lcars-header-bar-home:focus-visible {
-	outline: var(--lcars-focus-outline-width) solid var(--lcars-focus-outline-color);
-	outline-offset: var(--lcars-focus-outline-offset);
-	box-shadow: none;
-}
-
 .lcars-header-bar-fill {
 	flex: 1;
 	height: var(--lcars-header-bar-height, 40px);
