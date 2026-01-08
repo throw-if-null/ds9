@@ -37,7 +37,7 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
 - 4. Core Component Primitives (CSS‑First)  
   - [x] [ds9-8 · 4.1 Extract Focus System Styles](#41-ds9-8-extract-focus-system-styles)  
     - depends on: ds9-2  
-  - [ ] [ds9-9 · 4.2 Extract Base Button & Color Utility Classes](#42-ds9-9-extract-base-button--color-utility-classes)  
+  - [x] [ds9-9 · 4.2 Extract Base Button & Color Utility Classes](#42-ds9-9-extract-base-button--color-utility-classes)  
     - depends on: ds9-2, ds9-8  
   - [ ] [ds9-10 · 4.3 Extract Arrow Button Primitive](#43-ds9-10-extract-arrow-button-primitive)  
     - depends on: ds9-7, ds9-9  
