@@ -1,3 +1,5 @@
+@import './lcars-buttons.css';
+
 /* ---- Design tokens (colour palette and fonts) ---- */
 :root {
 	/* core palette */
@@ -13,30 +15,6 @@
 	/* typography */
 	--lcars-heading-font: 'Antonio', sans-serif;
 	--lcars-button-hover-filter: 1.1; /* brighten on hover */
-}
-
-/* ---- Base LCARS button ---- */
-.lcars-button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 48px;
-	padding: 0.6rem 1rem;
-	border-top-left-radius: var(--lcars-button-radius-left);
-	border-bottom-left-radius: var(--lcars-button-radius-left);
-	border-top-right-radius: var(--lcars-button-radius-right);
-	border-bottom-right-radius: var(--lcars-button-radius-right);
-	background-color: var(--lcars-button-bg, var(--lcars-beige));
-	color: var(--lcars-button-fg, var(--lcars-black));
-	font-family: var(--lcars-heading-font);
-	font-weight: 600;
-	font-size: 1rem;
-	text-transform: uppercase;
-	cursor: pointer;
-	transition: filter 0.3s ease;
-}
-.lcars-button:hover {
-	filter: brightness(var(--lcars-button-hover-filter));
 }
 
 /* ---- Sidebar button variant ---- */
