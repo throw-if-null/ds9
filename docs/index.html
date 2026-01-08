@@ -113,60 +113,6 @@
                components/src/lib/styles/lcars-shell.css
                (Primitives: .lcars-scroll-container and scrollbar hiding) */
 
-            /* ==============================================
-               LCARS ARROW BUTTON PRIMITIVE
-               A flat directional control with triangle indicator.
-               Used for scroll controls, pagination, carousels, etc.
-               ============================================== */
-            .lcars-arrow-btn {
-                --lcars-arrow-btn-height: 24px;
-                --lcars-arrow-btn-bg: var(--shape-color);
-                --lcars-arrow-btn-bg-hover: var(--lcars-beige);
-                --lcars-arrow-btn-bg-focus: var(--shape-color);
-                --lcars-arrow-btn-arrow-size: 40px 12px;
-                --lcars-arrow-btn-arrow-color: var(--lcars-black);
-
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: var(--lcars-arrow-btn-height);
-                min-height: var(--lcars-arrow-btn-height);
-                background-color: var(--lcars-arrow-btn-bg);
-                border: none;
-                cursor: pointer;
-                transition: background-color var(--lcars-transition-normal);
-            }
-
-            .lcars-arrow-btn:hover {
-                background-color: var(--lcars-arrow-btn-bg-hover);
-            }
-
-            .lcars-arrow-btn:focus-visible {
-                outline: var(--lcars-focus-outline-width) solid
-                    var(--lcars-focus-outline-color);
-                outline-offset: calc(-1 * var(--lcars-focus-outline-width));
-                background-color: var(--lcars-arrow-btn-bg-focus);
-            }
-
-            .lcars-arrow-btn:disabled,
-            .lcars-arrow-btn.disabled {
-                cursor: default;
-                pointer-events: none;
-            }
-
-            .lcars-arrow-btn:disabled svg,
-            .lcars-arrow-btn.disabled svg {
-                opacity: 0.3;
-            }
-
-            .lcars-arrow-btn svg {
-                width: 40px;
-                height: 12px;
-                fill: var(--lcars-arrow-btn-arrow-color);
-                transition:
-                    fill var(--lcars-transition-normal),
-                    opacity var(--lcars-transition-normal);
-            }
 
             /* ==============================================
                SIDEBAR-SPECIFIC STYLES

@@ -186,6 +186,58 @@
 	display: none; /* Chrome/Safari/Opera */
 }
 
+/* ==============================================
+   LCARS ARROW BUTTON PRIMITIVE
+   Centralized arrow button styles for library consumers.
+   Configurable via CSS custom properties prefixed with --lcars-arrow-btn-
+   ============================================== */
+.lcars-arrow-btn {
+	--lcars-arrow-btn-height: 24px;
+	--lcars-arrow-btn-bg: var(--shape-color);
+	--lcars-arrow-btn-bg-hover: var(--lcars-beige);
+	--lcars-arrow-btn-bg-focus: var(--shape-color);
+	--lcars-arrow-btn-arrow-size: 40px 12px;
+	--lcars-arrow-btn-arrow-color: var(--lcars-black);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--lcars-arrow-btn-height);
+	min-height: var(--lcars-arrow-btn-height);
+	background-color: var(--lcars-arrow-btn-bg);
+	border: none;
+	cursor: pointer;
+	transition: background-color var(--lcars-transition-normal);
+}
+
+.lcars-arrow-btn:hover {
+	background-color: var(--lcars-arrow-btn-bg-hover);
+}
+
+.lcars-arrow-btn:focus-visible {
+	background-color: var(--lcars-arrow-btn-bg-focus);
+}
+
+.lcars-arrow-btn:disabled,
+.lcars-arrow-btn.disabled {
+	cursor: default;
+	pointer-events: none;
+}
+
+.lcars-arrow-btn:disabled svg,
+.lcars-arrow-btn.disabled svg {
+	opacity: 0.3;
+}
+
+.lcars-arrow-btn svg {
+	width: 40px;
+	height: 12px;
+	fill: var(--lcars-arrow-btn-arrow-color);
+	transition:
+		fill var(--lcars-transition-normal),
+		opacity var(--lcars-transition-normal);
+}
+
 .lcars-sidebar-bar {
 	--lcars-sidebar-bar-width: var(--sidebar-width, 110px);
 	--lcars-sidebar-bar-elbow-height: 70px;
