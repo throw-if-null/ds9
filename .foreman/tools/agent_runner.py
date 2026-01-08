@@ -10,22 +10,51 @@ import requests
 def run_agent():
     parser = argparse.ArgumentParser()
     parser.add_argument("--webhook", required=True)
-    parser.add_argument("--cmd", required=True)
+    parser.add_argument("--agent", required=True)
+    parser.add_argument("--title", required=True)
+    parser.add_argument("--cmd", required=False)
+    parser.add_argument("--prompt", required=False)
+    parser.add_argument("--prompt-file", required=False)
     parser.add_argument("--cwd", required=False)
-    parser.add_argument("--base64", action="store_true", help="Decode cmd from base64")
+    parser.add_argument("--base64", action="store_true", help="Decode prompt/cmd from base64")
     args = parser.parse_args()
 
     # Wait for n8n Listener
     time.sleep(5)
 
-    command_to_run = args.cmd
+    if args.cmd and (args.prompt or args.prompt_file):
+        print("[Runner] Error: use either --cmd or --prompt/--prompt-file")
+        requests.post(
+            args.webhook,
+            json={"success": False, "output": "Conflicting args: --cmd with --prompt/--prompt-file"},
+        )
+        sys.exit(2)
+
+    prompt_text: str | None = None
+
+    if args.prompt_file:
+        try:
+            with open(args.prompt_file, "r", encoding="utf-8") as f:
+                prompt_text = f.read()
+        except Exception as e:
+            requests.post(
+                args.webhook,
+                json={"success": False, "output": f"Prompt file read error: {e}"},
+            )
+            sys.exit(1)
+    elif args.prompt is not None:
+        prompt_text = args.prompt
+
     if args.base64:
         try:
-            print("[Runner] Decoding Base64 command...")
-            command_to_run = base64.b64decode(args.cmd).decode("utf-8")
+            if prompt_text is not None:
+                print("[Runner] Decoding Base64 prompt...")
+                prompt_text = base64.b64decode(prompt_text).decode("utf-8")
+            elif args.cmd is not None:
+                print("[Runner] Decoding Base64 cmd...")
+                args.cmd = base64.b64decode(args.cmd).decode("utf-8")
         except Exception as e:
             print(f"[Runner] Base64 decode failed: {e}")
-            # We fail the job but still try to report back to n8n
             try:
                 requests.post(
                     args.webhook,
@@ -33,17 +62,33 @@ def run_agent():
                 )
             except Exception as e:
                 print(f"Failed to hit the webhook. Error: {e}")
-                pass
             sys.exit(1)
 
-    print(f"[Runner] Executing: {command_to_run}")
+    if prompt_text is not None:
+        cmd = [
+            "opencode",
+            "run",
+            "--agent",
+            args.agent,
+            "--title",
+            args.title,
+            prompt_text,
+        ]
+    elif args.cmd is not None:
+        cmd = ["bash", "-lc", args.cmd]
+    else:
+        requests.post(
+            args.webhook,
+            json={"success": False, "output": "Missing prompt/cmd"},
+        )
+        sys.exit(2)
+
+    print(f"[Runner] Executing: {cmd!r}")
     if args.cwd:
         print(f"[Runner] CWD: {args.cwd}")
 
     try:
-        result = subprocess.run(
-            command_to_run, shell=True, cwd=args.cwd, capture_output=True, text=True
-        )
+        result = subprocess.run(cmd, cwd=args.cwd, capture_output=True, text=True)
 
         output = result.stdout + "\n" + result.stderr
 

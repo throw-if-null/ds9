@@ -61,7 +61,7 @@
     },
     {
       "parameters": {
-        "command": "=git worktree add -b feature/{{ $json.task_id }} {{ $json.worktree_path }} main"
+        "command": "=REPO=\"/home/backsippan/gh/etc/ds9\"\n\ngit -C \"$REPO\" worktree add -b feature/{{ $json.task_id }} {{ $json.worktree_path }} main"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -71,7 +71,7 @@
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths (Use repo-relative runner script)\nRUNNER_SCRIPT=\".foreman/tools/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Read base prompt from file\nBUILDER_BASE_PROMPT=\"$(cat .foreman/builder/templates/builder_base_prompt.md)\"\n# 3. Inject the user task\nUSER_TASK=\"{{ $('Initialize Variables').item.json.body.prompt }}\"\nPROMPT=\"${BUILDER_BASE_PROMPT}\nThe user task is:\n${USER_TASK}\n\"\n# 4. Execution: run Builder via agent_runner.py\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent builder --title \\\"BUILDER {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\\\" \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
+        "command": "=# 1. Define paths\nREPO=\"/home/backsippan/gh/etc/ds9\"\nRUNNER_SCRIPT=\"$REPO/.foreman/tools/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n\n# 2. Build a prompt file safely (no command substitution)\nPROMPT_FILE=\"$REPO/.foreman/.tmp/builder_{{ $('Initialize Variables').item.json.body.task_id }}.prompt.md\"\nmkdir -p \"$(dirname \"$PROMPT_FILE\")\n\ncat \"$REPO/.foreman/builder/templates/builder_base_prompt.md\" > \"$PROMPT_FILE\"\ncat <<'EOF' >> \"$PROMPT_FILE\"\n\nThe user task is:\n{{ $('Initialize Variables').item.json.body.prompt }}\nEOF\n\n# 3. Execution: run Builder via agent_runner.py using base64 prompt\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --base64 \\\n  --cmd \"$(base64 -w0 < \"$PROMPT_FILE\")\" \\\n  --title \"BUILDER {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\" \\\n  --agent builder \\\n  > /dev/null 2>&1 &"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -95,7 +95,7 @@
     },
     {
       "parameters": {
-        "command": "=WORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\" && \\\ncd \"$WORKTREE\" && \\\ngit diff main...HEAD > inspector_diff.patch"
+        "command": "=REPO=\"/home/backsippan/gh/etc/ds9\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\n\ncd \"$WORKTREE\" && \\\ngit diff main...HEAD > inspector_diff.patch"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -105,7 +105,7 @@
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths (Use repo-relative runner script)\nRUNNER_SCRIPT=\".foreman/tools/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n# 2. Read base prompt from Markdown file\nINSPECTOR_BASE_PROMPT=\"$(cat .foreman/inspector/templates/inspector_base_prompt.md)\"\n# 3. Inject the task being reviewed\nTASK_BEING_REVIEWED=\"{{ $('Initialize Variables').item.json.body.prompt }}\"\nPROMPT=\"${INSPECTOR_BASE_PROMPT}\nThe task being reviewed is:\n${TASK_BEING_REVIEWED}\n\"\n# 4. Execution: run Inspector via agent_runner.py\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --cmd \"opencode run --agent inspector --title \\\"INSPECTOR {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\\\" \\\"$PROMPT\\\"\" \\\n  > /dev/null 2>&1 &"
+        "command": "=# 1. Define paths\nREPO=\"/home/backsippan/gh/etc/ds9\"\nRUNNER_SCRIPT=\"$REPO/.foreman/tools/agent_runner.py\"\nWORKTREE=\"{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n\n# 2. Build a prompt file safely (no command substitution)\nPROMPT_FILE=\"$REPO/.foreman/.tmp/inspector_{{ $('Initialize Variables').item.json.body.task_id }}.prompt.md\"\nmkdir -p \"$(dirname \"$PROMPT_FILE\")\n\ncat \"$REPO/.foreman/inspector/templates/inspector_base_prompt.md\" > \"$PROMPT_FILE\"\ncat <<'EOF' >> \"$PROMPT_FILE\"\n\nThe task being reviewed is:\n{{ $('Initialize Variables').item.json.body.prompt }}\nEOF\n\n# 3. Execution: run Inspector via agent_runner.py using base64 prompt\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --base64 \\\n  --cmd \"$(base64 -w0 < \"$PROMPT_FILE\")\" \\\n  --title \"INSPECTOR {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\" \\\n  --agent inspector \\\n  > /dev/null 2>&1 &"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -131,7 +131,7 @@
     },
     {
       "parameters": {
-        "command": "=python .foreman/tools/create_pr.py \\\n  --task-id \"{{ $('Initialize Variables').first().json.task_id }}\" \\\n  --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n  --body \"{{ $('Initialize Variables').first().json.body.prompt }}\" \\\n  --worktree \"{{ $('Initialize Variables').first().json.worktree_path }}\" \\\n  --branch \"feature/{{ $('Initialize Variables').first().json.task_id }}\""
+        "command": "=REPO=\"/home/backsippan/gh/etc/ds9\"\n\npython \"$REPO/.foreman/tools/create_pr.py\" \\\n  --task-id \"{{ $('Initialize Variables').first().json.task_id }}\" \\\n  --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n  --body \"{{ $('Initialize Variables').first().json.body.prompt }}\" \\\n  --worktree \"$REPO/{{ $('Initialize Variables').first().json.worktree_path }}\" \\\n  --branch \"feature/{{ $('Initialize Variables').first().json.task_id }}\""
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -244,7 +244,7 @@
     },
     {
       "parameters": {
-        "command": "=cd {{ $('Initialize Variables').item.json.worktree_path }} && \\\n  python .foreman/tools/check_builder_handoff.py"
+        "command": "=REPO=\"/home/backsippan/gh/etc/ds9\"\n\ncd \"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\" && \\\n  python \"$REPO/.foreman/tools/check_builder_handoff.py\""
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -264,7 +264,7 @@
     },
     {
       "parameters": {
-        "command": "=cd {{ $('Initialize Variables').item.json.worktree_path }} && \\\n  python .foreman/tools/check_inspector_handoff.py"
+        "command": "=REPO=\"/home/backsippan/gh/etc/ds9\"\n\ncd \"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\" && \\\n  python \"$REPO/.foreman/tools/check_inspector_handoff.py\""
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -298,7 +298,7 @@
     },
     {
       "parameters": {
-        "command": "=cd {{ $('Initialize Variables').item.json.worktree_path }}/components && \\\npnpm i"
+        "command": "=REPO=\"/home/backsippan/gh/etc/ds9\"\n\ncd \"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}/components\" && \\\npnpm i"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
