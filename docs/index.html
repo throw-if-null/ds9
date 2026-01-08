@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="../src/lib/styles/lcars-focus.css" />
         <link rel="stylesheet" href="../src/lib/styles/lcars-buttons.css" />
         <link rel="stylesheet" href="../src/lib/styles/lcars-tiles.css" />
+        <link rel="stylesheet" href="../src/lib/styles/lcars-forms.css" />
         <style>
             /* LCARS design tokens moved to src/lib/styles/lcars-tokens.css */
 
@@ -713,39 +714,8 @@
                 font-weight: bold;
             }
 
-            /* ==============================================
-               LCARS FORM PRIMITIVES
-               Namespaced form controls for design system extraction.
-               Apply these classes explicitly to form elements.
-               ============================================== */
-            .lcars-input,
-            .lcars-select,
-            .lcars-textarea {
-                width: 100%;
-                padding: 10px;
-                background-color: var(--lcars-dark-2);
-                border: 1px solid var(--theme-main);
-                color: var(--lcars-beige);
-                border-radius: var(--lcars-radius-xs);
-                border-width: 3px;
-                font-family: var(--lcars-font);
-            }
+            /* LCARS form primitives moved to library stylesheet (components/src/lib/styles/lcars-forms.css) */
 
-            .lcars-textarea {
-                resize: vertical;
-                min-height: 60px;
-                max-height: 150px;
-            }
-
-            /* URL protocol select styled as compact LCARS control */
-            .js-url-protocol {
-                max-width: 140px;
-                border-radius: var(--lcars-radius-md);
-                text-transform: uppercase;
-                font-weight: bold;
-                letter-spacing: 1px;
-                padding: 8px 12px;
-            }
 
             .dialog-actions {
                 display: flex;

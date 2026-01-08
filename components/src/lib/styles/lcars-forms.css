@@ -1,0 +1,33 @@
+/* LCARS Form Primitives
+   Extracted from docs/index.html to provide reusable form control styles.
+   Includes: .lcars-input, .lcars-select, .lcars-textarea, .js-url-protocol
+   These styles are purely visual and safe for SSR. */
+
+.lcars-input,
+.lcars-select,
+.lcars-textarea {
+	width: 100%;
+	padding: 10px;
+	background-color: var(--lcars-dark-2);
+	border: 1px solid var(--theme-main);
+	color: var(--lcars-beige);
+	border-radius: var(--lcars-radius-xs);
+	border-width: 3px;
+	font-family: var(--lcars-font);
+}
+
+.lcars-textarea {
+	resize: vertical;
+	min-height: 60px;
+	max-height: 150px;
+}
+
+/* URL protocol select styled as compact LCARS control */
+.js-url-protocol {
+	max-width: 140px;
+	border-radius: var(--lcars-radius-md);
+	text-transform: uppercase;
+	font-weight: bold;
+	letter-spacing: 1px;
+	padding: 8px 12px;
+}
