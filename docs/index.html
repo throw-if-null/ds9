@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="../src/lib/styles/lcars-buttons.css" />
         <link rel="stylesheet" href="../src/lib/styles/lcars-tiles.css" />
         <link rel="stylesheet" href="../src/lib/styles/lcars-forms.css" />
+        <link rel="stylesheet" href="../src/lib/styles/lcars-dialog.css" />
         <style>
             /* LCARS design tokens moved to src/lib/styles/lcars-tokens.css */
 
@@ -611,91 +612,8 @@
                 height: 40px;
             }
 
-            /* ==============================================
-               DIALOGS
-               Dialogs use native <dialog> which renders at document root.
-               We use .lcars-dialog class for scoping rather than element selector.
-               ============================================== */
-            .lcars-dialog-container {
-                background-color: var(--lcars-black);
-                color: var(--lcars-orange);
-                font-family: var(--lcars-font);
-                border: 2px solid var(--shape-color);
-                border-radius: var(--lcars-radius-md);
-                padding: 0;
-                max-width: 540px;
-                width: 90%;
-            }
-
-            .lcars-dialog-container::backdrop {
-                background-color: rgba(0, 0, 0, 0.8);
-            }
-
-            .lcars-dialog {
-                display: flex;
-                flex-direction: column;
-                border-radius: var(--lcars-radius-md);
-                overflow: hidden;
-            }
-
-            /* Color picker specific overlay */
-            /* Color picker uses slightly larger radius for visual distinction */
-            .js-color-picker-dialog {
-                max-width: 520px;
-                border-radius: calc(var(--lcars-radius-md) + 6px);
-                border-color: var(--shape-color);
-            }
-
-            .js-color-picker-dialog .lcars-dialog-header {
-                background-color: var(--shape-color);
-                color: var(--lcars-black);
-            }
-
-            .js-color-picker-dialog .lcars-dialog-body {
-                padding: 20px;
-                background-color: var(--lcars-black);
-            }
-
-            .js-color-picker-dialog .lcars-dialog-footer {
-                display: flex;
-                justify-content: flex-end;
-                padding: 10px 20px 18px 20px;
-                background-color: var(--lcars-black);
-            }
-
-            .lcars-dialog-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background-color: var(--shape-color);
-                color: var(--lcars-black);
-                padding: 10px 16px;
-            }
-
-            .lcars-dialog-title {
-                font-size: 1.2rem;
-                font-weight: bold;
-                letter-spacing: 1px;
-            }
-
-            .lcars-dialog-meta {
-                font-size: 0.75rem;
-                opacity: 0.8;
-                cursor: help;
-            }
-
-            .lcars-dialog-body {
-                padding: 16px 16px 8px 16px;
-                background-color: var(--lcars-black);
-            }
-
-            .lcars-dialog-footer {
-                display: flex;
-                justify-content: flex-end;
-                gap: 10px;
-                padding: 8px 16px 16px 16px;
-                background-color: var(--lcars-black);
-            }
+            /* Dialog primitives moved to components/src/lib/styles/lcars-dialog.css */
+            /* The docs page continues to include the centralized stylesheet for parity. */
 
             .lcars-form-group {
                 margin-bottom: 15px;

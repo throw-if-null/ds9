@@ -1,0 +1,102 @@
+/* DIALOGS
+   Centralized dialog primitive styles extracted from docs/index.html
+   This file defines the following reusable primitives:
+   - .lcars-dialog-container
+   - .lcars-dialog-container::backdrop
+   - .lcars-dialog
+   - .lcars-dialog-header
+   - .lcars-dialog-title
+   - .lcars-dialog-meta
+   - .lcars-dialog-body
+   - .lcars-dialog-footer
+   - .js-color-picker-dialog and its overrides for the color picker dialog
+
+   Expectations for markup:
+   - A native <dialog> element should use the outer class `lcars-dialog-container`.
+   - Inside it, the dialog content should be wrapped in an element with class `lcars-dialog`.
+   - Header, body, footer sections should use `lcars-dialog-header`, `lcars-dialog-body`,
+     and `lcars-dialog-footer` respectively. The title goes in `lcars-dialog-title` and
+   - Action buttons inside the footer should use the existing `lcars-button` primitive
+     and may include the semantic hook `lcars-dialog-action` for contextual overrides.
+*/
+
+.lcars-dialog-container {
+	background-color: var(--lcars-black);
+	color: var(--lcars-orange);
+	font-family: var(--lcars-font);
+	border: 2px solid var(--shape-color);
+	border-radius: var(--lcars-radius-md);
+	padding: 0;
+	max-width: 540px;
+	width: 90%;
+}
+
+.lcars-dialog-container::backdrop {
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+.lcars-dialog {
+	display: flex;
+	flex-direction: column;
+	border-radius: var(--lcars-radius-md);
+	overflow: hidden;
+}
+
+/* Color picker specific overlay */
+/* Color picker uses slightly larger radius for visual distinction */
+.js-color-picker-dialog {
+	max-width: 520px;
+	border-radius: calc(var(--lcars-radius-md) + 6px);
+	border-color: var(--shape-color);
+}
+
+.js-color-picker-dialog .lcars-dialog-header {
+	background-color: var(--shape-color);
+	color: var(--lcars-black);
+}
+
+.js-color-picker-dialog .lcars-dialog-body {
+	padding: 20px;
+	background-color: var(--lcars-black);
+}
+
+.js-color-picker-dialog .lcars-dialog-footer {
+	display: flex;
+	justify-content: flex-end;
+	padding: 10px 20px 18px 20px;
+	background-color: var(--lcars-black);
+}
+
+.lcars-dialog-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: var(--shape-color);
+	color: var(--lcars-black);
+	padding: 10px 16px;
+}
+
+.lcars-dialog-title {
+	font-size: 1.2rem;
+	font-weight: bold;
+	letter-spacing: 1px;
+}
+
+.lcars-dialog-meta {
+	font-size: 0.75rem;
+	opacity: 0.8;
+	cursor: help;
+}
+
+.lcars-dialog-body {
+	padding: 16px 16px 8px 16px;
+	background-color: var(--lcars-black);
+}
+
+.lcars-dialog-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	padding: 8px 16px 16px 16px;
+	background-color: var(--lcars-black);
+}
