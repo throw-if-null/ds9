@@ -3,8 +3,19 @@ description: "Review agent: gates changes, enforces standards, and provides feed
 model: "github-copilot/claude-haiku-4.5" #"github-copilot/gpt-5.1"
 temperature: 0.0
 prompt: prompts/inspector.prompt.md
-tools:
-  write: true
-  edit: true
-  bash: true
+permission:
+  edit:
+    "*": deny
+    inspector_result.json: allow
+  read:
+    "*": allow
+    "*.env": deny
+    "*.env.*": deny
+    ".env": deny
+    ".env.*": deny
+  bash: allow
+  webfetch: allow
+  websearch: allow
+  codesearch: allow
+  external_directory: deny
 ---
