@@ -24,7 +24,3 @@ This is your review checklist. Follow it in order when possible:
       correctness, accessibility, Svelte 5/runes rules, public API stability, tests, and docs
 - [ ] (MANDATORY) Decide whether the change is acceptable or if changes are required
 - [ ] (CRITICAL) (MANDATORY) Execute the 'Final Handoff Procedure' and produce 'inspector_result.json'
-- [ ] (MANDATORY) Report on your work by printing out this checklist. Use the legend below to mark the items:
-  - [ + ] - completed items
-  - [ ~ ] - skipped items (put a comment regarding why you skipped it)
-  - [ - ] - items you haven’t done (explain why you didn’t do them)

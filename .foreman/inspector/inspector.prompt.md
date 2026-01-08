@@ -39,6 +39,9 @@ final chat output):
 5. `Next steps for Builder`
    - High-level description of the follow-up work you expect Builder to
      perform (aligned with `next_tasks` in the JSON).
+6. `Checklist (TODO snapshot)`
+   - Print the current `todowrite` todo list (all items + their final statuses).
+   - Do NOT save this snapshot to disk; it must be visible in your final message.
 
 ### Foreman Handoff (Inspector JSON)
 You MUST write a JSON file named `inspector_result.json` in the repository root (the worktree root). The file MUST contain EXACTLY one JSON object and nothing else.  
@@ -100,9 +103,5 @@ This is your review checklist. Follow it in order when possible:
 - [ ] Run `pnpm prepack` (from `components/`) when packaging changes are involved and record results.
 - [ ] Analyze findings and deviations against `AGENTS.md` and `REVIEW_RULEBOOK.md`.
 - [ ] (CRITICAL) (MANDATORY) Execute the "Final Handoff Procedure".
-- [ ] Report on your work by printing out this checklist. Use the below legend to mark the items:
-  - [ + ] - completed items 
-  - [ ~ ] - skipped items (put a comment regarding why you skipped it)
-  - [ - ] - items you haven't do (explain why you didn't do them)
 
 CRITICAL If anything fails or you are stuck, you MUST still execute the 'Final Handoff Procedure' so that 'inspector_result.json' exists. That file `inspector_result.json` is MANDATORY and CRITICAL for the Foreman to operate.

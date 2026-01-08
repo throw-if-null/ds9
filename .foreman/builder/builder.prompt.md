@@ -20,7 +20,7 @@ When you believe your current task is complete, your FINAL step MUST include:
 - Inspector Handoff
 
 ### Public Handoff
-Print out a message(s) that contains the below sections:
+Print out a message(s) as part of your final chat output that contains the below sections:
 1. `Summary`
    - 1–3 short bullets summarizing what you implemented/changed.
 2. `Files touched`
@@ -35,6 +35,9 @@ Print out a message(s) that contains the below sections:
    - Or state that there were no interactive changes.
 6. `Risks / follow-ups`
    - Any known limitations, edge cases, or recommended future work.
+7. `Checklist (TODO snapshot)`
+   - Print the current `todowrite` todo list (all items + their final statuses).
+   - Do NOT save this snapshot to disk; it must be visible in your final message.
 
 Do not claim “approved” or “done forever”; Inspector will make the final call.
 
@@ -72,7 +75,7 @@ Make sure to:
 - [ ] Do the 'Inspector Handoff'
   - [ ] (CRITICAL) Write `builder_result.json` (to the root folder) to disk with EXACTLY one JSON object (`summary`, `complexity`)
   - [ ] Run `validate_builder_result` (in process tool) and fix any reported issues
-- [ ] Print out the "implementation checklist" 
+- [ ] Print a `Checklist (TODO snapshot)` section in your final message
 
 CRITICAL: No matter what, you MUST always execute the "Write 'builder_result.json' to disk" step. That file is CRITICAL for the Foreman to operate.
 
@@ -103,9 +106,5 @@ This is your implementation checklist. Follow in order when possible:
         - Set `work = null`
       Then proceed to the "Final Handoff Procedure" so Foreman can stop safely.
 - [ ] (CRITICAL) (MANDATORY) Execute the 'Final Handoff Procedure'
-- [ ] Report on your work by printing out this checklist. Use the below legend to mark the items:
-  - [ + ] - completed items 
-  - [ ~ ] - skipped items (put a comment regarding why you skipped it)
-  - [ - ] - items you haven't do (explain why you didn't do them)
 
 CRITICAL If anything fails or you are stuck, you MUST still execute the 'Final Handoff Procedure' so that 'builder_result.json' exists. That file `builder_result.json` is MANDATORY and CRITICAL for the Foreman to operate.

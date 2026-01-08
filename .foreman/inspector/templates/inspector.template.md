@@ -73,6 +73,10 @@ Rules:
 - You may print human-readable explanations to chat, but Foreman will rely on
   `inspector_result.json` as the source of truth for decisions.
 
+If you produce any final chat output, include a `Checklist (TODO snapshot)` section:
+- Print the current `todowrite` todo list (all items + their final statuses).
+- Do NOT save this snapshot to disk; it must be visible in your final message.
+
 File write behavior (MANDATORY):
 - `inspector_result.json` is the authoritative artifact for Foreman. You MUST
   NOT rely on chat output alone.

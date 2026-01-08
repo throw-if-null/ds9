@@ -28,9 +28,5 @@ This is your implementation checklist. Follow it in order when possible:
         - write `builder_result.json` with `run.status = "failed"`, `run.failed_step = "git commit"`, `run.error` set to the exact error output, and `work = null`
         - then proceed to the Final Handoff Procedure so Foreman can stop safely.
 - [ ] (CRITICAL) (MANDATORY) Execute the 'Final Handoff Procedure'
-- [ ] (MANDATORY) Report on your work by printing out this checklist. Use the legend below to mark the items:
-  - [ + ] - completed items 
-  - [ ~ ] - skipped items (put a comment regarding why you skipped it)
-  - [ - ] - items you haven’t done (explain why you didn’t do them)
 
 (CRITICAL) No matter what happens ALWAYS save the 'builder_result.json' and validated it with 'validate_builder_result' (in process) tool.

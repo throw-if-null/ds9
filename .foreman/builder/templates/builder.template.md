@@ -37,6 +37,9 @@ Print out a message(s) that contains the below sections:
    - Or state that there were no interactive changes.
 6. `Risks / follow-ups`
    - Any known limitations, edge cases, or recommended future work.
+7. `Checklist (TODO snapshot)`
+   - Print the current `todowrite` todo list (all items + their final statuses).
+   - Do NOT save this snapshot to disk; it must be visible in your final message.
 
 Do not claim “approved” or “done forever”; Inspector will make the final call.
 
@@ -93,7 +96,13 @@ This is you implementation checklist. Follow in order when possible:
 - [ ] Run `pnpm prepack` when packaging changes are involved and record results
 -->  
 - [ ] Prepare the Git state: stage all relevant files with `git add` so that `git diff main...HEAD` reflects the full change
-- [ ] Create a local commit with a clear, concise message when possible; if `git commit` fails or is disallowed, leave changes staged and capture the error
+- [ ] Create a local commit with a clear, concise message.
+      If `git commit` fails for any reason, treat it as a hard failure (Foreman depends on the commit for `git diff HEAD...main`):
+        - Set `run.status = "failed"`
+        - Set `run.failed_step = "git commit"`
+        - Set `run.error` to the exact error output
+        - Set `work = null`
+      Then proceed to the "Final Handoff Procedure" so Foreman can stop safely.
 - [ ] (CRITICAL) Execute the 'Final Handoff Procedure'
 
 CRITICAL If anything fails or you are stuck, you MUST still execute the Final Handoff Procedure so that builder_result.json exists. That file `builder_result.json` is MANDATORY and CRITICAL for the Foreman to operate.
