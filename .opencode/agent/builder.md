@@ -13,5 +13,6 @@ permission:
     "*": deny
     greeter: allow
     builder-checklist: allow
+    builder-signoff: allow
   external_directory: deny
 ---

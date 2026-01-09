@@ -20,7 +20,7 @@ Use this checklist to create and maintain a `todowrite` TODO list and to execute
 - [ ] (MANDATORY) Run `pnpm install` (`components/`) if dependencies are missing
   - If `pnpm install` cannot run (for example due to network restrictions), treat it as a hard failure:
     - write `inspector_result.json` with `run.status = "failed"`, `run.failed_step = "pnpm install"`, `run.error` set to the exact error output, and `work = null`
-    - then proceed to the Final Handoff Procedure so Foreman can stop safely.
+    - then proceed to the `inspector-signoff` skill so Foreman can stop safely.
 - [ ] (MANDATORY) Run `pnpm lint` (`components/`) and record pass/fail
   - If it fails due to formatting (Prettier), you MAY run `pnpm format` (`components/`) and then re-run `pnpm lint`.
 - [ ] (MANDATORY) Run `pnpm check` (`components/`) and record pass/fail
@@ -30,4 +30,4 @@ Use this checklist to create and maintain a `todowrite` TODO list and to execute
 - [ ] (MANDATORY) Review the changes against `AGENTS.md` and `REVIEW_RULEBOOK.md`:
   correctness, accessibility, Svelte 5/runes rules, public API stability, tests, and docs
 - [ ] (MANDATORY) Decide whether the change is acceptable or if changes are required
-- [ ] (CRITICAL) (MANDATORY) Execute the "Final Handoff Procedure" and produce `inspector_result.json`
+- [ ] (CRITICAL) (MANDATORY) Execute the `inspector-signoff` skill (writes `inspector_result.json` + validates + prints Public Handoff)

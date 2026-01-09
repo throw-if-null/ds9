@@ -21,5 +21,6 @@ permission:
     "*": deny
     greeter: allow
     inspector-checklist: allow
+    inspector-signoff: allow
   external_directory: deny
 ---
