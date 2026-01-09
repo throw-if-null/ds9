@@ -1,0 +1,24 @@
+{
+  "run": {
+    "status": "in_progress",
+    "failed_step": null,
+    "error": null
+  },
+  "work": {
+    "summary": "Add LcarsShell component, export it, and keep showcase unchanged",
+    "files_touched": [
+      "components/src/lib/layout/LcarsShell.svelte",
+      "components/src/lib/layout/index.ts",
+      "components/src/lib/index.ts",
+      "components/src/routes/MainContent.svelte"
+    ],
+    "public_api_impact": "Added export `LcarsShell` under layout (no breaking changes)",
+    "checks": {
+      "install": "ok",
+      "lint": "ok (after format)",
+      "check": "ok",
+      "test:unit": "ok",
+      "prepack": "ok"
+    }
+  }
+}
