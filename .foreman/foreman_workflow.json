@@ -28,6 +28,10 @@
               "value": "3"
             },
             {
+              "name": "change_requests",
+              "value": ""
+            },
+            {
               "name": "task_id",
               "value": "={{ $json.body.task_id }}"
             },
@@ -71,7 +75,17 @@
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths\nREPO=\"${FOREMAN_REPO:-$(pwd)}\"\nRUNNER_SCRIPT=\"$REPO/.foreman/tools/agent_runner.py\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n\n# 2. Build a prompt file safely (no command substitution)\nPROMPT_FILE=\"$REPO/.foreman/.tmp/builder_{{ $('Initialize Variables').item.json.body.task_id }}.prompt.md\"\nmkdir -p \"$(dirname \"$PROMPT_FILE\")\"\n\ncat \"$REPO/.foreman/builder/templates/builder_base_prompt.md\" > \"$PROMPT_FILE\"\ncat <<'EOF' >> \"$PROMPT_FILE\"\n\nThe user task is:\n{{ $('Initialize Variables').item.json.body.prompt }}\nEOF\n\n# 3. Execution: run Builder via agent_runner.py using a prompt file\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --agent builder \\\n  --title \"BUILDER {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\" \\\n  --prompt-file \"$PROMPT_FILE\" \\\n  > /dev/null 2>&1 &"
+        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\n\ncd \"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}/components\" && \\\npnpm i"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [4512, 864],
+      "id": "938ab0db-6c9e-4a7c-9557-92a7d60c7eea",
+      "name": "Setup Repository"
+    },
+    {
+      "parameters": {
+        "command": "=# 1. Define paths\nREPO=\"${FOREMAN_REPO:-$(pwd)}\"\nRUNNER_SCRIPT=\"$REPO/.foreman/tools/agent_runner.py\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n\n# 2. Build a prompt file safely (no command substitution)\nPROMPT_FILE=\"$REPO/.foreman/.tmp/builder_{{ $('Initialize Variables').item.json.body.task_id }}.prompt.md\"\nmkdir -p \"$(dirname \"$PROMPT_FILE\")\"\n\ncat \"$REPO/.foreman/builder/templates/builder_base_prompt.md\" > \"$PROMPT_FILE\"\ncat <<'EOF' >> \"$PROMPT_FILE\"\n\nThe user task is:\n{{ $('Initialize Variables').item.json.body.prompt }}\n\n{{ (() => {\n  const cr = $('Initialize Variables').item.json.change_requests || '';\n  if (!cr.trim()) return '';\n  return `The inspector requested changes. Please apply ALL change requests below, then continue.\n\n${cr}\n`;\n})() }}\nEOF\n\n# 3. Execution: run Builder via agent_runner.py using a prompt file\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --agent builder \\\n  --title \"BUILDER {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\" \\\n  --prompt-file \"$PROMPT_FILE\" \\\n  > /dev/null 2>&1 &"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -95,59 +109,23 @@
     },
     {
       "parameters": {
-        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\n\ncd \"$WORKTREE\" && \\\ngit diff main...HEAD > inspector_diff.patch"
+        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\n\ncd \"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\" && \\\n  python \"$REPO/.foreman/tools/check_builder_handoff.py\""
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4992, 1088],
-      "id": "b90d808d-de00-4f86-b00c-c646b5ed2d87",
-      "name": "Create the DIFF"
+      "position": [4352, 1088],
+      "id": "f7fba4cc-4ad7-4e31-a60a-3e4a5ec3142e",
+      "name": "Check Builder Handoff"
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths\nREPO=\"${FOREMAN_REPO:-$(pwd)}\"\nRUNNER_SCRIPT=\"$REPO/.foreman/tools/agent_runner.py\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n\n# 2. Build a prompt file safely (no command substitution)\nPROMPT_FILE=\"$REPO/.foreman/.tmp/inspector_{{ $('Initialize Variables').item.json.body.task_id }}.prompt.md\"\nmkdir -p \"$(dirname \"$PROMPT_FILE\")\"\n\ncat \"$REPO/.foreman/inspector/templates/inspector_base_prompt.md\" > \"$PROMPT_FILE\"\ncat <<'EOF' >> \"$PROMPT_FILE\"\n\nThe task being reviewed is:\n{{ $('Initialize Variables').item.json.body.prompt }}\nEOF\n\n# 3. Execution: run Inspector via agent_runner.py using a prompt file\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --agent inspector \\\n  --title \"INSPECTOR {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\" \\\n  --prompt-file \"$PROMPT_FILE\" \\\n  > /dev/null 2>&1 &"
+        "jsCode": "const text = $json.stdout || '';\n\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse handoff JSON: ' + e.message);\n}\n  // n8n expects an array of items\nreturn [result];"
       },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [5152, 1088],
-      "id": "65c3372d-b946-4493-9243-b5c18ab519e8",
-      "name": "Run Inspector Agent",
-      "notesInFlow": false,
-      "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "resume": "webhook",
-        "httpMethod": "POST",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [4352, 1360],
-      "id": "f61c0b44-900f-47dc-9ef7-f6e5cd178386",
-      "name": "Wait fo Inspector",
-      "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9",
-      "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\n\npython \"$REPO/.foreman/tools/create_pr.py\" \\\n  --task-id \"{{ $('Initialize Variables').first().json.task_id }}\" \\\n  --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n  --body \"{{ $('Initialize Variables').first().json.body.prompt }}\" \\\n  --worktree \"$REPO/{{ $('Initialize Variables').first().json.worktree_path }}\" \\\n  --branch \"feature/{{ $('Initialize Variables').first().json.task_id }}\""
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [5200, 1440],
-      "id": "4f199f0c-b522-4da4-b5a4-833973f7e479",
-      "name": "Create the PR"
-    },
-    {
-      "parameters": {
-        "command": "=TASK_ID=\"{{ $('Initialize Variables').first().json.task_id }}\"\n\nWHO=\"builder\"\nif [ \"{{ $json.data.work.status || '' }}\" != \"\" ]; then\n  WHO=\"inspector\"\nfi\n\nREPORT_DIR=\".foreman/failures/$WHO\"\nREPORT_FILE=\"$REPORT_DIR/${TASK_ID}_report.json\"\nmkdir -p \"$REPORT_DIR\"\n\nREASON=\"unknown\"\nif [ \"{{ $json.status }}\" != \"valid\" ]; then\n  REASON=\"result_invalid\"\nelif [ \"{{ $json.data.run.status }}\" != \"ok\" ]; then\n  REASON=\"run_failed\"\nelif [ \"{{ $json.data.work.status || '' }}\" != \"approved\" ]; then\n  REASON=\"changes_requested\"\nelse\n  REASON=\"unexpected\"\nfi\n\nFOREMAN_STATUS=\"{{ $json.status }}\" \\\nFOREMAN_REASON=\"$REASON\" \\\nFOREMAN_RAW_JSON='{{ JSON.stringify($json) }}' \\\npython3 - <<'PY' > \"$REPORT_FILE\"\nimport json\nimport os\n\nstatus = os.environ.get('FOREMAN_STATUS')\nreason = os.environ.get('FOREMAN_REASON')\nraw = os.environ.get('FOREMAN_RAW_JSON')\n\ntry:\n    payload = json.loads(raw)\nexcept Exception:\n    payload = None\n\ndata = (payload.get('data') if isinstance(payload, dict) else None) or {}\n\nout = {\n    'status': status,\n    'reason': reason,\n    'errors': (payload.get('errors') if isinstance(payload, dict) else None),\n    'data': {\n        'run': data.get('run'),\n        'work': data.get('work'),\n    },\n}\nprint(json.dumps(out, ensure_ascii=False))\nPY"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [5200, 1296],
-      "id": "1b7ecb71-1ade-48f7-bb68-198575be4945",
-      "name": "Log Rejection"
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [4544, 1088],
+      "id": "ef394d40-38b3-4f4d-89b7-b89c3ec2be42",
+      "name": "Process the response"
     },
     {
       "parameters": {
@@ -189,6 +167,62 @@
       "position": [4752, 1088],
       "id": "b2fb4d14-6183-4592-8556-db7e171781c2",
       "name": "Is Builder OK"
+    },
+    {
+      "parameters": {
+        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\n\ncd \"$WORKTREE\" && \\\ngit diff main...HEAD > inspector_diff.patch"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [4992, 1088],
+      "id": "b90d808d-de00-4f86-b00c-c646b5ed2d87",
+      "name": "Create the DIFF"
+    },
+    {
+      "parameters": {
+        "command": "=# 1. Define paths\nREPO=\"${FOREMAN_REPO:-$(pwd)}\"\nRUNNER_SCRIPT=\"$REPO/.foreman/tools/agent_runner.py\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n\n# 2. Build a prompt file safely (no command substitution)\nPROMPT_FILE=\"$REPO/.foreman/.tmp/inspector_{{ $('Initialize Variables').item.json.body.task_id }}.prompt.md\"\nmkdir -p \"$(dirname \"$PROMPT_FILE\")\"\n\ncat \"$REPO/.foreman/inspector/templates/inspector_base_prompt.md\" > \"$PROMPT_FILE\"\ncat <<'EOF' >> \"$PROMPT_FILE\"\n\nThe task being reviewed is:\n{{ $('Initialize Variables').item.json.body.prompt }}\nEOF\n\n# 3. Execution: run Inspector via agent_runner.py using a prompt file\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --agent inspector \\\n  --title \"INSPECTOR {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\" \\\n  --prompt-file \"$PROMPT_FILE\" \\\n  > /dev/null 2>&1 &"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [5152, 1088],
+      "id": "65c3372d-b946-4493-9243-b5c18ab519e8",
+      "name": "Run Inspector Agent",
+      "notesInFlow": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "httpMethod": "POST",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [4352, 1360],
+      "id": "f61c0b44-900f-47dc-9ef7-f6e5cd178386",
+      "name": "Wait fo Inspector",
+      "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\n\ncd \"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\" && \\\n  python \"$REPO/.foreman/tools/check_inspector_handoff.py\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [4560, 1360],
+      "id": "acbb6650-8826-4788-9801-544690bdc09f",
+      "name": "Check Inspector Handoff"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.stdout || '';\n\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse handoff JSON: ' + e.message);\n}\n  // n8n expects an array of items\nreturn [result];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [4784, 1360],
+      "id": "bd5db19b-9c43-49ad-a13c-ca906a671ba5",
+      "name": "Process the response1"
     },
     {
       "parameters": {
@@ -244,67 +278,87 @@
     },
     {
       "parameters": {
-        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\n\ncd \"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\" && \\\n  python \"$REPO/.foreman/tools/check_builder_handoff.py\""
+        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\n\npython \"$REPO/.foreman/tools/create_pr.py\" \\\n  --task-id \"{{ $('Initialize Variables').first().json.task_id }}\" \\\n  --title \"feat: {{ $('Initialize Variables').first().json.task_id }} implementation\" \\\n  --body \"{{ $('Initialize Variables').first().json.body.prompt }}\" \\\n  --worktree \"$REPO/{{ $('Initialize Variables').first().json.worktree_path }}\" \\\n  --branch \"feature/{{ $('Initialize Variables').first().json.task_id }}\""
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4352, 1088],
-      "id": "f7fba4cc-4ad7-4e31-a60a-3e4a5ec3142e",
-      "name": "Check Builder Handoff"
+      "position": [5200, 1440],
+      "id": "4f199f0c-b522-4da4-b5a4-833973f7e479",
+      "name": "Create the PR"
     },
     {
       "parameters": {
-        "jsCode": "const text = $json.stdout || '';\n\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse handoff JSON: ' + e.message);\n}\n  // n8n expects an array of items\nreturn [result];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [4544, 1088],
-      "id": "ef394d40-38b3-4f4d-89b7-b89c3ec2be42",
-      "name": "Process the response"
-    },
-    {
-      "parameters": {
-        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\n\ncd \"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\" && \\\n  python \"$REPO/.foreman/tools/check_inspector_handoff.py\""
+        "command": "=TASK_ID=\"{{ $('Initialize Variables').first().json.task_id }}\"\n\nWHO=\"builder\"\nif [ \"{{ $json.data.work.status || '' }}\" != \"\" ]; then\n  WHO=\"inspector\"\nfi\n\nREPORT_DIR=\".foreman/failures/$WHO\"\nREPORT_FILE=\"$REPORT_DIR/${TASK_ID}_report.json\"\nmkdir -p \"$REPORT_DIR\"\n\nREASON=\"unknown\"\nif [ \"{{ $json.status }}\" != \"valid\" ]; then\n  REASON=\"result_invalid\"\nelif [ \"{{ $json.data.run.status }}\" != \"ok\" ]; then\n  REASON=\"run_failed\"\nelif [ \"{{ $json.data.work.status || '' }}\" != \"approved\" ]; then\n  REASON=\"changes_requested\"\nelse\n  REASON=\"unexpected\"\nfi\n\nFOREMAN_STATUS=\"{{ $json.status }}\" \\\nFOREMAN_REASON=\"$REASON\" \\\nFOREMAN_RAW_JSON='{{ JSON.stringify($json) }}' \\\npython3 - <<'PY' > \"$REPORT_FILE\"\nimport json\nimport os\n\nstatus = os.environ.get('FOREMAN_STATUS')\nreason = os.environ.get('FOREMAN_REASON')\nraw = os.environ.get('FOREMAN_RAW_JSON')\n\ntry:\n    payload = json.loads(raw)\nexcept Exception:\n    payload = None\n\ndata = (payload.get('data') if isinstance(payload, dict) else None) or {}\n\nout = {\n    'status': status,\n    'reason': reason,\n    'errors': (payload.get('errors') if isinstance(payload, dict) else None),\n    'data': {\n        'run': data.get('run'),\n        'work': data.get('work'),\n    },\n}\nprint(json.dumps(out, ensure_ascii=False))\nPY"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4560, 1360],
-      "id": "acbb6650-8826-4788-9801-544690bdc09f",
-      "name": "Check Inspector Handoff"
+      "position": [5200, 1296],
+      "id": "1b7ecb71-1ade-48f7-bb68-198575be4945",
+      "name": "Log Rejection"
     },
     {
       "parameters": {
-        "jsCode": "const text = $json.stdout || '';\n\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse handoff JSON: ' + e.message);\n}\n  // n8n expects an array of items\nreturn [result];"
+        "jsCode": "const raw = $input.first().json.stdout || '';\n\nlet parsed;\ntry {\n  parsed = JSON.parse(raw);\n} catch (e) {\n  parsed = null;\n}\n\nconst work = parsed?.data?.work || {};\nconst issues = Array.isArray(work.issues) ? work.issues : [];\nconst nextTasks = Array.isArray(work.next_tasks) ? work.next_tasks : [];\n\nconst issueText = issues\n  .map((i, idx) => {\n    const sev = i?.severity ? `[${i.severity}] ` : '';\n    const desc = i?.description || '';\n    const paths = Array.isArray(i?.paths) && i.paths.length ? `\\n  Paths: ${i.paths.join(', ')}` : '';\n    return `${idx + 1}. ${sev}${desc}${paths}`.trim();\n  })\n  .filter(Boolean)\n  .join('\\n\\n');\n\nconst nextText = nextTasks.map((t) => `- ${t}`).join('\\n');\n\nconst sections = [];\nif (issueText) sections.push(`ISSUES:\\n${issueText}`);\nif (nextText) sections.push(`NEXT TASKS:\\n${nextText}`);\n\nconst changeRequests = sections.join('\\n\\n');\nconst retry = parseInt($('Initialize Variables').first().json.retry_count || '0', 10);\nreturn [{ change_requests: changeRequests, retry_count: String(retry + 1) }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [4784, 1360],
-      "id": "bd5db19b-9c43-49ad-a13c-ca906a671ba5",
-      "name": "Process the response1"
+      "position": [5616, 1360],
+      "id": "b2b2b2b2-1111-2222-3333-444444444444",
+      "name": "Update Retry State"
     },
     {
       "parameters": {
-        "httpMethod": "POST",
-        "path": "run-inspector",
-        "responseMode": "lastNode",
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c1c1c1c1-1111-2222-3333-444444444444",
+              "leftValue": "={{ $json.retry_count }}",
+              "rightValue": "={{ $('Initialize Variables').first().json.max_retries }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
         "options": {}
       },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [3632, 1152],
-      "id": "7d0d4bb4-878b-4bca-9237-1d3d5b19b0dc",
-      "name": "Review",
-      "webhookId": "0d33a427-d5ca-4d31-8dda-d8a963a9db4e"
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [5808, 1360],
+      "id": "c3c3c3c3-1111-2222-3333-444444444444",
+      "name": "Should Retry"
     },
     {
       "parameters": {
-        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\n\ncd \"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}/components\" && \\\npnpm i"
+        "values": {
+          "string": [
+            {
+              "name": "change_requests",
+              "value": "={{ $json.change_requests }}"
+            },
+            {
+              "name": "retry_count",
+              "value": "={{ $json.retry_count }}"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
       },
-      "type": "n8n-nodes-base.executeCommand",
+      "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [4512, 864],
-      "id": "938ab0db-6c9e-4a7c-9557-92a7d60c7eea",
-      "name": "Setup Repository"
+      "position": [6032, 1360],
+      "id": "d4d4d4d4-1111-2222-3333-444444444444",
+      "name": "Persist Retry Vars"
     },
     {
       "parameters": {
@@ -364,6 +418,20 @@
       "position": [4112, 992],
       "id": "ceb666c6-808d-491a-8e87-751541108cf6",
       "name": "Switch"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "run-inspector",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [3632, 1152],
+      "id": "7d0d4bb4-878b-4bca-9237-1d3d5b19b0dc",
+      "name": "Review",
+      "webhookId": "0d33a427-d5ca-4d31-8dda-d8a963a9db4e"
     }
   ],
   "pinData": {},
@@ -390,11 +458,40 @@
         ]
       ]
     },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Setup Git Worktree",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Builder Handoff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Setup Git Worktree": {
       "main": [
         [
           {
             "node": "Setup Repository",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Repository": {
+      "main": [
+        [
+          {
+            "node": "Run Builder Agent",
             "type": "main",
             "index": 0
           }
@@ -423,65 +520,22 @@
         ]
       ]
     },
-    "Create the DIFF": {
+    "Check Builder Handoff": {
       "main": [
         [
           {
-            "node": "Run Inspector Agent",
+            "node": "Process the response",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Run Inspector Agent": {
+    "Process the response": {
       "main": [
         [
           {
-            "node": "Wait fo Inspector",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Wait fo Inspector",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Wait fo Inspector": {
-      "main": [
-        [
-          {
-            "node": "Check Inspector Handoff",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Check Inspector Handoff",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Is Inspector OK": {
-      "main": [
-        [
-          {
-            "node": "Create the PR",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Log Rejection",
+            "node": "Is Builder OK",
             "type": "main",
             "index": 0
           }
@@ -506,22 +560,33 @@
         ]
       ]
     },
-    "Check Builder Handoff": {
+    "Create the DIFF": {
       "main": [
         [
           {
-            "node": "Process the response",
+            "node": "Run Inspector Agent",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Process the response": {
+    "Run Inspector Agent": {
       "main": [
         [
           {
-            "node": "Is Builder OK",
+            "node": "Wait fo Inspector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait fo Inspector": {
+      "main": [
+        [
+          {
+            "node": "Check Inspector Handoff",
             "type": "main",
             "index": 0
           }
@@ -550,40 +615,58 @@
         ]
       ]
     },
-    "Review": {
+    "Is Inspector OK": {
       "main": [
         [
           {
-            "node": "Initialize Variables",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Setup Repository": {
-      "main": [
-        [
-          {
-            "node": "Run Builder Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Switch": {
-      "main": [
-        [
-          {
-            "node": "Setup Git Worktree",
+            "node": "Create the PR",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Check Builder Handoff",
+            "node": "Update Retry State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Retry State": {
+      "main": [
+        [
+          {
+            "node": "Should Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Retry": {
+      "main": [
+        [
+          {
+            "node": "Persist Retry Vars",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist Retry Vars": {
+      "main": [
+        [
+          {
+            "node": "Run Builder Agent",
             "type": "main",
             "index": 0
           }
