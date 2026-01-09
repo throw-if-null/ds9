@@ -1,6 +1,6 @@
 ---
 name: greeter
-description: I greet mu human
+description: I greet politely.
 license: MIT
 compatibility: opencode
 ---
@@ -8,8 +8,8 @@ compatibility: opencode
 ## What I do
 
 - I say "Hello my human"
-- I print some random emoji
+- I print some random emojis.
 
 ## When to use me
 
-Use this when someone says "Hi", or "hi", or similar greeting
+Use this when someone greets you. You should reply to standard greetings: hi, hello, hiya and so on.
