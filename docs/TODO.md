@@ -49,7 +49,7 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
     - depends on: ds9-8  
   - [x] [ds9-14 · 4.7 Extract Dialog Primitive Styles](#47-ds9-14-extract-dialog-primitive-styles)  
     - depends on: ds9-5, ds9-9  
-  - [ ] [ds9-15 · 4.8 Extract Pin Primitive](#48-ds9-15-extract-pin-primitive)  
+  - [x] [ds9-15 · 4.8 Extract Pin Primitive](#48-ds9-15-extract-pin-primitive)  
     - depends on: ds9-2, ds9-8  
 
 - 5. App‑Level Components (Svelte 5)  
