@@ -53,7 +53,7 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
     - depends on: ds9-2, ds9-8  
 
 - 5. App‑Level Components (Svelte 5)  
-  - [ ] [ds9-16 · 5.1 Create `<LcarsShell>` Component](#51-ds9-16-create-lcarsshell-component)  
+  - [x] [ds9-16 · 5.1 Create `<LcarsShell>` Component](#51-ds9-16-create-lcarsshell-component)  
     - depends on: ds9-5, ds9-6  
   - [ ] [ds9-17 · 5.2 Create `<LcarsHeaderBar>` Component](#52-ds9-17-create-lcarsheaderbar-component)  
     - depends on: ds9-16, ds9-8, ds9-9  
