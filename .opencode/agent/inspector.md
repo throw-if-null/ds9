@@ -18,7 +18,8 @@ permission:
   websearch: allow
   codesearch: allow
   skill:
-    inspector-checklist: allow
     "*": deny
+    greeter: allow
+    inspector-checklist: allow
   external_directory: deny
 ---

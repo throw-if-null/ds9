@@ -10,7 +10,8 @@ permission:
   websearch: allow
   codesearch: allow
   skill:
-    builder-checklist: allow
     "*": deny
+    greeter: allow
+    builder-checklist: allow
   external_directory: deny
 ---
