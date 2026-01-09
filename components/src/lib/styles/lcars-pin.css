@@ -1,0 +1,128 @@
+/* LCARS pin primitive and variants
+   Extracted from docs/index.html
+
+   Public custom properties:
+   - --lcars-pin-size (defaults to 20px)
+   - --lcars-pin-bg
+   - --lcars-pin-fg
+
+   Notes:
+   - Preserves hover and focus interactions
+   - Size modifiers: .lcars-pin--sm, .lcars-pin--lg
+   - Color variants: .lcars-pin--edit, .lcars-pin--url, .lcars-pin--open, .lcars-pin--delete
+   - Style modifier: .lcars-pin--bordered
+   - SVG support rules preserved
+*/
+
+.lcars-pin {
+	--lcars-pin-size: 20px;
+	--lcars-pin-bg: var(--theme-secondary, var(--lcars-blue));
+	--lcars-pin-fg: var(--lcars-black);
+
+	width: var(--lcars-pin-size);
+	height: var(--lcars-pin-size);
+	border-radius: 50%;
+	border: none;
+	padding: 0;
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	background-color: var(--lcars-pin-bg);
+	color: var(--lcars-pin-fg);
+	font-family: var(--lcars-font);
+	font-weight: bold;
+	font-size: 1rem;
+	line-height: 1;
+
+	cursor: pointer;
+	position: relative;
+	transition:
+		transform var(--lcars-transition-normal),
+		filter var(--lcars-transition-normal);
+}
+
+.lcars-pin:hover {
+	filter: brightness(1.1);
+	transform: scale(1.1);
+}
+
+.lcars-pin:focus-visible {
+	outline: var(--lcars-focus-outline-width) solid var(--lcars-focus-outline-color);
+	outline-offset: var(--lcars-focus-outline-offset);
+}
+
+/* --- Pin Size Modifiers --- */
+
+.lcars-pin--sm {
+	--lcars-pin-size: 18px;
+	font-size: 0.85rem;
+}
+
+.lcars-pin--lg {
+	--lcars-pin-size: 40px;
+	font-size: 1.25rem;
+	line-height: 1.1;
+	letter-spacing: 0.03em;
+}
+
+/* --- Pin Color Variants --- */
+
+.lcars-pin--edit {
+	--lcars-pin-bg: var(--lcars-orange);
+}
+
+.lcars-pin--url {
+	--lcars-pin-bg: var(--theme-main);
+}
+
+.lcars-pin--open {
+	--lcars-pin-bg: var(--lcars-blue);
+}
+
+.lcars-pin--delete {
+	--lcars-pin-bg: var(--lcars-red);
+}
+
+/* --- Pin Style Modifiers --- */
+
+.lcars-pin--bordered {
+	box-shadow: inset 0 0 0 2px var(--lcars-black);
+}
+
+/* --- Pin SVG Icon Support --- */
+
+.lcars-pin svg {
+	width: 70%;
+	height: 70%;
+	display: block;
+	margin: auto;
+	fill: currentColor;
+}
+
+.lcars-pin[data-glyph='up'] svg {
+	width: 87%;
+	height: 87%;
+	transform: translateY(-2px);
+}
+
+.lcars-pin[data-glyph='down'] svg {
+	width: 87%;
+	height: 87%;
+	transform: translateY(2px);
+}
+
+.lcars-pin[data-glyph='plus'] svg {
+	width: 90%;
+	height: 90%;
+}
+
+.lcars-pin[data-glyph='delete'] svg {
+	width: 80%;
+	height: 80%;
+	stroke: currentColor;
+	stroke-width: 2.5;
+	stroke-linecap: round;
+	fill: none;
+}
