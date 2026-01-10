@@ -65,6 +65,14 @@
             {
               "name": "mode",
               "value": "={{ (() => {\n  const url = $json.webhookUrl || '';\n  if (url.endsWith('run-foreman')) return 'full';\n  if (url.endsWith('run-inspector')) return 'review';\n  return 'unknown';\n})() }}"
+            },
+            {
+              "name": "builder_pass",
+              "value": "1"
+            },
+            {
+              "name": "inspector_pass",
+              "value": "0"
             }
           ]
         },
@@ -100,7 +108,7 @@
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths\nREPO=\"${FOREMAN_REPO:-$(pwd)}\"\nRUNNER_SCRIPT=\"$REPO/.foreman/tools/agent_runner.py\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n\n# 2. Build a prompt file safely (no command substitution)\nPROMPT_FILE=\"$REPO/.foreman/.tmp/builder_{{ $('Initialize Variables').item.json.body.task_id }}.prompt.md\"\nmkdir -p \"$(dirname \"$PROMPT_FILE\")\"\n\ncat \"$REPO/.foreman/builder/templates/builder_base_prompt.md\" > \"$PROMPT_FILE\"\ncat <<'EOF' >> \"$PROMPT_FILE\"\n\nThe user task is:\n{{ $('Initialize Variables').item.json.body.prompt }}\n\n{{ (() => {\n  const cr = $('Initialize Variables').item.json.change_requests || '';\n  if (!cr.trim()) return '';\n  return `The inspector requested changes. Please apply ALL change requests below, then continue.\n\n${cr}\n`;\n})() }}\nEOF\n\n# 3. Execution: run Builder via agent_runner.py using a prompt file\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --agent builder \\\n  --title \"BUILDER {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\" \\\n  --prompt-file \"$PROMPT_FILE\" \\\n  > /dev/null 2>&1 &"
+        "command": "=# 1. Define paths\nREPO=\"${FOREMAN_REPO:-$(pwd)}\"\nRUNNER_SCRIPT=\"$REPO/.foreman/tools/agent_runner.py\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n\n# 2. Build a prompt file safely (no command substitution)\nPROMPT_FILE=\"$REPO/.foreman/.tmp/builder_{{ $('Initialize Variables').item.json.body.task_id }}.prompt.md\"\nmkdir -p \"$(dirname \"$PROMPT_FILE\")\"\n\nTEMPLATE=\"builder_base_prompt_initial.md\"\nif [ \"{{ $('Initialize Variables').first().json.builder_pass }}\" != \"1\" ]; then\n  TEMPLATE=\"builder_base_prompt_revision.md\"\nfi\n\ncat \"$REPO/.foreman/builder/templates/$TEMPLATE\" > \"$PROMPT_FILE\"\ncat <<'EOF' >> \"$PROMPT_FILE\"\n\nThe user task is:\n{{ $('Initialize Variables').item.json.body.prompt }}\n\n{{ (() => {\n  const cr = $('Initialize Variables').item.json.change_requests || '';\n  if (!cr.trim()) return '';\n  return `The inspector requested changes. Please apply ALL change requests below, then continue.\n\n${cr}\n`;\n})() }}\nEOF\n\n# 3. Execution: run Builder via agent_runner.py using a prompt file\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --agent builder \\\n  --title \"BUILDER {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }} b{{ $('Initialize Variables').first().json.builder_pass }}-i{{ $('Initialize Variables').first().json.inspector_pass }}\" \\\n  --prompt-file \"$PROMPT_FILE\" \\\n  > /dev/null 2>&1 &"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -325,7 +333,37 @@
     },
     {
       "parameters": {
-        "command": "=# 1. Define paths\nREPO=\"${FOREMAN_REPO:-$(pwd)}\"\nRUNNER_SCRIPT=\"$REPO/.foreman/tools/agent_runner.py\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n\n# 2. Build a prompt file safely (no command substitution)\nPROMPT_FILE=\"$REPO/.foreman/.tmp/inspector_{{ $('Initialize Variables').item.json.body.task_id }}.prompt.md\"\nmkdir -p \"$(dirname \"$PROMPT_FILE\")\"\n\ncat \"$REPO/.foreman/inspector/templates/inspector_base_prompt.md\" > \"$PROMPT_FILE\"\ncat <<'EOF' >> \"$PROMPT_FILE\"\n\nThe task being reviewed is:\n{{ $('Initialize Variables').item.json.body.prompt }}\nEOF\n\n# 3. Execution: run Inspector via agent_runner.py using a prompt file\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --agent inspector \\\n  --title \"INSPECTOR {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }}\" \\\n  --prompt-file \"$PROMPT_FILE\" \\\n  > /dev/null 2>&1 &"
+        "jsCode": "const input = $input.first().json;\nconst fallback = $('Initialize Variables').first().json;\nconst raw = input.inspector_pass ?? fallback.inspector_pass ?? '0';\nconst current = parseInt(String(raw), 10);\nreturn [{ inspector_pass: String(Number.isFinite(current) ? current + 1 : 1) }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [5712, 2032],
+      "id": "dc31f4f6-ea5f-4e9d-8eb1-3e3fd6d9b6f5",
+      "name": "Increment Inspector Pass (Auto)"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "inspector_pass",
+              "value": "={{ $json.inspector_pass }}"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [5904, 2032],
+      "id": "e35ad2c9-45ff-4c5e-9b2f-8c7c1bd224d5",
+      "name": "Persist Inspector Pass (Auto)"
+    },
+    {
+      "parameters": {
+        "command": "=# 1. Define paths\nREPO=\"${FOREMAN_REPO:-$(pwd)}\"\nRUNNER_SCRIPT=\"$REPO/.foreman/tools/agent_runner.py\"\nWORKTREE=\"$REPO/{{ $('Initialize Variables').item.json.worktree_path }}\"\nRESUME_URL=\"{{ $execution.resumeUrl }}\"\n\n# 2. Build a prompt file safely (no command substitution)\nPROMPT_FILE=\"$REPO/.foreman/.tmp/inspector_{{ $('Initialize Variables').item.json.body.task_id }}.prompt.md\"\nmkdir -p \"$(dirname \"$PROMPT_FILE\")\"\n\ncat \"$REPO/.foreman/inspector/templates/inspector_base_prompt.md\" > \"$PROMPT_FILE\"\ncat <<'EOF' >> \"$PROMPT_FILE\"\n\nThe task being reviewed is:\n{{ $('Initialize Variables').item.json.body.prompt }}\nEOF\n\n# 3. Execution: run Inspector via agent_runner.py using a prompt file\nnohup python3 \"$RUNNER_SCRIPT\" \\\n  --webhook \"$RESUME_URL\" \\\n  --cwd \"$WORKTREE\" \\\n  --agent inspector \\\n  --title \"INSPECTOR {{ $('Initialize Variables').item.json.body.task_id }} {{ $('Initialize Variables').item.json.timeStamp }} b{{ $('Initialize Variables').first().json.builder_pass }}-i{{ $('Initialize Variables').first().json.inspector_pass }}\" \\\n  --prompt-file \"$PROMPT_FILE\" \\\n  > /dev/null 2>&1 &"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -658,6 +696,36 @@
     },
     {
       "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst fallback = $('Initialize Variables').first().json;\nconst raw = input.builder_pass ?? fallback.builder_pass ?? '1';\nconst current = parseInt(String(raw), 10);\nreturn [{ builder_pass: String(Number.isFinite(current) ? current + 1 : 2) }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [6944, 2176],
+      "id": "0dd82db3-5a4e-4e59-9b5d-85d7a1edbf1e",
+      "name": "Increment Builder Pass"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "builder_pass",
+              "value": "={{ $json.builder_pass }}"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [7136, 2176],
+      "id": "79e9a8d9-5b10-4f93-b9fc-81a8d0b778d8",
+      "name": "Persist Builder Pass"
+    },
+    {
+      "parameters": {
         "rules": {
           "values": [
             {
@@ -717,6 +785,36 @@
     },
     {
       "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst fallback = $('Initialize Variables').first().json;\nconst raw = input.inspector_pass ?? fallback.inspector_pass ?? '0';\nconst current = parseInt(String(raw), 10);\nreturn [{ inspector_pass: String(Number.isFinite(current) ? current + 1 : 1) }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [5024, 1968],
+      "id": "1a4e95c2-7f2e-4d5d-9a0b-2e88d7c0b6a1",
+      "name": "Increment Inspector Pass (Manual)"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "inspector_pass",
+              "value": "={{ $json.inspector_pass }}"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [5216, 1968],
+      "id": "b6d2d0aa-7b2d-4a8b-9b2c-0e7d1d8f1293",
+      "name": "Persist Inspector Pass (Manual)"
+    },
+    {
+      "parameters": {
         "httpMethod": "POST",
         "path": "run-inspector",
         "responseMode": "lastNode",
@@ -763,6 +861,28 @@
             "index": 0
           }
         ],
+        [
+          {
+            "node": "Increment Inspector Pass (Manual)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Inspector Pass (Manual)": {
+      "main": [
+        [
+          {
+            "node": "Persist Inspector Pass (Manual)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist Inspector Pass (Manual)": {
+      "main": [
         [
           {
             "node": "Check Builder Handoff",
@@ -923,6 +1043,28 @@
     },
 
     "Create the DIFF": {
+      "main": [
+        [
+          {
+            "node": "Increment Inspector Pass (Auto)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Inspector Pass (Auto)": {
+      "main": [
+        [
+          {
+            "node": "Persist Inspector Pass (Auto)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist Inspector Pass (Auto)": {
       "main": [
         [
           {
@@ -1109,6 +1251,28 @@
       ]
     },
     "Persist Retry Vars": {
+      "main": [
+        [
+          {
+            "node": "Increment Builder Pass",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Builder Pass": {
+      "main": [
+        [
+          {
+            "node": "Persist Builder Pass",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist Builder Pass": {
       "main": [
         [
           {

@@ -99,15 +99,6 @@ Make sure to:
   - Set `work = null`
   Then proceed to the "Final Handoff Procedure" so Foreman can stop safely.
 
-### Final Handoff Checklist
-- [ ] Do the 'Public Handoff' - Construct your public handoff message in the required format (`Summary`, `Files touched`, `Commands run + results`, `Public API impact`, `A11y considerations`, `Risks / follow-ups`)
-- [ ] Do the 'Inspector Handoff'
-  - [ ] (CRITICAL) Write `builder_result.json` to disk with EXACTLY one JSON object (`summary`, `complexity`)
-  - [ ] Run `validate_builder_result` (in process tool) and fix any reported issues
-- [ ] (OPTIONAL) Write a final message if you have anything you feel you should share.
-
-CRITICAL no matter what ALWAYS do the "Write 'builder_result.json' to disk. That file is CRITICAL for the Foreman to operate.
-
 ## Implementation Procedure
 This is you implementation checklist. Follow in order when possible:
 - [ ] Read `AGENTS.md` and, if present, `REVIEW_RULEBOOK.md` to refresh requirements and constraints

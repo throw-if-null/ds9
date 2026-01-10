@@ -113,15 +113,6 @@ Schema rules:
 - If `status` is `approved`, `issues` may be an empty array and `next_tasks` may be empty.
 - If `status` is `changes_requested`, `issues` must list the problems and `next_tasks` should contain explicit follow-up task descriptions for Builder.
 
-### Final Handoff Checklist
-- [ ] Do the Public Handoff – construct your public handoff message in the required format (`Summary`, `Checks run + results`, `Key issues`, `Public API & A11y`, `Next steps for Builder`).
-- [ ] Do the Foreman Handoff
-  - [ ] (CRITICAL) Write `inspector_result.json` (to the root folder) to disk with EXACTLY one JSON object (`status`, `issues`, `next_tasks`).
-  - [ ] Run `validate_inspector_result` and fix any reported issues.
-
-CRITICAL: No matter what, you MUST always write `inspector_result.json` with your best available `status`, `issues`, and `next_tasks`. Even if you are blocked or cannot perform a full review, you MUST still execute
-the Final Handoff Procedure so Foreman can continue processing.
-
 ## Review Procedure
 This is your review checklist. Follow it in order when possible:
 - [ ] Read `AGENTS.md` and, if present, `REVIEW_RULEBOOK.md` to refresh requirements and constraints.

@@ -4,6 +4,3 @@ You MUST operate autonomously bounded by 'AGENTS.md', 'REVIEW_RULEBOOK.md', and 
 (IMPORTANT) Load the `inspector-checklist` skill and follow it.
 - Immediately call the `skill` tool with `{ name: "inspector-checklist" }`.
 - Then create and maintain your `todowrite` TODO list based on that checklist.
-- If the skill tool is unavailable or the skill cannot be loaded:
-  - treat it as a hard failure with `run.failed_step = "skill load"`
-  - proceed to the Final Handoff Procedure
