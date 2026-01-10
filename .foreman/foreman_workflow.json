@@ -10,8 +10,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [11952, 10280],
-      "id": "1efbdaf3-a391-4a42-b2f0-946e073de7d9",
+      "position": [4176, 13200],
+      "id": "c80a759c-d7d9-45f7-9af0-e444e83723b2",
       "name": "Start",
       "webhookId": "25673ee8-bf54-43e5-9912-6ae2db478f78"
     },
@@ -73,6 +73,10 @@
             {
               "name": "inspector_pass",
               "value": "0"
+            },
+            {
+              "name": "setup_done",
+              "value": "0"
             }
           ]
         },
@@ -82,8 +86,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [12176, 10376],
-      "id": "128272e0-77f2-4cc8-9e74-c29ddefec3f8",
+      "position": [4400, 13152],
+      "id": "3968b0bf-6a53-49f5-a098-179423b11e1d",
       "name": "Initialize Variables"
     },
     {
@@ -92,8 +96,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [12624, 10256],
-      "id": "655ae716-3d97-49b7-8b4b-6d38bdabac74",
+      "position": [4848, 13056],
+      "id": "502cdf08-9ccb-4c50-8299-50fb54a0c9b3",
       "name": "Check Worktree Exists"
     },
     {
@@ -102,8 +106,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [12848, 10256],
-      "id": "16eea058-5c4e-4c68-aa5a-2e965a842e4a",
+      "position": [5072, 13056],
+      "id": "194f8c14-2adf-4103-887e-8dac47e83359",
       "name": "Parse Worktree Exists"
     },
     {
@@ -143,8 +147,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [13072, 10256],
-      "id": "b5f9932e-90cc-45f6-af51-631dec0fbeb0",
+      "position": [5296, 13056],
+      "id": "6bd9636a-4c31-4351-b794-171b8ea7a36b",
       "name": "Worktree Exists?"
     },
     {
@@ -153,8 +157,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [13296, 10136],
-      "id": "d8ddb760-ba6a-4c77-a65b-ae57e7a8dbde",
+      "position": [5520, 12912],
+      "id": "fbe734cf-c0a7-4255-9309-1b9a7ad289fe",
       "name": "Setup Git Worktree"
     },
     {
@@ -163,9 +167,29 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [13520, 10256],
-      "id": "38e723e8-38f1-4c6a-ba35-c39ddea64880",
+      "position": [5744, 13056],
+      "id": "4fd973d7-f89f-4df3-93eb-472e62bf8ed3",
       "name": "Setup Repository"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "setup_done",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [5968, 13056],
+      "id": "af3632f5-edda-4acf-9f93-f6ecf11a5e85",
+      "name": "Mark Setup Done"
     },
     {
       "parameters": {
@@ -173,10 +197,11 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [13744, 10256],
-      "id": "7b825ab9-6d10-4c8b-9979-a7741aa4a4da",
+      "position": [6240, 12496],
+      "id": "52613e76-9a05-43da-9d66-ad837ec67c70",
       "name": "Run Builder Agent",
-      "alwaysOutputData": false
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -186,8 +211,8 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [13968, 9496],
-      "id": "4fb4dbad-8f02-42fc-abdd-944f2aaa1aaa",
+      "position": [6432, 12448],
+      "id": "e5fb1490-6739-4d04-85f4-32680776dcfa",
       "name": "Wait for Builder",
       "webhookId": "7fae1480-f059-48d9-9a0d-864c586b17a0"
     },
@@ -197,8 +222,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [14192, 9496],
-      "id": "b03d3f08-9281-40a1-abea-653cca6c28be",
+      "position": [6640, 12400],
+      "id": "23d7f44b-cb60-4434-9f4e-b4e4feec21c8",
       "name": "Check Builder Handoff"
     },
     {
@@ -207,8 +232,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [14416, 9496],
-      "id": "a600dd3a-5077-420d-9164-521c309b8585",
+      "position": [6864, 12400],
+      "id": "4b60c011-27a0-4fc1-aa8f-dbccee76889a",
       "name": "Process the response"
     },
     {
@@ -287,8 +312,8 @@
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
-      "position": [14640, 9480],
-      "id": "cc7ebfd9-6c62-411b-aa4b-c395ad2112b5",
+      "position": [7088, 12384],
+      "id": "b56dce69-4446-4e23-9e74-f1fd169033d7",
       "name": "Builder Result Switch"
     },
     {
@@ -318,8 +343,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [14864, 9352],
-      "id": "90229ae6-2744-4215-b266-acce3e828328",
+      "position": [7312, 12256],
+      "id": "dd3c89da-1149-41d5-ac5c-44fd25ce5c3c",
       "name": "Is Builder Run OK"
     },
     {
@@ -328,8 +353,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [14864, 10056],
-      "id": "4cb9f829-74df-4fb7-9970-2c8139b82b9f",
+      "position": [7328, 12720],
+      "id": "549bc522-be9c-4d64-8d8c-1e607637ca50",
       "name": "Increment Builder Transient"
     },
     {
@@ -358,8 +383,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [15088, 10056],
-      "id": "b9ea0fa4-1a10-4799-8a85-5c26b81892db",
+      "position": [7568, 12736],
+      "id": "f1840580-8b3b-48b1-b780-cee372310283",
       "name": "Should Retry Builder Transient"
     },
     {
@@ -378,8 +403,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [15312, 10088],
-      "id": "b4ca4e73-660e-47a0-93ae-18f1e5954626",
+      "position": [7920, 12816],
+      "id": "11972716-5797-46c0-bda3-defaa55c708c",
       "name": "Persist Builder Transient"
     },
     {
@@ -388,8 +413,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [15088, 9432],
-      "id": "6d09bb3e-a47c-407d-9cb9-be2e9379b82b",
+      "position": [7536, 12336],
+      "id": "0a6dca8c-3158-482d-a587-e3ce47a86f1f",
       "name": "Create the DIFF"
     },
     {
@@ -398,8 +423,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [15312, 9432],
-      "id": "b3c7dcf9-1529-4a21-a92a-341d7361fa4f",
+      "position": [7760, 12336],
+      "id": "83151739-bb76-4f63-970f-1516e74e1732",
       "name": "Increment Inspector Pass (Auto)"
     },
     {
@@ -418,8 +443,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [15536, 9432],
-      "id": "9ef93682-4795-43ae-bc78-3769e1d17547",
+      "position": [7984, 12336],
+      "id": "34f1b75a-7700-48ae-b60b-3093175c5b6d",
       "name": "Persist Inspector Pass (Auto)"
     },
     {
@@ -428,8 +453,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [15760, 9432],
-      "id": "ff5cf84f-fe76-4e2e-9a9a-95035b1a923d",
+      "position": [8208, 12336],
+      "id": "aad7a808-8667-4a5f-83d9-fd2007229c74",
       "name": "Run Inspector Agent",
       "notesInFlow": false,
       "onError": "continueErrorOutput"
@@ -442,8 +467,8 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [15984, 9352],
-      "id": "ca96e56e-7d10-478a-8ffe-32e69b7cd9d7",
+      "position": [8432, 12256],
+      "id": "4140bf5e-b9b1-413f-b869-95e153a73a05",
       "name": "Wait fo Inspector",
       "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9"
     },
@@ -453,8 +478,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [16208, 9352],
-      "id": "ed2f2cc9-a116-4170-a460-089bad52c843",
+      "position": [8656, 12256],
+      "id": "e0b0aa77-f870-4291-88ca-6203845c3773",
       "name": "Check Inspector Handoff"
     },
     {
@@ -463,8 +488,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [16432, 9352],
-      "id": "400a1f59-805f-4241-8679-f395a30c9572",
+      "position": [8880, 12256],
+      "id": "e19c9212-5476-4e17-bb59-f854da2da9bf",
       "name": "Process the response1"
     },
     {
@@ -543,8 +568,8 @@
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
-      "position": [16656, 9336],
-      "id": "b8444347-5de8-4fa3-b795-f342f09caba5",
+      "position": [9104, 12240],
+      "id": "94c212b1-7544-44a1-acf4-4113b17d5f5f",
       "name": "Inspector Result Switch"
     },
     {
@@ -574,8 +599,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [16880, 9232],
-      "id": "6234ab47-6d7f-4a82-8423-60004c5288fe",
+      "position": [9328, 12136],
+      "id": "e4df61ca-6690-4ee0-8363-434efc83d433",
       "name": "Is Inspector Run OK"
     },
     {
@@ -606,8 +631,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [17104, 9304],
-      "id": "04460e34-5064-41a8-a16a-db5bdd189f6d",
+      "position": [9552, 12208],
+      "id": "6fb39de9-4edb-45b1-b4f4-e6e7d143fd43",
       "name": "Is Inspector Approved"
     },
     {
@@ -616,8 +641,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [16880, 9624],
-      "id": "43bfeb17-0b27-4a9a-9776-06543a5ebdb6",
+      "position": [9328, 12536],
+      "id": "520502b2-e1bc-4405-9389-552e3b0f4550",
       "name": "Increment Inspector Transient"
     },
     {
@@ -646,8 +671,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [17104, 9624],
-      "id": "3aa5661c-4efd-42b3-ba6d-cdba712af7fb",
+      "position": [9552, 12536],
+      "id": "b35516e6-171f-49be-acab-68aff8f08319",
       "name": "Should Retry Inspector Transient"
     },
     {
@@ -666,8 +691,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [17328, 9776],
-      "id": "378eb3f3-2225-450a-95f5-479b4b744acd",
+      "position": [9776, 12688],
+      "id": "026c7aa0-ae24-4003-a4c2-25c591813c30",
       "name": "Persist Inspector Transient"
     },
     {
@@ -676,8 +701,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [17328, 9216],
-      "id": "f5fa95ed-d5e7-4301-a1ed-adeb7f7d9475",
+      "position": [9776, 12128],
+      "id": "ac312533-093c-4982-8e46-5eea83a0420c",
       "name": "Create the PR"
     },
     {
@@ -686,8 +711,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [17776, 9280],
-      "id": "cfb219d2-f4d7-48d8-93eb-4f86dcdb4a1d",
+      "position": [10176, 11792],
+      "id": "142afa0e-4efa-4159-9d29-4a9a6ba50735",
       "name": "Log Rejection"
     },
     {
@@ -696,8 +721,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [17328, 9408],
-      "id": "bcf0b307-3fe9-4c23-b9d9-5b74ebc9dd7f",
+      "position": [9776, 12320],
+      "id": "e4dc0a44-ff65-4f47-a3ff-bc7f61d9f78b",
       "name": "Update Retry State"
     },
     {
@@ -727,8 +752,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [17552, 9408],
-      "id": "aac62dcc-b001-411a-801f-45cf8d2885d3",
+      "position": [10000, 12320],
+      "id": "c311767a-3572-4ccf-9849-f980d757312f",
       "name": "Should Retry"
     },
     {
@@ -751,8 +776,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [17776, 9584],
-      "id": "18118561-9304-47d6-8215-65e5a31fd693",
+      "position": [10224, 12480],
+      "id": "64a73e5c-d64a-4d48-9ca6-d8cace9d55ad",
       "name": "Persist Retry Vars"
     },
     {
@@ -761,8 +786,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [18000, 9584],
-      "id": "c2e335af-5cab-4336-8f98-d33aeb48a957",
+      "position": [10448, 12480],
+      "id": "e6b4ddb9-f8d0-425b-bf73-4c365e6f0c23",
       "name": "Increment Builder Pass"
     },
     {
@@ -781,68 +806,49 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [18224, 9920],
-      "id": "62757855-a7cd-4f79-abab-a42cd87910a7",
+      "position": [10672, 12840],
+      "id": "8240a525-c635-4756-babb-60e94eb2b9d0",
       "name": "Persist Builder Pass"
     },
     {
       "parameters": {
-        "rules": {
-          "values": [
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
             {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.mode }}",
-                    "rightValue": "full",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    },
-                    "id": "8ad8fcbe-21de-4473-bebb-ec4019dedcd4"
-                  }
-                ],
-                "combinator": "and"
+              "id": "6a7f2f7c-4f14-4c55-92c4-9c2a7f6ba5ac",
+              "leftValue": "={{ $json.mode }}",
+              "rightValue": "full",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
               }
             },
             {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "id": "275c73f6-2b12-46a9-849d-1ae68bd8f94a",
-                    "leftValue": "={{ $json.mode }}",
-                    "rightValue": "review",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
+              "id": "a18e1430-6930-4a56-b8e4-8f519f9b8a1d",
+              "leftValue": "={{ $('Initialize Variables').first().json.setup_done }}",
+              "rightValue": "1",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
               }
             }
-          ]
+          ],
+          "combinator": "and"
         },
+        "looseTypeValidation": true,
         "options": {}
       },
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.4,
-      "position": [12400, 10376],
-      "id": "d5a46111-d961-4d98-b4e2-905cbb7d85b1",
-      "name": "Switch"
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [4624, 13152],
+      "id": "4c171d15-9cec-4151-8265-90810364a88b",
+      "name": "Setup Gate"
     },
     {
       "parameters": {
@@ -850,8 +856,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [13744, 10496],
-      "id": "26142bc2-d64c-477e-857e-e4ffdbf45b7b",
+      "position": [3952, 13008],
+      "id": "026af7b7-7521-4934-9696-52f0ff95a0aa",
       "name": "Increment Inspector Pass (Manual)"
     },
     {
@@ -870,8 +876,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [13968, 10496],
-      "id": "2284ef02-0371-49e6-9636-3a587cabe902",
+      "position": [4176, 13008],
+      "id": "4bd7606a-a8b8-443b-8b7f-1cdd53be4e5a",
       "name": "Persist Inspector Pass (Manual)"
     },
     {
@@ -883,8 +889,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [11952, 10472],
-      "id": "b343cb50-592b-4904-b4df-539782acd082",
+      "position": [3728, 13008],
+      "id": "51c3a20a-dcee-4e15-8343-ed5868ce931a",
       "name": "Review",
       "webhookId": "0d33a427-d5ca-4d31-8dda-d8a963a9db4e"
     }
@@ -906,25 +912,25 @@
       "main": [
         [
           {
-            "node": "Switch",
+            "node": "Setup Gate",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Switch": {
+    "Setup Gate": {
       "main": [
         [
           {
-            "node": "Check Worktree Exists",
+            "node": "Run Builder Agent",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Increment Inspector Pass (Manual)",
+            "node": "Check Worktree Exists",
             "type": "main",
             "index": 0
           }
@@ -982,17 +988,6 @@
         ]
       ]
     },
-    "Persist Inspector Pass (Manual)": {
-      "main": [
-        [
-          {
-            "node": "Check Builder Handoff",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Setup Git Worktree": {
       "main": [
         [
@@ -1008,6 +1003,17 @@
       "main": [
         [
           {
+            "node": "Mark Setup Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Setup Done": {
+      "main": [
+        [
+          {
             "node": "Run Builder Agent",
             "type": "main",
             "index": 0
@@ -1017,6 +1023,13 @@
     },
     "Run Builder Agent": {
       "main": [
+        [
+          {
+            "node": "Wait for Builder",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "Wait for Builder",
@@ -1177,6 +1190,13 @@
     },
     "Run Inspector Agent": {
       "main": [
+        [
+          {
+            "node": "Wait fo Inspector",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "Wait fo Inspector",
@@ -1386,6 +1406,17 @@
       "main": [
         [
           {
+            "node": "Increment Inspector Pass (Manual)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist Inspector Pass (Manual)": {
+      "main": [
+        [
+          {
             "node": "Initialize Variables",
             "type": "main",
             "index": 0
@@ -1399,7 +1430,7 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "7cfee554-73a4-4823-9d4b-a6b6a4ff9c68",
+  "versionId": "bd2c7cd4-2a05-40ce-aa35-d46517f0e6bb",
   "meta": {
     "instanceId": "b11168fb8d2189bb65765ba38337a8f759c5093954de979172c9be19e0a9355a"
   },
