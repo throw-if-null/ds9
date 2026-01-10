@@ -31,6 +31,22 @@
               "name": "change_requests"
             },
             {
+              "name": "transient_retry_builder",
+              "value": "0"
+            },
+            {
+              "name": "transient_max_retries_builder",
+              "value": "3"
+            },
+            {
+              "name": "transient_retry_inspector",
+              "value": "0"
+            },
+            {
+              "name": "transient_max_retries_inspector",
+              "value": "3"
+            },
+            {
               "name": "task_id",
               "value": "={{ $json.body.task_id }}"
             },
@@ -128,6 +144,86 @@
     },
     {
       "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f1b27a9b-50f1-4d8e-8ddd-1e15d91dfc71",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "valid",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e2b0c6c4-8bbd-4b46-97e2-8f9a469a63f3",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "file_missing",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1f9aa194-73e4-465d-b7c3-5d31f3d6e0ef",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "invalid_json",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [5472, 1904],
+      "id": "c8c9f18f-5f03-4c85-8c6f-9783fe0aa1b1",
+      "name": "Builder Result Switch"
+    },
+    {
+      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -137,17 +233,7 @@
           },
           "conditions": [
             {
-              "id": "90ec06b4-7f79-490b-8459-b93dddfcad09",
-              "leftValue": "={{ $json.status }}",
-              "rightValue": "valid",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            },
-            {
-              "id": "2e9ba515-993c-4378-a68f-b6ff997fa2cc",
+              "id": "0a3dd3eb-0c1c-4f0b-bfb8-59f0f2f0b8c0",
               "leftValue": "={{ $json.data.run.status }}",
               "rightValue": "ok",
               "operator": {
@@ -163,9 +249,69 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [5472, 1904],
-      "id": "0d5bbd61-137b-496f-8243-43bf4805fce4",
-      "name": "Is Builder OK"
+      "position": [5664, 1904],
+      "id": "d3afce1c-0a63-4d30-9b41-34fff7d9c9a4",
+      "name": "Is Builder Run OK"
+    },
+    {
+      "parameters": {
+        "jsCode": "const current = parseInt($('Initialize Variables').first().json.transient_retry_builder || '0', 10);\nreturn [{ transient_retry_builder: String(current + 1) }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [5664, 2016],
+      "id": "52a8b66e-6a5f-4e42-88b3-8e1c77fbd2bf",
+      "name": "Increment Builder Transient"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3341c2d1-083c-4283-9db1-56aedb5bd956",
+              "leftValue": "={{ $json.transient_retry_builder }}",
+              "rightValue": "={{ $('Initialize Variables').first().json.transient_max_retries_builder }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [5856, 2016],
+      "id": "9c99b020-31f7-4ebc-91f2-79b6d7bb4a5a",
+      "name": "Should Retry Builder Transient"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "transient_retry_builder",
+              "value": "={{ $json.transient_retry_builder }}"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [6048, 2016],
+      "id": "331203bd-2f6f-4921-b2dd-56b7b510c141",
+      "name": "Persist Builder Transient"
     },
     {
       "parameters": {
@@ -224,6 +370,117 @@
     },
     {
       "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "4f0b4c00-f2bd-4b54-b2c7-6c62e4f63c68",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "valid",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "41bcb2d2-ad2d-4d2b-856c-06248d2b0a70",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "file_missing",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8878bf1f-0b24-4cb1-8c4a-4560b0b1ee45",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "invalid_json",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [5696, 2176],
+      "id": "df0b4710-cb73-4caa-9bd0-54aeecb3e572",
+      "name": "Inspector Result Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "96d2b1ab-4d15-48a6-abd6-854d5356cb94",
+              "leftValue": "={{ $json.data.run.status }}",
+              "rightValue": "ok",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [5888, 2176],
+      "id": "74edcdbf-b148-41d7-90e5-6d0b338ab700",
+      "name": "Is Inspector Run OK"
+    },
+    {
+      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -233,27 +490,7 @@
           },
           "conditions": [
             {
-              "id": "e4238de8-6dfb-4cf6-b62b-1b4df22407eb",
-              "leftValue": "={{ $json.status }}",
-              "rightValue": "valid",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            },
-            {
-              "id": "0a71aede-43b0-4f73-9570-798181800b51",
-              "leftValue": "={{ $json.data.run.status }}",
-              "rightValue": "ok",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            },
-            {
-              "id": "ebce3b67-55cd-4285-a8a6-6c6c5758a8f0",
+              "id": "2df5974e-7c8d-4f10-a34a-a04ce3d0c2ff",
               "leftValue": "={{ $json.data.work.status }}",
               "rightValue": "approved",
               "operator": {
@@ -270,9 +507,69 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [5696, 2176],
-      "id": "f73afa94-fc0a-438a-845e-d9fc69459b77",
-      "name": "Is Inspector OK"
+      "position": [6080, 2176],
+      "id": "79b9cd8a-2d4d-49d0-8c4c-87869b393c04",
+      "name": "Is Inspector Approved"
+    },
+    {
+      "parameters": {
+        "jsCode": "const current = parseInt($('Initialize Variables').first().json.transient_retry_inspector || '0', 10);\nreturn [{ transient_retry_inspector: String(current + 1) }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [5888, 2304],
+      "id": "a830c8d7-042d-4a24-b978-3d53b1463f70",
+      "name": "Increment Inspector Transient"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2c69b8f5-0c49-4ee1-8d9d-acde1b0092ef",
+              "leftValue": "={{ $json.transient_retry_inspector }}",
+              "rightValue": "={{ $('Initialize Variables').first().json.transient_max_retries_inspector }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [6080, 2304],
+      "id": "d0257140-287d-4cb1-8650-d5bcbbce6a2b",
+      "name": "Should Retry Inspector Transient"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "transient_retry_inspector",
+              "value": "={{ $json.transient_retry_inspector }}"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [6272, 2304],
+      "id": "cf298479-de9c-4b71-99c0-e8519b099339",
+      "name": "Persist Inspector Transient"
     },
     {
       "parameters": {
@@ -534,14 +831,39 @@
       "main": [
         [
           {
-            "node": "Is Builder OK",
+            "node": "Builder Result Switch",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Is Builder OK": {
+    "Builder Result Switch": {
+      "main": [
+        [
+          {
+            "node": "Is Builder Run OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Builder Transient",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Builder Transient",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Builder Run OK": {
       "main": [
         [
           {
@@ -559,6 +881,47 @@
         ]
       ]
     },
+    "Increment Builder Transient": {
+      "main": [
+        [
+          {
+            "node": "Should Retry Builder Transient",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Retry Builder Transient": {
+      "main": [
+        [
+          {
+            "node": "Persist Builder Transient",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist Builder Transient": {
+      "main": [
+        [
+          {
+            "node": "Run Builder Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+
     "Create the DIFF": {
       "main": [
         [
@@ -607,14 +970,57 @@
       "main": [
         [
           {
-            "node": "Is Inspector OK",
+            "node": "Inspector Result Switch",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Is Inspector OK": {
+    "Inspector Result Switch": {
+      "main": [
+        [
+          {
+            "node": "Is Inspector Run OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Inspector Transient",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Inspector Transient",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Inspector Run OK": {
+      "main": [
+        [
+          {
+            "node": "Is Inspector Approved",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Inspector Approved": {
       "main": [
         [
           {
@@ -632,6 +1038,47 @@
         ]
       ]
     },
+    "Increment Inspector Transient": {
+      "main": [
+        [
+          {
+            "node": "Should Retry Inspector Transient",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Retry Inspector Transient": {
+      "main": [
+        [
+          {
+            "node": "Persist Inspector Transient",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist Inspector Transient": {
+      "main": [
+        [
+          {
+            "node": "Run Inspector Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+
     "Update Retry State": {
       "main": [
         [

@@ -1,7 +1,7 @@
 ---
 description: "Review agent: gates changes, enforces standards, and provides feedback."
 model: "github-copilot/claude-haiku-4.5" #"github-copilot/gpt-5.1"
-temperature: 0.0
+temperature: 0.2
 prompt: prompts/inspector.prompt.md
 permission:
   edit:

@@ -1,7 +1,7 @@
 ---
 description: "Implementation agent: writes code, runs tests, and iterates in an isolated worktree."
 model: "github-copilot/gpt-5-mini"
-temperature: 0.0
+temperature: 0.4
 prompt: prompts/builder.prompt.md
 permission:
   edit: allow
