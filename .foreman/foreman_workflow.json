@@ -10,8 +10,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [4352, 1680],
-      "id": "b930395f-6c49-4e3d-93a4-66d043eda0b7",
+      "position": [11952, 10280],
+      "id": "1efbdaf3-a391-4a42-b2f0-946e073de7d9",
       "name": "Start",
       "webhookId": "25673ee8-bf54-43e5-9912-6ae2db478f78"
     },
@@ -82,9 +82,70 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [4640, 1808],
-      "id": "c0400830-9b2e-42f5-a006-2a77bf23aae8",
+      "position": [12176, 10376],
+      "id": "128272e0-77f2-4cc8-9e74-c29ddefec3f8",
       "name": "Initialize Variables"
+    },
+    {
+      "parameters": {
+        "command": "=REPO=\"${FOREMAN_REPO:-$(pwd)}\"\nWORKTREE=\"$REPO/{{ $json.worktree_path }}\"\n\nif [ -d \"$WORKTREE\" ] && git -C \"$WORKTREE\" rev-parse --is-inside-work-tree >/dev/null 2>&1; then\n  echo 'exists=true'\nelse\n  echo 'exists=false'\nfi"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [12624, 10256],
+      "id": "655ae716-3d97-49b7-8b4b-6d38bdabac74",
+      "name": "Check Worktree Exists"
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = String($input.first().json.stdout || '').trim();\nconst exists = stdout.includes('exists=true');\nreturn [{ worktree_exists: exists }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [12848, 10256],
+      "id": "16eea058-5c4e-4c68-aa5a-2e965a842e4a",
+      "name": "Parse Worktree Exists"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c6d8c9f0-0d2c-4d10-b962-4d4ccf8b4d10",
+              "leftValue": "={{ $json.worktree_exists }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "isTrue"
+              }
+            },
+            {
+              "id": "d09a1627-33ab-4e21-8b43-ab2b9cdcca41",
+              "leftValue": "={{ $json.worktree_exists }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [13072, 10256],
+      "id": "b5f9932e-90cc-45f6-af51-631dec0fbeb0",
+      "name": "Worktree Exists?"
     },
     {
       "parameters": {
@@ -92,8 +153,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5056, 1680],
-      "id": "69e06f59-191e-4740-a417-056a07184f0b",
+      "position": [13296, 10136],
+      "id": "d8ddb760-ba6a-4c77-a65b-ae57e7a8dbde",
       "name": "Setup Git Worktree"
     },
     {
@@ -102,8 +163,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5232, 1680],
-      "id": "fd12ef5f-658d-4f8d-bb7b-c75da70ae308",
+      "position": [13520, 10256],
+      "id": "38e723e8-38f1-4c6a-ba35-c39ddea64880",
       "name": "Setup Repository"
     },
     {
@@ -112,8 +173,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5552, 1680],
-      "id": "a00d2b18-a28a-45fd-94c8-e7929a99fcad",
+      "position": [13744, 10256],
+      "id": "7b825ab9-6d10-4c8b-9979-a7741aa4a4da",
       "name": "Run Builder Agent",
       "alwaysOutputData": false
     },
@@ -125,8 +186,8 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [5744, 1680],
-      "id": "777e130f-ae14-4655-8e10-d1a269094f12",
+      "position": [13968, 9496],
+      "id": "4fb4dbad-8f02-42fc-abdd-944f2aaa1aaa",
       "name": "Wait for Builder",
       "webhookId": "7fae1480-f059-48d9-9a0d-864c586b17a0"
     },
@@ -136,8 +197,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5072, 1904],
-      "id": "cb0b3f5f-3533-4b41-bae9-8d835083678e",
+      "position": [14192, 9496],
+      "id": "b03d3f08-9281-40a1-abea-653cca6c28be",
       "name": "Check Builder Handoff"
     },
     {
@@ -146,8 +207,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [5264, 1904],
-      "id": "72bbbf35-fdf0-4b30-8302-672602bfdd5c",
+      "position": [14416, 9496],
+      "id": "a600dd3a-5077-420d-9164-521c309b8585",
       "name": "Process the response"
     },
     {
@@ -226,8 +287,8 @@
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
-      "position": [5472, 1904],
-      "id": "c8c9f18f-5f03-4c85-8c6f-9783fe0aa1b1",
+      "position": [14640, 9480],
+      "id": "cc7ebfd9-6c62-411b-aa4b-c395ad2112b5",
       "name": "Builder Result Switch"
     },
     {
@@ -257,8 +318,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [5664, 1904],
-      "id": "d3afce1c-0a63-4d30-9b41-34fff7d9c9a4",
+      "position": [14864, 9352],
+      "id": "90229ae6-2744-4215-b266-acce3e828328",
       "name": "Is Builder Run OK"
     },
     {
@@ -267,8 +328,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [5664, 2016],
-      "id": "52a8b66e-6a5f-4e42-88b3-8e1c77fbd2bf",
+      "position": [14864, 10056],
+      "id": "4cb9f829-74df-4fb7-9970-2c8139b82b9f",
       "name": "Increment Builder Transient"
     },
     {
@@ -297,8 +358,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [5856, 2016],
-      "id": "9c99b020-31f7-4ebc-91f2-79b6d7bb4a5a",
+      "position": [15088, 10056],
+      "id": "b9ea0fa4-1a10-4799-8a85-5c26b81892db",
       "name": "Should Retry Builder Transient"
     },
     {
@@ -317,8 +378,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [6048, 2016],
-      "id": "331203bd-2f6f-4921-b2dd-56b7b510c141",
+      "position": [15312, 10088],
+      "id": "b4ca4e73-660e-47a0-93ae-18f1e5954626",
       "name": "Persist Builder Transient"
     },
     {
@@ -327,8 +388,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5712, 1904],
-      "id": "4e99c9c2-20cb-4e11-afdc-95752551cf01",
+      "position": [15088, 9432],
+      "id": "6d09bb3e-a47c-407d-9cb9-be2e9379b82b",
       "name": "Create the DIFF"
     },
     {
@@ -337,8 +398,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [5712, 2032],
-      "id": "dc31f4f6-ea5f-4e9d-8eb1-3e3fd6d9b6f5",
+      "position": [15312, 9432],
+      "id": "b3c7dcf9-1529-4a21-a92a-341d7361fa4f",
       "name": "Increment Inspector Pass (Auto)"
     },
     {
@@ -357,8 +418,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [5904, 2032],
-      "id": "e35ad2c9-45ff-4c5e-9b2f-8c7c1bd224d5",
+      "position": [15536, 9432],
+      "id": "9ef93682-4795-43ae-bc78-3769e1d17547",
       "name": "Persist Inspector Pass (Auto)"
     },
     {
@@ -367,8 +428,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5872, 1904],
-      "id": "0ab49706-6cec-494d-a140-e0592f9b708e",
+      "position": [15760, 9432],
+      "id": "ff5cf84f-fe76-4e2e-9a9a-95035b1a923d",
       "name": "Run Inspector Agent",
       "notesInFlow": false,
       "onError": "continueErrorOutput"
@@ -381,8 +442,8 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [5072, 2176],
-      "id": "7f6b703f-13ce-492f-b71f-16b750297bbc",
+      "position": [15984, 9352],
+      "id": "ca96e56e-7d10-478a-8ffe-32e69b7cd9d7",
       "name": "Wait fo Inspector",
       "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9"
     },
@@ -392,8 +453,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5280, 2176],
-      "id": "473c93de-d60b-4a37-8a3e-454da0ba6750",
+      "position": [16208, 9352],
+      "id": "ed2f2cc9-a116-4170-a460-089bad52c843",
       "name": "Check Inspector Handoff"
     },
     {
@@ -402,8 +463,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [5504, 2176],
-      "id": "a39d1fa8-23ae-4c54-b10b-56c9a7943ba3",
+      "position": [16432, 9352],
+      "id": "400a1f59-805f-4241-8679-f395a30c9572",
       "name": "Process the response1"
     },
     {
@@ -482,8 +543,8 @@
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
-      "position": [5696, 2176],
-      "id": "df0b4710-cb73-4caa-9bd0-54aeecb3e572",
+      "position": [16656, 9336],
+      "id": "b8444347-5de8-4fa3-b795-f342f09caba5",
       "name": "Inspector Result Switch"
     },
     {
@@ -513,8 +574,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [5888, 2176],
-      "id": "74edcdbf-b148-41d7-90e5-6d0b338ab700",
+      "position": [16880, 9232],
+      "id": "6234ab47-6d7f-4a82-8423-60004c5288fe",
       "name": "Is Inspector Run OK"
     },
     {
@@ -545,8 +606,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [6080, 2176],
-      "id": "79b9cd8a-2d4d-49d0-8c4c-87869b393c04",
+      "position": [17104, 9304],
+      "id": "04460e34-5064-41a8-a16a-db5bdd189f6d",
       "name": "Is Inspector Approved"
     },
     {
@@ -555,8 +616,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [5888, 2304],
-      "id": "a830c8d7-042d-4a24-b978-3d53b1463f70",
+      "position": [16880, 9624],
+      "id": "43bfeb17-0b27-4a9a-9776-06543a5ebdb6",
       "name": "Increment Inspector Transient"
     },
     {
@@ -585,8 +646,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [6080, 2304],
-      "id": "d0257140-287d-4cb1-8650-d5bcbbce6a2b",
+      "position": [17104, 9624],
+      "id": "3aa5661c-4efd-42b3-ba6d-cdba712af7fb",
       "name": "Should Retry Inspector Transient"
     },
     {
@@ -605,8 +666,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [6272, 2304],
-      "id": "cf298479-de9c-4b71-99c0-e8519b099339",
+      "position": [17328, 9776],
+      "id": "378eb3f3-2225-450a-95f5-479b4b744acd",
       "name": "Persist Inspector Transient"
     },
     {
@@ -615,8 +676,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [6736, 1952],
-      "id": "e64625c2-65ae-47b6-8268-08871582dc7a",
+      "position": [17328, 9216],
+      "id": "f5fa95ed-d5e7-4301-a1ed-adeb7f7d9475",
       "name": "Create the PR"
     },
     {
@@ -625,8 +686,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [6736, 1760],
-      "id": "49b987eb-7f5a-4ae7-a1ca-2ce27997de48",
+      "position": [17776, 9280],
+      "id": "cfb219d2-f4d7-48d8-93eb-4f86dcdb4a1d",
       "name": "Log Rejection"
     },
     {
@@ -635,8 +696,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [6336, 2176],
-      "id": "30dd42b9-7be0-4ea2-b55c-60fd949e1190",
+      "position": [17328, 9408],
+      "id": "bcf0b307-3fe9-4c23-b9d9-5b74ebc9dd7f",
       "name": "Update Retry State"
     },
     {
@@ -666,8 +727,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [6528, 2176],
-      "id": "42b76437-7ad2-4eba-997b-2969735e9bdb",
+      "position": [17552, 9408],
+      "id": "aac62dcc-b001-411a-801f-45cf8d2885d3",
       "name": "Should Retry"
     },
     {
@@ -690,8 +751,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [6752, 2176],
-      "id": "1a551bdb-e78d-4ce3-87de-b37d03591859",
+      "position": [17776, 9584],
+      "id": "18118561-9304-47d6-8215-65e5a31fd693",
       "name": "Persist Retry Vars"
     },
     {
@@ -700,8 +761,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [6944, 2176],
-      "id": "0dd82db3-5a4e-4e59-9b5d-85d7a1edbf1e",
+      "position": [18000, 9584],
+      "id": "c2e335af-5cab-4336-8f98-d33aeb48a957",
       "name": "Increment Builder Pass"
     },
     {
@@ -720,8 +781,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [7136, 2176],
-      "id": "79e9a8d9-5b10-4f93-b9fc-81a8d0b778d8",
+      "position": [18224, 9920],
+      "id": "62757855-a7cd-4f79-abab-a42cd87910a7",
       "name": "Persist Builder Pass"
     },
     {
@@ -779,8 +840,8 @@
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
-      "position": [4832, 1808],
-      "id": "73cd8380-9758-4b98-b287-325018281600",
+      "position": [12400, 10376],
+      "id": "d5a46111-d961-4d98-b4e2-905cbb7d85b1",
       "name": "Switch"
     },
     {
@@ -789,8 +850,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [5024, 1968],
-      "id": "1a4e95c2-7f2e-4d5d-9a0b-2e88d7c0b6a1",
+      "position": [13744, 10496],
+      "id": "26142bc2-d64c-477e-857e-e4ffdbf45b7b",
       "name": "Increment Inspector Pass (Manual)"
     },
     {
@@ -809,8 +870,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [5216, 1968],
-      "id": "b6d2d0aa-7b2d-4a8b-9b2c-0e7d1d8f1293",
+      "position": [13968, 10496],
+      "id": "2284ef02-0371-49e6-9636-3a587cabe902",
       "name": "Persist Inspector Pass (Manual)"
     },
     {
@@ -822,8 +883,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [4352, 1968],
-      "id": "0683f834-3118-4851-b796-7861c8b79f3c",
+      "position": [11952, 10472],
+      "id": "b343cb50-592b-4904-b4df-539782acd082",
       "name": "Review",
       "webhookId": "0d33a427-d5ca-4d31-8dda-d8a963a9db4e"
     }
@@ -856,7 +917,7 @@
       "main": [
         [
           {
-            "node": "Setup Git Worktree",
+            "node": "Check Worktree Exists",
             "type": "main",
             "index": 0
           }
@@ -864,6 +925,46 @@
         [
           {
             "node": "Increment Inspector Pass (Manual)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Worktree Exists": {
+      "main": [
+        [
+          {
+            "node": "Parse Worktree Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Worktree Exists": {
+      "main": [
+        [
+          {
+            "node": "Worktree Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Worktree Exists?": {
+      "main": [
+        [
+          {
+            "node": "Setup Repository",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Setup Git Worktree",
             "type": "main",
             "index": 0
           }
@@ -1041,7 +1142,6 @@
         ]
       ]
     },
-
     "Create the DIFF": {
       "main": [
         [
@@ -1220,7 +1320,6 @@
         ]
       ]
     },
-
     "Update Retry State": {
       "main": [
         [
@@ -1300,10 +1399,10 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "d688dabf-833b-4875-a535-b58fb805e55d",
+  "versionId": "7cfee554-73a4-4823-9d4b-a6b6a4ff9c68",
   "meta": {
     "instanceId": "b11168fb8d2189bb65765ba38337a8f759c5093954de979172c9be19e0a9355a"
   },
-  "id": "cv-zd6S-OH7kCiTmLAvMb",
+  "id": "zJD1NAj5NGGDGbPmWurIz",
   "tags": []
 }

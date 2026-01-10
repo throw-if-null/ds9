@@ -1,8 +1,8 @@
 ---
 description: "Implementation agent: writes code, runs tests, and iterates in an isolated worktree."
-model: "github-copilot/gpt-5-mini
-reasoningEffort: high,
-verbosity: high,
+model: "github-copilot/gpt-5-mini"
+reasoningEffort: high
+verbosity: high
 temperature: 0.4
 prompt: prompts/builder.prompt.md
 permission:
@@ -16,5 +16,5 @@ permission:
     greeter: allow
     builder-checklist: allow
     builder-signoff: allow
-  external_directory: deny
+external_directory: deny
 ---
