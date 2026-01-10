@@ -24,6 +24,12 @@
 		class="lcars-arrow-btn lcars-sidebar-up"
 		aria-label="Scroll up"
 		onclick={() => scrollByAmount(-100)}
+		onkeydown={(e: KeyboardEvent) => {
+			if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+				e.preventDefault();
+				scrollByAmount(-100);
+			}
+		}}
 	>
 		<svg viewBox="0 0 40 12" aria-hidden="true"><path d="M0 12 L20 0 L40 12 Z" /></svg>
 	</button>
@@ -36,6 +42,12 @@
 		class="lcars-arrow-btn lcars-sidebar-down"
 		aria-label="Scroll down"
 		onclick={() => scrollByAmount(100)}
+		onkeydown={(e: KeyboardEvent) => {
+			if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+				e.preventDefault();
+				scrollByAmount(100);
+			}
+		}}
 	>
 		<svg viewBox="0 0 40 12" aria-hidden="true"><path d="M0 0 L20 12 L40 0 Z" /></svg>
 	</button>
