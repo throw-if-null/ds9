@@ -10,8 +10,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [3632, 864],
-      "id": "54d064be-b699-419a-abdf-73ebc1376803",
+      "position": [4352, 1680],
+      "id": "b930395f-6c49-4e3d-93a4-66d043eda0b7",
       "name": "Start",
       "webhookId": "25673ee8-bf54-43e5-9912-6ae2db478f78"
     },
@@ -28,8 +28,7 @@
               "value": "3"
             },
             {
-              "name": "change_requests",
-              "value": ""
+              "name": "change_requests"
             },
             {
               "name": "task_id",
@@ -59,8 +58,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [3920, 992],
-      "id": "032eb0aa-204d-4916-acba-d6425264fcfe",
+      "position": [4640, 1808],
+      "id": "c0400830-9b2e-42f5-a006-2a77bf23aae8",
       "name": "Initialize Variables"
     },
     {
@@ -69,8 +68,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4336, 864],
-      "id": "34966bac-8383-4631-832a-c416af0c5009",
+      "position": [5056, 1680],
+      "id": "69e06f59-191e-4740-a417-056a07184f0b",
       "name": "Setup Git Worktree"
     },
     {
@@ -79,8 +78,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4512, 864],
-      "id": "938ab0db-6c9e-4a7c-9557-92a7d60c7eea",
+      "position": [5232, 1680],
+      "id": "fd12ef5f-658d-4f8d-bb7b-c75da70ae308",
       "name": "Setup Repository"
     },
     {
@@ -89,8 +88,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4832, 864],
-      "id": "09957eb7-4bef-4413-a173-92899588121e",
+      "position": [5552, 1680],
+      "id": "a00d2b18-a28a-45fd-94c8-e7929a99fcad",
       "name": "Run Builder Agent",
       "alwaysOutputData": false
     },
@@ -102,8 +101,8 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [5024, 864],
-      "id": "f963019d-5a3c-466a-9793-16e7a36632ae",
+      "position": [5744, 1680],
+      "id": "777e130f-ae14-4655-8e10-d1a269094f12",
       "name": "Wait for Builder",
       "webhookId": "7fae1480-f059-48d9-9a0d-864c586b17a0"
     },
@@ -113,18 +112,18 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4352, 1088],
-      "id": "f7fba4cc-4ad7-4e31-a60a-3e4a5ec3142e",
+      "position": [5072, 1904],
+      "id": "cb0b3f5f-3533-4b41-bae9-8d835083678e",
       "name": "Check Builder Handoff"
     },
     {
       "parameters": {
-        "jsCode": "const text = $json.stdout || '';\n\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse handoff JSON: ' + e.message);\n}\n  // n8n expects an array of items\nreturn [result];"
+        "jsCode": "const text = $input.first().json.stdout || '';\n\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse handoff JSON: ' + e.message);\n}\n  // n8n expects an array of items\nreturn [result];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [4544, 1088],
-      "id": "ef394d40-38b3-4f4d-89b7-b89c3ec2be42",
+      "position": [5264, 1904],
+      "id": "72bbbf35-fdf0-4b30-8302-672602bfdd5c",
       "name": "Process the response"
     },
     {
@@ -164,8 +163,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [4752, 1088],
-      "id": "b2fb4d14-6183-4592-8556-db7e171781c2",
+      "position": [5472, 1904],
+      "id": "0d5bbd61-137b-496f-8243-43bf4805fce4",
       "name": "Is Builder OK"
     },
     {
@@ -174,8 +173,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4992, 1088],
-      "id": "b90d808d-de00-4f86-b00c-c646b5ed2d87",
+      "position": [5712, 1904],
+      "id": "4e99c9c2-20cb-4e11-afdc-95752551cf01",
       "name": "Create the DIFF"
     },
     {
@@ -184,8 +183,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5152, 1088],
-      "id": "65c3372d-b946-4493-9243-b5c18ab519e8",
+      "position": [5872, 1904],
+      "id": "0ab49706-6cec-494d-a140-e0592f9b708e",
       "name": "Run Inspector Agent",
       "notesInFlow": false,
       "onError": "continueErrorOutput"
@@ -198,11 +197,10 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [4352, 1360],
-      "id": "f61c0b44-900f-47dc-9ef7-f6e5cd178386",
+      "position": [5072, 2176],
+      "id": "7f6b703f-13ce-492f-b71f-16b750297bbc",
       "name": "Wait fo Inspector",
-      "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9",
-      "onError": "continueErrorOutput"
+      "webhookId": "19eb0f2f-c982-4e12-92f6-be4cdcb74ee9"
     },
     {
       "parameters": {
@@ -210,18 +208,18 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [4560, 1360],
-      "id": "acbb6650-8826-4788-9801-544690bdc09f",
+      "position": [5280, 2176],
+      "id": "473c93de-d60b-4a37-8a3e-454da0ba6750",
       "name": "Check Inspector Handoff"
     },
     {
       "parameters": {
-        "jsCode": "const text = $json.stdout || '';\n\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse handoff JSON: ' + e.message);\n}\n  // n8n expects an array of items\nreturn [result];"
+        "jsCode": "const text = $input.first().json.stdout || '';\n\nlet result;\ntry {\n  result = JSON.parse(text);\n} catch (e) {\n  throw new Error('Failed to parse handoff JSON: ' + e.message);\n}\n  // n8n expects an array of items\nreturn [result];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [4784, 1360],
-      "id": "bd5db19b-9c43-49ad-a13c-ca906a671ba5",
+      "position": [5504, 2176],
+      "id": "a39d1fa8-23ae-4c54-b10b-56c9a7943ba3",
       "name": "Process the response1"
     },
     {
@@ -272,8 +270,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [4976, 1360],
-      "id": "e8848f2f-3247-473e-a6bb-83eb437fa5be",
+      "position": [5696, 2176],
+      "id": "f73afa94-fc0a-438a-845e-d9fc69459b77",
       "name": "Is Inspector OK"
     },
     {
@@ -282,8 +280,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5200, 1440],
-      "id": "4f199f0c-b522-4da4-b5a4-833973f7e479",
+      "position": [6736, 1952],
+      "id": "e64625c2-65ae-47b6-8268-08871582dc7a",
       "name": "Create the PR"
     },
     {
@@ -292,8 +290,8 @@
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
-      "position": [5200, 1296],
-      "id": "1b7ecb71-1ade-48f7-bb68-198575be4945",
+      "position": [6736, 1760],
+      "id": "49b987eb-7f5a-4ae7-a1ca-2ce27997de48",
       "name": "Log Rejection"
     },
     {
@@ -302,8 +300,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [5616, 1360],
-      "id": "b2b2b2b2-1111-2222-3333-444444444444",
+      "position": [6336, 2176],
+      "id": "30dd42b9-7be0-4ea2-b55c-60fd949e1190",
       "name": "Update Retry State"
     },
     {
@@ -312,7 +310,7 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict",
+            "typeValidation": "loose",
             "version": 3
           },
           "conditions": [
@@ -328,12 +326,13 @@
           ],
           "combinator": "and"
         },
+        "looseTypeValidation": true,
         "options": {}
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [5808, 1360],
-      "id": "c3c3c3c3-1111-2222-3333-444444444444",
+      "position": [6528, 2176],
+      "id": "42b76437-7ad2-4eba-997b-2969735e9bdb",
       "name": "Should Retry"
     },
     {
@@ -356,8 +355,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [6032, 1360],
-      "id": "d4d4d4d4-1111-2222-3333-444444444444",
+      "position": [6752, 2176],
+      "id": "1a551bdb-e78d-4ce3-87de-b37d03591859",
       "name": "Persist Retry Vars"
     },
     {
@@ -415,8 +414,8 @@
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
-      "position": [4112, 992],
-      "id": "ceb666c6-808d-491a-8e87-751541108cf6",
+      "position": [4832, 1808],
+      "id": "73cd8380-9758-4b98-b287-325018281600",
       "name": "Switch"
     },
     {
@@ -428,8 +427,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [3632, 1152],
-      "id": "7d0d4bb4-878b-4bca-9237-1d3d5b19b0dc",
+      "position": [4352, 1968],
+      "id": "0683f834-3118-4851-b796-7861c8b79f3c",
       "name": "Review",
       "webhookId": "0d33a427-d5ca-4d31-8dda-d8a963a9db4e"
     }
@@ -672,21 +671,28 @@
           }
         ]
       ]
+    },
+    "Review": {
+      "main": [
+        [
+          {
+            "node": "Initialize Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": false,
-    "timeSavedMode": "fixed",
-    "timezone": "Europe/Stockholm",
-    "callerPolicy": "workflowsFromSameOwner"
+    "availableInMCP": false
   },
-  "versionId": "f7b22c7f-4bee-4f2c-9bb1-8223f209199a",
+  "versionId": "d688dabf-833b-4875-a535-b58fb805e55d",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "b11168fb8d2189bb65765ba38337a8f759c5093954de979172c9be19e0a9355a"
   },
-  "id": "dPFeMtNgFfJcco6V",
+  "id": "cv-zd6S-OH7kCiTmLAvMb",
   "tags": []
 }
