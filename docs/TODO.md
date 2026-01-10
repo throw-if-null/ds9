@@ -57,7 +57,7 @@ This tree shows main dependency relationships. Leaf tasks are more implementatio
     - depends on: ds9-5, ds9-6  
   - [x] [ds9-17 · 5.2 Create `<LcarsHeaderBar>` Component](#52-ds9-17-create-lcarsheaderbar-component)  
     - depends on: ds9-16, ds9-8, ds9-9  
-  - [ ] [ds9-18 · 5.3 Create `<LcarsSidebar>` and Scroll Controls](#53-ds9-18-create-lcarssidebar-and-scroll-controls)  
+  - [x] [ds9-18 · 5.3 Create `<LcarsSidebar>` and Scroll Controls](#53-ds9-18-create-lcarssidebar-and-scroll-controls)  
     - depends on: ds9-7, ds9-10, ds9-16  
   - [ ] [ds9-19 · 5.4 Create `<LcarsBreadcrumb>` Component](#54-ds9-19-create-lcarsbreadcrumb-component)  
     - depends on: ds9-12  
