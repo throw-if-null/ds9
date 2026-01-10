@@ -2,7 +2,7 @@ import json
 import os
 import subprocess
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 
 def validate_builder_result(data: Any) -> Dict[str, Any]:
